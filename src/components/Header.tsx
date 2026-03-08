@@ -45,7 +45,7 @@ const Header = () => {
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav aria-label="Menu principal" className="hidden items-center gap-8 md:flex">
             {navItems.map((item) => (
               <a
                 key={item.href}
