@@ -22,7 +22,7 @@ const ContactSection = () => {
             Fale Conosco
           </span>
           <h2 className="mt-3 font-heading text-3xl font-bold text-primary sm:text-4xl">
-            Entre em Contato
+            Contato - Advogado Militar em Brasília
           </h2>
           <div className="mx-auto mt-2 h-[2px] w-16 bg-accent" />
         </motion.div>

@@ -7,7 +7,7 @@ const HeroSection = () => {
     <section id="inicio" className="relative min-h-[85vh] flex items-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        <img src={heroBg} alt="" className="h-full w-full object-cover" />
+        <img src={heroBg} alt="Forças Armadas e segurança pública do Brasil - Direito Militar" className="h-full w-full object-cover" loading="eager" />
         <div className="absolute inset-0 bg-gradient-hero opacity-80" />
       </div>
 
@@ -29,6 +29,7 @@ const HeroSection = () => {
             Mais de 35 anos de{" "}
             <span className="text-gradient-gold">experiência</span> em Direito Militar
           </h1>
+          <p className="sr-only">Aguiar Filgueiras Advocacia - Escritório especializado em Direito Penal Militar, Administrativo, Disciplinar e Previdenciário Militar em Brasília-DF</p>
 
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-gold-light/80">
             Advocacia e consultoria especializada nas áreas de Direito Penal, Administrativo, 

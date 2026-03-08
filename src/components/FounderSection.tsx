@@ -16,8 +16,9 @@ const FounderSection = () => {
             <div className="absolute -inset-3 rounded-sm border border-gold/20" />
             <img
               src={founderImg}
-              alt="Carlos Filgueiras - Sócio Fundador"
+              alt="Carlos Filgueiras - Advogado Militar e Sócio Fundador do escritório Aguiar Filgueiras Advocacia"
               className="relative rounded-sm object-cover"
+              loading="lazy"
             />
           </motion.div>
 

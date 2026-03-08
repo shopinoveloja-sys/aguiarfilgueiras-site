@@ -22,7 +22,7 @@ const AboutSection = () => {
               Quem Somos
             </span>
             <h2 className="mt-3 font-heading text-3xl font-bold text-primary sm:text-4xl">
-              O Escritório
+              Escritório de Advocacia Militar
             </h2>
             <div className="mt-2 h-[2px] w-16 bg-accent" />
 
