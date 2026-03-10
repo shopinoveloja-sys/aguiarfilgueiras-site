@@ -30,14 +30,15 @@
 
     <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
 
-    <?php
-    wp_nav_menu(array(
-      'theme_location' => 'primary',
-      'container' => false,
-      'menu_class' => 'main-nav',
-      'menu_id' => 'mainNav',
-      'fallback_cb' => 'aguiar_fallback_menu',
-    ));
-    ?>
+    <nav>
+      <ul class="main-nav" id="mainNav">
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="#escritorio">O Escritório</a></li>
+        <li><a href="#areas">Áreas de Atuação</a></li>
+        <li><a href="#fundador">Fundador</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
   </div>
 </header>
