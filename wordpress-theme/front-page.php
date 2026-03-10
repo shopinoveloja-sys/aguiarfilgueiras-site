@@ -3,7 +3,7 @@
 <!-- ========== HERO ========== -->
 <section id="inicio" class="hero">
   <div class="hero-bg">
-    <img src="<?php echo get_template_directory_uri(); ?>/assets/hero-bg.jpg" alt="">
+    <img src="<?php echo get_template_directory_uri(); ?>/assets/hero-bg.jpg" alt="Forças Armadas e segurança pública do Brasil - Direito Militar">
     <div class="hero-overlay"></div>
   </div>
   <div class="container">
@@ -117,6 +117,38 @@
           <a href="https://www.facebook.com/carlosfilgueiras.adv" target="_blank">Facebook</a>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BLOG ========== -->
+<section id="blog" class="blog">
+  <div class="container">
+    <div class="animate-on-scroll" style="text-align:center;">
+      <span class="section-label">Publicações</span>
+      <h2 class="section-title">Blog Jurídico</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="blog-grid">
+      <article class="blog-card animate-on-scroll">
+        <div class="blog-date">15 Mar 2025</div>
+        <h3>Direitos do Militar na Reserva</h3>
+        <p>Entenda quais são os direitos garantidos aos militares quando passam para a reserva remunerada.</p>
+        <span class="blog-link">Leia mais →</span>
+      </article>
+      <article class="blog-card animate-on-scroll">
+        <div class="blog-date">08 Mar 2025</div>
+        <h3>Processo Administrativo Disciplinar</h3>
+        <p>Como funciona o PAD militar e quais são as garantias do militar investigado.</p>
+        <span class="blog-link">Leia mais →</span>
+      </article>
+      <article class="blog-card animate-on-scroll">
+        <div class="blog-date">01 Mar 2025</div>
+        <h3>Pensão Militar: Novas Regras</h3>
+        <p>As mudanças recentes na legislação sobre pensão militar e seus impactos para os beneficiários.</p>
+        <span class="blog-link">Leia mais →</span>
+      </article>
     </div>
   </div>
 </section>
