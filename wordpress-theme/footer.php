@@ -24,8 +24,8 @@
       if (target) {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-      // Close mobile menu
       document.getElementById('mainNav').classList.remove('active');
+      document.getElementById('menuToggle').textContent = '☰';
     });
   });
 
@@ -42,6 +42,16 @@
   document.querySelectorAll('.animate-on-scroll').forEach(function(el) {
     observer.observe(el);
   });
+
+  // Newsletter form
+  var nlForm = document.getElementById('newsletterForm');
+  if (nlForm) {
+    nlForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      nlForm.style.display = 'none';
+      document.getElementById('newsletterSuccess').style.display = 'block';
+    });
+  }
 </script>
 </body>
 </html>
