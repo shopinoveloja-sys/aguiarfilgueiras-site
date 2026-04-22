@@ -818,3 +818,21 @@ html { margin-top: 0 !important; }
     margin: 40px 0 20px;
 }
 
+
+/* --- Estilo da Logo Original --- */
+.logo-img {
+    height: 80px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .logo-img {
+        height: 60px;
+    }
+}
+
