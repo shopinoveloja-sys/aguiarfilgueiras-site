@@ -780,3 +780,41 @@ img {
 
 /* Override WP admin bar offset */
 html { margin-top: 0 !important; }
+
+/* --- Estilos para o Post Individual (Laura) --- */
+.single-post {
+    padding: 120px 0 80px;
+    background-color: var(--white);
+}
+
+.single-post .container {
+    max-width: 800px;
+}
+
+.single-post .section-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.single-post .post-meta {
+    margin-bottom: 30px;
+    color: var(--gray-light);
+    font-size: 0.9rem;
+}
+
+.single-post .post-content {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--gray);
+}
+
+.single-post .post-content p {
+    margin-bottom: 25px;
+}
+
+.single-post .post-content h2, 
+.single-post .post-content h3 {
+    color: var(--navy);
+    margin: 40px 0 20px;
+}
+

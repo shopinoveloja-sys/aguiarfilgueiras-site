@@ -131,70 +131,45 @@
       <p class="blog-subtitle">Conteúdo exclusivo com análises do nosso fundador Carlos Filgueiras sobre temas relevantes do Direito Militar.</p>
     </div>
 
-    <div class="blog-grid">
-      <!-- Artigo 1 -->
-      <article class="blog-card animate-on-scroll">
-        <div class="blog-card-header">
-          <span class="blog-category">Direito Penal Militar</span>
-          <span class="blog-date">📅 28 Fev 2026</span>
-        </div>
-        <div class="blog-card-body">
-          <h3>Reforma do Código Penal Militar: o que muda para os militares da ativa</h3>
-          <p>As recentes propostas de alteração do CPM trazem impactos significativos na tipificação de crimes militares e nos procedimentos processuais.</p>
-          <div class="blog-founder-comment">
-            <div class="comment-header">
-              <img src="<?php echo get_template_directory_uri(); ?>/assets/founder.jpg" alt="Carlos Filgueiras" class="comment-avatar">
-              <span class="comment-name">Carlos Filgueiras</span>
-              <span class="comment-role">• Fundador</span>
-            </div>
-            <p class="comment-text">"Em mais de 35 anos acompanhando a Justiça Militar, vejo esta reforma como um momento decisivo. Os militares precisam de orientação jurídica especializada para entender como essas mudanças afetam diretamente suas carreiras e direitos."</p>
-          </div>
-          <a href="#contato" class="blog-link">Saiba mais →</a>
-        </div>
-      </article>
+      <?php
+      $blog_query = new WP_Query(array(
+        'posts_per_page' => 3,
+        'post_status' => 'publish'
+      ));
 
-      <!-- Artigo 2 -->
-      <article class="blog-card animate-on-scroll">
-        <div class="blog-card-header">
-          <span class="blog-category">Direito Previdenciário Militar</span>
-          <span class="blog-date">📅 15 Fev 2026</span>
-        </div>
-        <div class="blog-card-body">
-          <h3>Pensão militar: direitos dos dependentes após a reforma previdenciária</h3>
-          <p>Entenda como a reforma da previdência alterou os critérios de concessão de pensão para dependentes de militares das Forças Armadas.</p>
-          <div class="blog-founder-comment">
-            <div class="comment-header">
-              <img src="<?php echo get_template_directory_uri(); ?>/assets/founder.jpg" alt="Carlos Filgueiras" class="comment-avatar">
-              <span class="comment-name">Carlos Filgueiras</span>
-              <span class="comment-role">• Fundador</span>
+      if ($blog_query->have_posts()) :
+        while ($blog_query->have_posts()) : $blog_query->the_post();
+          $opinion = get_post_meta(get_the_ID(), 'opiniao_fundador', true);
+      ?>
+          <!-- Artigo Dinâmico -->
+          <article class="blog-card animate-on-scroll">
+            <div class="blog-card-header">
+              <span class="blog-category"><?php the_category(', '); ?></span>
+              <span class="blog-date">📅 <?php echo get_the_date(); ?></span>
             </div>
-            <p class="comment-text">"Na minha experiência à frente de seções de inativos e pensionistas, posso afirmar que muitos militares e familiares desconhecem direitos importantes. A orientação preventiva pode evitar anos de litígio desnecessário."</p>
-          </div>
-          <a href="#contato" class="blog-link">Saiba mais →</a>
-        </div>
-      </article>
-
-      <!-- Artigo 3 -->
-      <article class="blog-card animate-on-scroll">
-        <div class="blog-card-header">
-          <span class="blog-category">Direito Disciplinar Militar</span>
-          <span class="blog-date">📅 02 Fev 2026</span>
-        </div>
-        <div class="blog-card-body">
-          <h3>Transgressões disciplinares: como garantir o direito à ampla defesa</h3>
-          <p>Os procedimentos administrativos disciplinares exigem respeito estrito ao contraditório. Saiba como proteger seus direitos.</p>
-          <div class="blog-founder-comment">
-            <div class="comment-header">
-              <img src="<?php echo get_template_directory_uri(); ?>/assets/founder.jpg" alt="Carlos Filgueiras" class="comment-avatar">
-              <span class="comment-name">Carlos Filgueiras</span>
-              <span class="comment-role">• Fundador</span>
+            <div class="blog-card-body">
+              <h3><?php the_title(); ?></h3>
+              <p><?php echo wp_trim_words(get_the_excerpt(), 25); ?></p>
+              <?php if ($opinion) : ?>
+                <div class="blog-founder-comment">
+                  <div class="comment-header">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/founder.jpg" alt="Carlos Filgueiras" class="comment-avatar">
+                    <span class="comment-name">Carlos Filgueiras</span>
+                    <span class="comment-role">• Fundador</span>
+                  </div>
+                  <p class="comment-text">"<?php echo esc_html($opinion); ?>"</p>
+                </div>
+              <?php endif; ?>
+              <a href="<?php the_permalink(); ?>" class="blog-link">Saiba mais →</a>
             </div>
-            <p class="comment-text">"O Direito Disciplinar Militar é uma das áreas mais sensíveis. Um processo mal conduzido pode encerrar prematuramente uma carreira promissora. A defesa técnica desde o início é fundamental."</p>
-          </div>
-          <a href="#contato" class="blog-link">Saiba mais →</a>
-        </div>
-      </article>
-    </div>
+          </article>
+      <?php
+        endwhile;
+        wp_reset_postdata();
+      else :
+        echo '<p style="text-align:center; width:100%;">Aguardando as primeiras análises da Laura...</p>';
+      endif;
+      ?>
 
     <!-- Newsletter -->
     <div class="newsletter-box animate-on-scroll">
