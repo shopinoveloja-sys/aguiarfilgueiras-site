@@ -1,90 +1,30 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#020617" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Driver Cash" />
+    
+    <!-- SEO -->
+    <title>Driver Cash - Finanças para Motoristas</title>
+    <meta name="description" content="Gerencie suas finanças de motorista de aplicativo. Controle ganhos, despesas, metas e acompanhe seu desempenho em tempo real." />
+    <meta name="keywords" content="driver cash, motorista, aplicativo, uber, 99, finances, ganhos, lucro, produtividade" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
-    <!-- Primary SEO -->
-    <title>Aguiar Filgueiras Advocacia | Direito Militar - Mais de 35 Anos</title>
-    <meta name="description" content="Escritório especializado em Direito Militar com mais de 35 anos de experiência. Advocacia em Direito Penal, Administrativo, Disciplinar e Previdenciário Militar. Atendimento virtual para todo Brasil.">
-    <meta name="keywords" content="direito militar, advogado militar, direito penal militar, direito administrativo militar, direito disciplinar militar, direito previdenciário militar, advocacia militar, advogado forças armadas, Brasília, Taguatinga, Carlos Filgueiras">
-    <meta name="author" content="Aguiar Filgueiras Advocacia">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://aguiarfilgueiras.com.br/">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="pt_BR">
-    <meta property="og:site_name" content="Aguiar Filgueiras Advocacia">
-    <meta property="og:title" content="Aguiar Filgueiras Advocacia | Direito Militar - Mais de 35 Anos">
-    <meta property="og:description" content="Escritório especializado em Direito Militar com mais de 35 anos de experiência. Direito Penal, Administrativo, Disciplinar e Previdenciário Militar. Atendimento virtual para todo Brasil.">
-    <meta property="og:url" content="https://aguiarfilgueiras.com.br/">
-    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e89ea5f0-80e5-4307-ad09-5ce732c3b9ee/id-preview-903d16a8--6bed1b8f-779e-468c-81fb-8d3dd3a46a23.lovable.app-1772927798718.png">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Aguiar Filgueiras Advocacia | Direito Militar">
-    <meta name="twitter:description" content="Mais de 35 anos de experiência em Direito Militar. Penal, Administrativo, Disciplinar e Previdenciário Militar.">
-    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e89ea5f0-80e5-4307-ad09-5ce732c3b9ee/id-preview-903d16a8--6bed1b8f-779e-468c-81fb-8d3dd3a46a23.lovable.app-1772927798718.png">
-
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico">
-
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LegalService",
-      "name": "Aguiar Filgueiras Advocacia",
-      "description": "Escritório de advocacia especializado em Direito Militar com mais de 35 anos de experiência nas Forças Armadas.",
-      "url": "https://aguiarfilgueiras.com.br",
-      "telephone": "+55-61-98183-3328",
-      "email": "contato@aguiarfilgueiras.com.br",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "CNB 3 - Taguatinga Norte",
-        "addressLocality": "Brasília",
-        "addressRegion": "DF",
-        "postalCode": "72115-035",
-        "addressCountry": "BR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -15.8267,
-        "longitude": -48.0619
-      },
-      "openingHoursSpecification": {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "13:00",
-        "closes": "19:00"
-      },
-      "founder": {
-        "@type": "Person",
-        "name": "Carlos Filgueiras",
-        "jobTitle": "Advogado Militar - Sócio Fundador",
-        "sameAs": [
-          "https://www.instagram.com/carlosfilgueiras.adv",
-          "https://www.linkedin.com/in/carlos-filgueiras-992396154/",
-          "https://www.facebook.com/carlosfilgueiras.adv"
-        ]
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Brasil"
-      },
-      "knowsAbout": [
-        "Direito Penal Militar",
-        "Direito Administrativo Militar",
-        "Direito Disciplinar Militar",
-        "Direito Previdenciário Militar"
-      ],
-      "sameAs": [
-        "https://www.instagram.com/carlosfilgueiras.adv",
-        "https://www.facebook.com/carlosfilgueiras.adv"
-      ]
-    }
-    </script>
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -98,12 +38,14 @@
     fbq('init', '2037053431020045');
     fbq('track', 'PageView');
     </script>
+    <!-- End Meta Pixel Code -->
+  </head>
+  <body class="bg-[#020617] text-white">
+    <!-- Meta Pixel noscript -->
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=2037053431020045&ev=PageView&noscript=1"
     /></noscript>
-    <!-- End Meta Pixel Code -->
-  </head>
-  <body>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

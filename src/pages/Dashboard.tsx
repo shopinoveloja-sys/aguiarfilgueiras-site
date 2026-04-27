@@ -1,33 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getDashboardData } from "../lib/api";
 
-interface Trip {
-  id: string;
-  origin: string;
-  destination: string;
-  time: string;
-  distance: string;
-  value: string;
-  profit: string;
+interface DashboardData {
+  totalIncomeMonth: number;
+  daysWorked: number;
+  daysRemaining: number;
+  averageGoalMonth: number;
+  bestGoalMonth: number;
+  projectedMonth: number;
+  dailyGoalTodayAverage: number;
+  dailyGoalTodayBest: number;
+  performanceStatus: 'below_average' | 'on_track' | 'above_average';
+  chartData: {
+    labels: number[];
+    averageLine: number[];
+    bestLine: number[];
+    projectionLine: number[];
+  };
 }
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [trips] = useState<Trip[]>([
-    { id: "1", origin: "Expresso Aeropuerto", destination: "Centro", time: "14:20", distance: "22.5 KM", value: "$42.50", profit: "$32.00" },
-    { id: "2", origin: "Centro da Cidade", destination: "Shopping", time: "13:45", distance: "8.2 KM", value: "$15.20", profit: "$10.50" },
-  ]);
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const dashboard = await getDashboardData();
+        setData(dashboard);
+      } catch (error) {
+        console.error("Failed to load dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  const performanceLabel = {
+    below_average: { text: "Abaixo da Média", color: "text-red-400", bg: "bg-red-500/10" },
+    on_track: { text: "No Caminho", color: "text-blue-400", bg: "bg-blue-500/10" },
+    above_average: { text: "Acima da Média", color: "text-emerald-400", bg: "bg-emerald-500/10" }
+  }[data?.performanceStatus || 'on_track'];
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
       <header className="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-md border-b border-blue-500/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30 overflow-hidden">
-            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2j9ssKo2CQwyzErikrfFIkWqyhW-AWAr2BgULOBvDgACyuFR230DWwGx2WvVD2SA2AIWvHc1dxNRBWEWxBxT-FautSZniUuwHHnlETooaKUlx8EpvQ7ElY1UWVyG9Wfrx7gzNUi6SZxQ4KaMpD-rLin-Gipn-X34SLrc7MSdVPDuw6Wa2W48zjZZogFyz_CQ2PZkruYCQMgdQh_8kgPx2j7CDidYXlwK0IyHi-cT6pBdadtEePs9zxDs2MZRzrqCZOKvHIAz" alt="Profile" />
+            <img className="w-full h-full object-cover" src="https://avatar.vercel.sh/drivercash" alt="Profile" />
           </div>
           <div>
-            <p className="text-sm text-slate-500">Bem-vindo de volta,</p>
-            <p className="text-base font-bold">Alex Rivera</p>
+            <p className="text-sm text-slate-500">Bem-vindo,</p>
+            <p className="text-base font-bold">Motorista</p>
           </div>
         </div>
         <button className="p-2 rounded-full bg-blue-500/10 text-blue-400">
@@ -38,63 +73,67 @@ export default function Dashboard() {
       <main className="flex-1 overflow-y-auto p-4">
         <section className="mb-6">
           <div className="flex items-baseline justify-between mb-4">
-            <h2 className="text-xl font-bold">Desempenho de Hoje</h2>
-            <span className="text-xs font-semibold px-2 py-1 rounded bg-blue-500/10 text-blue-400 uppercase tracking-wider">Ao Vivo</span>
+            <h2 className="text-xl font-bold">Resumo Mensal</h2>
+            <span className={`text-xs font-semibold px-2 py-1 rounded ${performanceLabel.bg} ${performanceLabel.color} uppercase tracking-wider`}>
+              {performanceLabel.text}
+            </span>
           </div>
 
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 mb-4 relative overflow-hidden">
             <div className="relative z-10">
-              <p className="text-slate-400 text-xs uppercase font-bold mb-2">Lucro Líquido</p>
+              <p className="text-slate-400 text-xs uppercase font-bold mb-2">Ganhos do Mês</p>
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-extrabold text-blue-400">$188.40</span>
+                <span className="text-4xl font-extrabold text-blue-400">R$ {data?.totalIncomeMonth.toFixed(2)}</span>
                 <span className="text-sm font-medium text-blue-400 flex items-center">
-                  <span className="material-symbols-outlined text-sm">trending_up</span> 12%
+                  Proj: R$ {data?.projectedMonth.toFixed(0)}
                 </span>
               </div>
-            </div>
-            <div className="absolute right-[-20px] top-[-20px] opacity-10">
-              <span className="material-symbols-outlined text-[120px] text-blue-500">payments</span>
             </div>
           </div>
 
           <div className="bg-[#1e293b66] rounded-xl p-4 mb-4">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-slate-400">Meta Diária: $250.00</span>
-              <span className="text-sm font-bold text-blue-400">75%</span>
+              <span className="text-sm font-medium text-slate-400">Meta Média: R$ {data?.averageGoalMonth}</span>
+              <span className="text-sm font-bold text-blue-400">
+                {data ? Math.round((data.totalIncomeMonth / data.averageGoalMonth) * 100) : 0}%
+              </span>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-2.5">
-              <div className="bg-blue-400 h-2.5 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" style={{ width: "75%" }} />
+              <div 
+                className="bg-blue-400 h-2.5 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)] transition-all duration-1000" 
+                style={{ width: `${Math.min(data ? (data.totalIncomeMonth / data.averageGoalMonth) * 100 : 0, 100)}%` }} 
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#1e293b66] border border-blue-500/10 rounded-xl p-4">
               <div className="flex items-center gap-2 text-slate-400 mb-2">
-                <span className="material-symbols-outlined text-blue-400">account_balance_wallet</span>
-                <span className="text-xs font-medium uppercase">Bruto</span>
+                <span className="material-symbols-outlined text-blue-400 text-sm">event_available</span>
+                <span className="text-[10px] font-medium uppercase">Dias Trabalhados</span>
               </div>
-              <p className="text-xl font-bold">$245.50</p>
+              <p className="text-xl font-bold">{data?.daysWorked}</p>
             </div>
             <div className="bg-[#1e293b66] border border-blue-500/10 rounded-xl p-4">
               <div className="flex items-center gap-2 text-slate-400 mb-2">
-                <span className="material-symbols-outlined text-blue-400">route</span>
-                <span className="text-xs font-medium uppercase">Distância</span>
+                <span className="material-symbols-outlined text-blue-400 text-sm">calendar_month</span>
+                <span className="text-[10px] font-medium uppercase">Dias Restantes</span>
               </div>
-              <p className="text-xl font-bold">124.2 KM</p>
+              <p className="text-xl font-bold">{data?.daysRemaining}</p>
             </div>
-            <div className="bg-[#1e293b66] border border-blue-500/10 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-slate-400 mb-2">
-                <span className="material-symbols-outlined text-blue-400">schedule</span>
-                <span className="text-xs font-medium uppercase">Por Hora</span>
-              </div>
-              <p className="text-xl font-bold">$32.10</p>
+          </div>
+        </section>
+
+        <section className="mb-6">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Metas de Hoje</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
+              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Média</p>
+              <p className="text-2xl font-black text-blue-400">R$ {data?.dailyGoalTodayAverage}</p>
             </div>
-            <div className="bg-[#1e293b66] border border-blue-500/10 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-slate-400 mb-2">
-                <span className="material-symbols-outlined text-blue-400">speed</span>
-                <span className="text-xs font-medium uppercase">Por KM</span>
-              </div>
-              <p className="text-xl font-bold">$1.52</p>
+            <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
+              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Recorde</p>
+              <p className="text-2xl font-black text-emerald-400">R$ {data?.dailyGoalTodayBest}</p>
             </div>
           </div>
         </section>
@@ -105,30 +144,12 @@ export default function Dashboard() {
               <span className="material-symbols-outlined text-blue-400">psychology</span>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-white">Sugestão da IA</p>
-              <p className="text-xs text-slate-400">Alta demanda detectada no Centro. Vá para o norte para melhores tarifas.</p>
+              <p className="text-sm font-bold text-white">Status da Projeção</p>
+              <p className="text-xs text-slate-400">
+                Você está projetado para fechar o mês com R$ {data?.projectedMonth}. 
+                {data && data.projectedMonth > data.averageGoalMonth ? " Excelente ritmo!" : " Precisa acelerar um pouco."}
+              </p>
             </div>
-            <span className="material-symbols-outlined text-slate-500">chevron_right</span>
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Últimas Viagens</h3>
-          <div className="space-y-3">
-            {trips.map((trip) => (
-              <div key={trip.id} className="flex items-center justify-between p-3 bg-[#1e293b66] border border-blue-500/10 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="size-8 rounded bg-slate-800 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-sm text-blue-400">directions_car</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold">{trip.origin}</p>
-                    <p className="text-[10px] text-slate-500">{trip.time} • {trip.distance}</p>
-                  </div>
-                </div>
-                <p className="text-sm font-bold text-blue-400">+{trip.profit}</p>
-              </div>
-            ))}
           </div>
         </section>
       </main>

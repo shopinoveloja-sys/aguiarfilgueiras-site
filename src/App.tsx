@@ -8,7 +8,9 @@ import EarningsSettings from "./pages/EarningsSettings";
 import RideHistory from "./pages/RideHistory";
 import KineticOverlay from "./pages/KineticOverlay";
 import AdminDashboard from "./pages/AdminDashboard";
+import Onboarding from "./pages/Onboarding";
 import "./index.css";
+
 
 function App() {
   return (
@@ -22,7 +24,9 @@ function App() {
         <Route path="/rides" element={<RideHistory />} />
         <Route path="/kinetic" element={<KineticOverlay />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/onboarding" element={<Onboarding />} />
       </Routes>
+
       <Toaster position="top-center" />
     </BrowserRouter>
   );
