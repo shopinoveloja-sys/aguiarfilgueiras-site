@@ -34,4 +34,14 @@ export const createTransaction = async (data: any) => {
   return response.data;
 };
 
+export const createRecurringExpense = async (data: { name: string; value: number; dueDay: number }) => {
+  const response = await api.post('/planning/expenses', data);
+  return response.data;
+};
+
+export const getNonWorkingDays = async () => {
+  const response = await api.get('/planning/expenses/planning');
+  return response.data;
+};
+
 export default api;

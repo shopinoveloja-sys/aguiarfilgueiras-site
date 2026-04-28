@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDashboardData } from "../lib/api";
+import { getDashboardData, getRecurringExpenses } from "../lib/api";
 
 interface DashboardData {
   totalIncomeMonth: number;
@@ -23,6 +23,7 @@ interface DashboardData {
 export default function Dashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
+  const [planning, setPlanning] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +31,10 @@ export default function Dashboard() {
       try {
         const dashboard = await getDashboardData();
         setData(dashboard);
+        try {
+          const planData = await getRecurringExpenses();
+          setPlanning(planData);
+        } catch { /* no planning data yet */ }
       } catch (error) {
         console.error("Failed to load dashboard data", error);
       } finally {
@@ -152,6 +157,27 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+
+        {/* Daily Reserve Widget */}
+        {planning && planning.summary && planning.summary.requiredPerDay > 0 && (
+          <section className="mb-6">
+            <div onClick={() => navigate('/calendar')} className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-xl p-5 cursor-pointer hover:bg-amber-500/15 transition-all active:scale-[0.98]">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-amber-400">savings</span>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300">Reserva Diária</h3>
+                </div>
+                <span className="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
+              </div>
+              <p className="text-3xl font-black text-amber-400">
+                R$ {planning.summary.requiredPerDay.toFixed(2).replace('.', ',')}
+              </p>
+              <p className="text-[10px] text-slate-500 mt-1 font-medium">
+                Valor que você deve separar hoje para cobrir suas {planning.expenses?.length || 0} despesa(s) fixa(s)
+              </p>
+            </div>
+          </section>
+        )}
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-[#1e293b66] border-t border-blue-500/10 px-6 py-3 pb-8 flex items-center justify-around">

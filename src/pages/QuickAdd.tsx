@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createTransaction } from "../lib/api";
+import { createTransaction, createRecurringExpense } from "../lib/api";
 import { toast } from "sonner";
 
 export default function QuickAdd() {
@@ -59,14 +59,10 @@ export default function QuickAdd() {
       
       if (isRecurring && type === "EXPENSE") {
         // Send to recurring expense endpoint
-        await fetch('https://api.drivercash.app/finance/recurring-expenses', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: description || "Despesa Recorrente",
-            value: finalValue,
-            dueDay: parseInt(dueDay, 10) || 1
-          })
+        await createRecurringExpense({
+          name: description || "Despesa Recorrente",
+          value: finalValue,
+          dueDay: parseInt(dueDay, 10) || 1
         });
         toast.success("Despesa fixa registrada!");
       } else {
