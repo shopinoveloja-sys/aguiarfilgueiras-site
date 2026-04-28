@@ -58,8 +58,71 @@ export default function Dashboard() {
     above_average: { text: "Acima da Média", color: "text-emerald-400", bg: "bg-emerald-500/10" }
   }[data?.performanceStatus || 'on_track'];
 
+  const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const [previousBalance, setPreviousBalance] = useState("");
+
+  const handleSaveBalance = async () => {
+    const val = parseInt(previousBalance, 10) / 100;
+    if (val > 0) {
+      try {
+        const { createTransaction } = await import("../lib/api");
+        await createTransaction({
+          type: "INCOME",
+          value: val,
+          category: "SALDO_ANTERIOR",
+          description: "Saldo anterior ao começar a usar o app",
+          date: new Date().toISOString()
+        });
+        setShowBalanceModal(false);
+        setPreviousBalance("");
+        // Reload dashboard
+        window.location.reload();
+      } catch {
+        // handle error
+      }
+    }
+  };
+
+  const formatBalanceInput = (val: string) => {
+    if (!val) return "0,00";
+    const num = parseInt(val, 10);
+    return (num / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
+
+      {/* Saldo Anterior Modal */}
+      {showBalanceModal && (
+        <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => setShowBalanceModal(false)}>
+          <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10" onClick={e => e.stopPropagation()}>
+            <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
+            <h3 className="text-lg font-bold text-white mb-2">Saldo Anterior</h3>
+            <p className="text-xs text-slate-400 mb-5">Informe quanto você já ganhou neste mês antes de usar o app. Isso ajusta suas metas e projeções.</p>
+            
+            <div className="flex items-baseline justify-center gap-2 mb-6 py-4">
+              <span className="text-2xl font-bold text-slate-500">R$</span>
+              <span className="text-5xl font-black text-emerald-400">{formatBalanceInput(previousBalance)}</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mb-5">
+              {[1,2,3,4,5,6,7,8,9].map(n => (
+                <button key={n} onClick={() => setPreviousBalance(p => p.length < 8 ? p + n : p)} className="h-12 rounded-xl bg-[#1e293b] text-xl font-bold text-white active:scale-95 transition-transform">{n}</button>
+              ))}
+              <button onClick={() => setPreviousBalance(p => p + "00")} className="h-12 rounded-xl bg-[#1e293b] text-lg font-bold text-white active:scale-95 transition-transform">00</button>
+              <button onClick={() => setPreviousBalance(p => p.length < 8 ? p + "0" : p)} className="h-12 rounded-xl bg-[#1e293b] text-xl font-bold text-white active:scale-95 transition-transform">0</button>
+              <button onClick={() => setPreviousBalance(p => p.slice(0,-1))} className="h-12 rounded-xl bg-[#1e293b] text-slate-400 flex items-center justify-center active:scale-95 transition-transform">
+                <span className="material-symbols-outlined">backspace</span>
+              </button>
+            </div>
+
+            <button onClick={handleSaveBalance} className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-400 font-bold text-white shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined">check_circle</span>
+              CONFIRMAR SALDO
+            </button>
+          </div>
+        </div>
+      )}
       <header className="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-md border-b border-blue-500/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30 overflow-hidden">
@@ -96,6 +159,14 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Saldo Anterior Button */}
+          <button 
+            onClick={() => setShowBalanceModal(true)}
+            className="w-full flex items-center gap-3 bg-[#1e293b44] border border-dashed border-slate-700 rounded-xl p-3 mb-4 hover:bg-slate-800/50 transition-colors active:scale-[0.98]"
+          >
+            <span className="material-symbols-outlined text-slate-500 text-lg">account_balance_wallet</span>
+            <span className="text-xs text-slate-500 font-medium">Começou no meio do mês? <b className="text-slate-300">Informe seu saldo anterior</b></span>
+          </button>
           <div className="bg-[#1e293b66] rounded-xl p-4 mb-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-slate-400">Meta Média: R$ {data?.averageGoalMonth}</span>
