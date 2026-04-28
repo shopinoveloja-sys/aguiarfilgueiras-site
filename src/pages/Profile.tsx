@@ -58,6 +58,17 @@ export default function Profile() {
             </div>
           </button>
 
+          <button onClick={() => navigate("/calendar")} className="col-span-2 flex items-center p-5 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors text-left gap-4">
+            <div className="bg-purple-500/10 p-3 rounded-lg">
+              <span className="material-symbols-outlined text-purple-500">calendar_month</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold">Rotina & Folgas</h3>
+              <p className="text-slate-400 text-xs mt-1">Marque seus dias de descanso e planeje suas despesas</p>
+            </div>
+            <span className="material-symbols-outlined text-slate-500">chevron_right</span>
+          </button>
+
           <button className="flex flex-col items-start p-5 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors text-left space-y-3">
             <div className="bg-blue-500/10 p-2 rounded-lg">
               <span className="material-symbols-outlined text-blue-500">emoji_events</span>

@@ -8,6 +8,9 @@ export default function QuickAdd() {
   const [type, setType] = useState<"INCOME" | "EXPENSE">("INCOME");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("UBER");
+  const [description, setDescription] = useState("");
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [dueDay, setDueDay] = useState("5");
   const [loading, setLoading] = useState(false);
 
   // Income categories
@@ -54,16 +57,30 @@ export default function QuickAdd() {
     try {
       const finalValue = parseInt(amount, 10) / 100;
       
-      // Sending to our newly fixed database
-      await createTransaction({
-        type,
-        value: finalValue,
-        category: category,
-        description: `${type === 'INCOME' ? 'Ganho' : 'Despesa'} via App - ${category}`,
-        date: new Date().toISOString()
-      });
-
-      toast.success(type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!");
+      if (isRecurring && type === "EXPENSE") {
+        // Send to recurring expense endpoint
+        await fetch('https://api.drivercash.app/finance/recurring-expenses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: description || "Despesa Recorrente",
+            value: finalValue,
+            dueDay: parseInt(dueDay, 10) || 1
+          })
+        });
+        toast.success("Despesa fixa registrada!");
+      } else {
+        // Normal transaction
+        await createTransaction({
+          type,
+          value: finalValue,
+          category: category,
+          description: description || `${type === 'INCOME' ? 'Ganho' : 'Despesa'} via App - ${category}`,
+          date: new Date().toISOString()
+        });
+        toast.success(type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!");
+      }
+      
       navigate("/dashboard");
     } catch (error) {
       toast.error("Erro ao salvar lançamento.");
@@ -88,7 +105,7 @@ export default function QuickAdd() {
       <div className="px-6 mt-2">
         <div className="flex bg-[#1e293b66] rounded-2xl p-1 border border-blue-500/10">
           <button 
-            onClick={() => { setType("INCOME"); setCategory("UBER"); setAmount(""); }}
+            onClick={() => { setType("INCOME"); setCategory("UBER"); setAmount(""); setIsRecurring(false); }}
             className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${type === "INCOME" ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-slate-400"}`}
           >
             GANHO
@@ -116,8 +133,8 @@ export default function QuickAdd() {
       </div>
 
       {/* Category Selection */}
-      <div className="px-4 mb-6">
-        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x">
+      <div className="px-4 mb-4">
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
           {currentCategories.map(cat => (
             <button
               key={cat.id}
@@ -134,6 +151,42 @@ export default function QuickAdd() {
           ))}
         </div>
       </div>
+
+      {/* Conditional Description & Recurrence Input */}
+      {category === "OUTROS" && type === "EXPENSE" && (
+        <div className="px-6 mb-4 animate-fade-in">
+          <input 
+            type="text" 
+            placeholder="Descreva a despesa (ex: Aluguel do Carro)" 
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full bg-[#1e293b66] border border-blue-500/20 rounded-xl p-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          
+          <label className="flex items-center gap-3 mt-4 text-sm text-slate-300">
+            <input 
+              type="checkbox" 
+              checked={isRecurring} 
+              onChange={(e) => setIsRecurring(e.target.value === "true" || e.target.checked)} 
+              className="size-5 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500"
+            />
+            Essa é uma despesa fixa mensal?
+          </label>
+          
+          {isRecurring && (
+            <div className="mt-3 flex items-center gap-3 bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+              <span className="text-sm text-slate-400">Dia do vencimento:</span>
+              <input 
+                type="number" 
+                min="1" max="31" 
+                value={dueDay}
+                onChange={(e) => setDueDay(e.target.value)}
+                className="w-16 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-center text-white focus:outline-none"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Custom Keypad for Fast Entry */}
       <div className="bg-[#0f172a] rounded-t-[40px] p-6 border-t border-blue-500/10">

@@ -10,6 +10,7 @@ import KineticOverlay from "./pages/KineticOverlay";
 import AdminDashboard from "./pages/AdminDashboard";
 import Onboarding from "./pages/Onboarding";
 import QuickAdd from "./pages/QuickAdd";
+import WorkCalendar from "./pages/WorkCalendar";
 import "./index.css";
 
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/add" element={<QuickAdd />} />
+        <Route path="/calendar" element={<WorkCalendar />} />
       </Routes>
 
       <Toaster position="top-center" />
