@@ -25,18 +25,26 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [planning, setPlanning] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const [previousBalance, setPreviousBalance] = useState("");
+  
   useEffect(() => {
     async function loadData() {
       try {
+        console.log("Loading dashboard data...");
         const dashboard = await getDashboardData();
+        console.log("Dashboard data loaded", dashboard);
         setData(dashboard);
         try {
           const planData = await getRecurringExpenses();
           setPlanning(planData);
-        } catch { /* no planning data yet */ }
+        } catch (e) {
+          console.warn("No planning data", e);
+        }
       } catch (error) {
         console.error("Failed to load dashboard data", error);
+        setErrorMessage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
       } finally {
         setLoading(false);
       }
@@ -47,7 +55,26 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center text-center p-4">
+        <div className="text-red-400 text-lg font-bold">{errorMessage}</div>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center text-center p-4">
+        <p className="text-red-400 text-lg font-bold">Falha ao carregar dados do painel.</p>
       </div>
     );
   }
@@ -57,9 +84,6 @@ export default function Dashboard() {
     on_track: { text: "No Caminho", color: "text-blue-400", bg: "bg-blue-500/10" },
     above_average: { text: "Acima da Média", color: "text-emerald-400", bg: "bg-emerald-500/10" }
   }[data?.performanceStatus || 'on_track'];
-
-  const [showBalanceModal, setShowBalanceModal] = useState(false);
-  const [previousBalance, setPreviousBalance] = useState("");
 
   const handleSaveBalance = async () => {
     const val = parseInt(previousBalance, 10) / 100;
@@ -151,9 +175,9 @@ export default function Dashboard() {
             <div className="relative z-10">
               <p className="text-slate-400 text-xs uppercase font-bold mb-2">Ganhos do Mês</p>
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-extrabold text-blue-400">R$ {data?.totalIncomeMonth.toFixed(2)}</span>
+                <span className="text-4xl font-extrabold text-blue-400">R$ {data?.totalIncomeMonth?.toFixed(2)}</span>
                 <span className="text-sm font-medium text-blue-400 flex items-center">
-                  Proj: R$ {data?.projectedMonth.toFixed(0)}
+                  Proj: R$ {data?.projectedMonth?.toFixed(0)}
                 </span>
               </div>
             </div>
@@ -205,11 +229,11 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Média</p>
-              <p className="text-2xl font-black text-blue-400">R$ {data?.dailyGoalTodayAverage}</p>
+              <p className="text-2xl font-black text-blue-400">R$ {data?.dailyGoalTodayAverage?.toFixed(2)}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Recorde</p>
-              <p className="text-2xl font-black text-emerald-400">R$ {data?.dailyGoalTodayBest}</p>
+              <p className="text-2xl font-black text-emerald-400">R$ {data?.dailyGoalTodayBest?.toFixed(2)}</p>
             </div>
           </div>
         </section>
