@@ -9,6 +9,7 @@ import RideHistory from "./pages/RideHistory";
 import KineticOverlay from "./pages/KineticOverlay";
 import AdminDashboard from "./pages/AdminDashboard";
 import Onboarding from "./pages/Onboarding";
+import QuickAdd from "./pages/QuickAdd";
 import "./index.css";
 
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/kinetic" element={<KineticOverlay />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/add" element={<QuickAdd />} />
       </Routes>
 
       <Toaster position="top-center" />

@@ -130,10 +130,10 @@ export default function RideHistory() {
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>history</span>
           <p className="text-[10px] font-bold uppercase">Corridas</p>
         </a>
-        <a className="relative flex flex-1 flex-col items-center justify-center gap-1 -top-4" href="#" onClick={(e) => { e.preventDefault(); navigate("/kinetic"); }}>
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-800 to-blue-500 text-white shadow-lg">
-            <span className="material-symbols-outlined text-3xl">add</span>
-          </div>
+        <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
+          <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center text-white ring-4 ring-[#020617] active:scale-95 transition-all">
+            <span className="material-symbols-outlined text-4xl">add</span>
+          </button>
         </a>
         <a className="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500" href="#">
           <span className="material-symbols-outlined">insights</span>
