@@ -195,13 +195,13 @@ export default function Dashboard() {
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-slate-400">Meta Média: R$ {data?.averageGoalMonth}</span>
               <span className="text-sm font-bold text-blue-400">
-                {data ? Math.round((data.totalIncomeMonth / data.averageGoalMonth) * 100) : 0}%
+                {data?.averageGoalMonth && data.averageGoalMonth > 0 ? Math.round((data.totalIncomeMonth / data.averageGoalMonth) * 100) : 0}%
               </span>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-2.5">
               <div 
                 className="bg-blue-400 h-2.5 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)] transition-all duration-1000" 
-                style={{ width: `${Math.min(data ? (data.totalIncomeMonth / data.averageGoalMonth) * 100 : 0, 100)}%` }} 
+                style={{ width: `${Math.min(data?.averageGoalMonth && data.averageGoalMonth > 0 ? (data.totalIncomeMonth / data.averageGoalMonth) * 100 : 0, 100)}%` }} 
               />
             </div>
           </div>
