@@ -101,12 +101,16 @@ export default function QuickAdd() {
         recurrenceType === "SPECIFIC_DATE"
           ? recurrencePayload.dueDate
           : new Date().toISOString();
+      const transactionCategory =
+        type === "EXPENSE" && category === "OUTROS" && description.trim()
+          ? description.trim()
+          : category;
 
       if (hasAmount) {
         await createTransaction({
           type,
           value: finalValue,
-          category,
+          category: transactionCategory,
           source: "MANUAL",
           date: transactionDate,
           ...recurrencePayload,
