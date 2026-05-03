@@ -78,14 +78,15 @@ export default function QuickAdd() {
   };
 
   const handleSave = async () => {
-    if (!amount || parseInt(amount, 10) === 0) {
-      toast.error("Informe um valor valido.");
-      return;
-    }
-
     const shouldSaveKm = recurrenceType === "SPECIFIC_DATE" && kmStart && kmEnd;
+    const hasAmount = Boolean(amount) && parseInt(amount, 10) > 0;
     const parsedKmStart = parseInt(kmStart, 10);
     const parsedKmEnd = parseInt(kmEnd, 10);
+
+    if (!hasAmount && !shouldSaveKm) {
+      toast.error("Informe um valor ou o KM do dia.");
+      return;
+    }
 
     if (shouldSaveKm && (Number.isNaN(parsedKmStart) || Number.isNaN(parsedKmEnd) || parsedKmEnd < parsedKmStart)) {
       toast.error("Confira o KM inicial e final do dia.");
@@ -101,14 +102,16 @@ export default function QuickAdd() {
           ? recurrencePayload.dueDate
           : new Date().toISOString();
 
-      await createTransaction({
-        type,
-        value: finalValue,
-        category,
-        source: "MANUAL",
-        date: transactionDate,
-        ...recurrencePayload,
-      });
+      if (hasAmount) {
+        await createTransaction({
+          type,
+          value: finalValue,
+          category,
+          source: "MANUAL",
+          date: transactionDate,
+          ...recurrencePayload,
+        });
+      }
 
       if (shouldSaveKm) {
         await createKmDaily({
@@ -118,7 +121,7 @@ export default function QuickAdd() {
         });
       }
 
-      if (type === "EXPENSE" && recurrenceType !== "SPECIFIC_DATE") {
+      if (hasAmount && type === "EXPENSE" && recurrenceType !== "SPECIFIC_DATE") {
         await createRecurringExpense({
           name: description || `Despesa fixa - ${category}`,
           value: finalValue,
@@ -126,7 +129,7 @@ export default function QuickAdd() {
         });
       }
 
-      toast.success(type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!");
+      toast.success(hasAmount ? (type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!") : "KM registrado com sucesso!");
       navigate("/dashboard");
     } catch (error) {
       toast.error("Erro ao salvar lancamento.");
