@@ -34,7 +34,14 @@ export const createTransaction = async (data: Record<string, unknown>) => {
   return response.data;
 };
 
-export const createRecurringExpense = async (data: { name: string; value: number; dueDay: number }) => {
+export const createRecurringExpense = async (data: {
+  name: string;
+  value: number;
+  recurrenceType?: 'MONTHLY' | 'WEEKLY' | 'SPECIFIC_DATE';
+  dueDay?: number;
+  dueDayOfWeek?: number;
+  dueDate?: string;
+}) => {
   const response = await api.post('/planning/expenses', data);
   return response.data;
 };

@@ -3,17 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { createTransaction, createRecurringExpense } from "../lib/api";
 import { toast } from "sonner";
 
+type RecurrenceType = "SPECIFIC_DATE" | "WEEKLY" | "MONTHLY";
+
+const todayInputValue = () => new Date().toISOString().split("T")[0];
+
 export default function QuickAdd() {
   const navigate = useNavigate();
   const [type, setType] = useState<"INCOME" | "EXPENSE">("INCOME");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("UBER");
   const [description, setDescription] = useState("");
-  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>("SPECIFIC_DATE");
+  const [selectedDate, setSelectedDate] = useState(todayInputValue());
   const [dueDay, setDueDay] = useState("5");
+  const [dueDayOfWeek, setDueDayOfWeek] = useState(new Date().getDay().toString());
   const [loading, setLoading] = useState(false);
 
-  // Income categories
   const apps = [
     { id: "UBER", name: "Uber", icon: "directions_car", color: "bg-black text-white" },
     { id: "99", name: "99", icon: "local_taxi", color: "bg-[#FFD100] text-black" },
@@ -21,24 +26,34 @@ export default function QuickAdd() {
     { id: "PARTICULAR", name: "Particular", icon: "person", color: "bg-blue-600 text-white" },
   ];
 
-  // Expense categories
   const expenses = [
-    { id: "COMBUSTIVEL", name: "Combustível", icon: "local_gas_station", color: "bg-orange-500 text-white" },
-    { id: "ALIMENTACAO", name: "Alimentação", icon: "restaurant", color: "bg-rose-500 text-white" },
-    { id: "MANUTENCAO", name: "Manutenção", icon: "build", color: "bg-slate-600 text-white" },
+    { id: "COMBUSTIVEL", name: "Combustivel", icon: "local_gas_station", color: "bg-orange-500 text-white" },
+    { id: "ALIMENTACAO", name: "Alimentacao", icon: "restaurant", color: "bg-rose-500 text-white" },
+    { id: "MANUTENCAO", name: "Manutencao", icon: "build", color: "bg-slate-600 text-white" },
     { id: "OUTROS", name: "Outros", icon: "receipt_long", color: "bg-purple-500 text-white" },
+  ];
+
+  const recurrenceOptions: { id: RecurrenceType; label: string; icon: string }[] = [
+    { id: "SPECIFIC_DATE", label: "Data", icon: "event" },
+    { id: "WEEKLY", label: "Semanal", icon: "calendar_view_week" },
+    { id: "MONTHLY", label: "Mensal", icon: "calendar_month" },
+  ];
+
+  const weekDays = [
+    { value: "0", label: "Dom" },
+    { value: "1", label: "Seg" },
+    { value: "2", label: "Ter" },
+    { value: "3", label: "Qua" },
+    { value: "4", label: "Qui" },
+    { value: "5", label: "Sex" },
+    { value: "6", label: "Sab" },
   ];
 
   const currentCategories = type === "INCOME" ? apps : expenses;
 
-  // Keypad logic for quick entry
   const handleKeypad = (num: string) => {
     if (amount.length > 8) return;
-    setAmount(prev => prev + num);
-  };
-
-  const handleBackspace = () => {
-    setAmount(prev => prev.slice(0, -1));
+    setAmount((prev) => prev + num);
   };
 
   const formatCurrency = (val: string) => {
@@ -47,39 +62,55 @@ export default function QuickAdd() {
     return (num / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  const getRecurrencePayload = () => {
+    if (recurrenceType === "MONTHLY") {
+      return { recurrenceType, dueDay: Math.min(Math.max(parseInt(dueDay, 10) || 1, 1), 31) };
+    }
+
+    if (recurrenceType === "WEEKLY") {
+      return { recurrenceType, dueDayOfWeek: parseInt(dueDayOfWeek, 10) || 0 };
+    }
+
+    const dueDate = new Date(`${selectedDate}T12:00:00`).toISOString();
+    return { recurrenceType, dueDate };
+  };
+
   const handleSave = async () => {
     if (!amount || parseInt(amount, 10) === 0) {
-      toast.error("Informe um valor válido.");
+      toast.error("Informe um valor valido.");
       return;
     }
 
     setLoading(true);
     try {
       const finalValue = parseInt(amount, 10) / 100;
-      
-      if (isRecurring && type === "EXPENSE") {
-        // Send to recurring expense endpoint
+      const recurrencePayload = getRecurrencePayload();
+      const transactionDate =
+        recurrenceType === "SPECIFIC_DATE"
+          ? recurrencePayload.dueDate
+          : new Date().toISOString();
+
+      await createTransaction({
+        type,
+        value: finalValue,
+        category,
+        source: "MANUAL",
+        date: transactionDate,
+        ...recurrencePayload,
+      });
+
+      if (type === "EXPENSE" && recurrenceType !== "SPECIFIC_DATE") {
         await createRecurringExpense({
-          name: description || "Despesa Recorrente",
+          name: description || `Despesa fixa - ${category}`,
           value: finalValue,
-          dueDay: parseInt(dueDay, 10) || 1
+          ...recurrencePayload,
         });
-        toast.success("Despesa fixa registrada!");
-      } else {
-        // Normal transaction
-        await createTransaction({
-          type,
-          value: finalValue,
-          category: category,
-          description: description || `${type === 'INCOME' ? 'Ganho' : 'Despesa'} via App - ${category}`,
-          date: new Date().toISOString()
-        });
-        toast.success(type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!");
       }
-      
+
+      toast.success(type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!");
       navigate("/dashboard");
     } catch (error) {
-      toast.error("Erro ao salvar lançamento.");
+      toast.error("Erro ao salvar lancamento.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -88,25 +119,23 @@ export default function QuickAdd() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white flex flex-col">
-      {/* Header */}
       <header className="flex items-center justify-between p-4">
         <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-white/5">
           <span className="material-symbols-outlined text-slate-400">close</span>
         </button>
-        <h1 className="text-sm font-bold tracking-wider uppercase text-slate-300">Novo Lançamento</h1>
-        <div className="w-10"></div>
+        <h1 className="text-sm font-bold tracking-wider uppercase text-slate-300">Novo Lancamento</h1>
+        <div className="w-10" />
       </header>
 
-      {/* Type Selector (Ganhos vs Despesas) */}
       <div className="px-6 mt-2">
         <div className="flex bg-[#1e293b66] rounded-2xl p-1 border border-blue-500/10">
-          <button 
-            onClick={() => { setType("INCOME"); setCategory("UBER"); setAmount(""); setIsRecurring(false); }}
+          <button
+            onClick={() => { setType("INCOME"); setCategory("UBER"); setAmount(""); }}
             className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${type === "INCOME" ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-slate-400"}`}
           >
             GANHO
           </button>
-          <button 
+          <button
             onClick={() => { setType("EXPENSE"); setCategory("COMBUSTIVEL"); setAmount(""); }}
             className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${type === "EXPENSE" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-slate-400"}`}
           >
@@ -115,8 +144,7 @@ export default function QuickAdd() {
         </div>
       </div>
 
-      {/* Amount Display */}
-      <div className="flex-1 flex flex-col items-center justify-center py-6">
+      <div className="flex-1 flex flex-col items-center justify-center py-5">
         <p className={`text-sm font-bold uppercase tracking-widest mb-2 ${type === "INCOME" ? "text-emerald-400" : "text-red-400"}`}>
           Valor {type === "INCOME" ? "Recebido" : "Gasto"}
         </p>
@@ -128,17 +156,16 @@ export default function QuickAdd() {
         </div>
       </div>
 
-      {/* Category Selection */}
       <div className="px-4 mb-4">
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
-          {currentCategories.map(cat => (
+          {currentCategories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setCategory(cat.id)}
               className={`snap-center shrink-0 flex flex-col items-center justify-center w-20 h-20 rounded-2xl transition-all border ${
-                category === cat.id 
-                ? `${cat.color} border-transparent ring-2 ring-offset-2 ring-offset-[#020617] ring-blue-500` 
-                : "bg-[#1e293b66] border-blue-500/10 text-slate-400"
+                category === cat.id
+                  ? `${cat.color} border-transparent ring-2 ring-offset-2 ring-offset-[#020617] ring-blue-500`
+                  : "bg-[#1e293b66] border-blue-500/10 text-slate-400"
               }`}
             >
               <span className="material-symbols-outlined text-2xl mb-1">{cat.icon}</span>
@@ -148,46 +175,86 @@ export default function QuickAdd() {
         </div>
       </div>
 
-      {/* Conditional Description & Recurrence Input */}
-      {category === "OUTROS" && type === "EXPENSE" && (
-        <div className="px-6 mb-4 animate-fade-in">
-          <input 
-            type="text" 
-            placeholder="Descreva a despesa (ex: Aluguel do Carro)" 
+      <div className="px-6 mb-4 space-y-4 animate-fade-in">
+        {(category === "OUTROS" || recurrenceType !== "SPECIFIC_DATE") && (
+          <input
+            type="text"
+            placeholder={type === "INCOME" ? "Observacao interna (opcional)" : "Nome da despesa (ex: Aluguel do carro)"}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full bg-[#1e293b66] border border-blue-500/20 rounded-xl p-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          
-          <label className="flex items-center gap-3 mt-4 text-sm text-slate-300">
-            <input 
-              type="checkbox" 
-              checked={isRecurring} 
-              onChange={(e) => setIsRecurring(e.target.value === "true" || e.target.checked)} 
-              className="size-5 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500"
-            />
-            Essa é uma despesa fixa mensal?
-          </label>
-          
-          {isRecurring && (
-            <div className="mt-3 flex items-center gap-3 bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
-              <span className="text-sm text-slate-400">Dia do vencimento:</span>
-              <input 
-                type="number" 
-                min="1" max="31" 
-                value={dueDay}
-                onChange={(e) => setDueDay(e.target.value)}
-                className="w-16 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-center text-white focus:outline-none"
-              />
-            </div>
-          )}
-        </div>
-      )}
+        )}
 
-      {/* Custom Keypad for Fast Entry */}
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Periodicidade</p>
+          <div className="grid grid-cols-3 gap-2">
+            {recurrenceOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => setRecurrenceType(option.id)}
+                className={`h-12 rounded-xl border text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                  recurrenceType === option.id
+                    ? "bg-blue-500 text-white border-blue-400"
+                    : "bg-[#1e293b66] text-slate-400 border-blue-500/10"
+                }`}
+              >
+                <span className="material-symbols-outlined text-base">{option.icon}</span>
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {recurrenceType === "SPECIFIC_DATE" && (
+          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Data do lancamento</label>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
+            />
+          </div>
+        )}
+
+        {recurrenceType === "MONTHLY" && (
+          <div className="flex items-center justify-between gap-3 bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+            <span className="text-sm text-slate-400">Dia do mes:</span>
+            <input
+              type="number"
+              min="1"
+              max="31"
+              value={dueDay}
+              onChange={(e) => setDueDay(e.target.value)}
+              className="w-16 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-center text-white focus:outline-none"
+            />
+          </div>
+        )}
+
+        {recurrenceType === "WEEKLY" && (
+          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Dia da semana</p>
+            <div className="grid grid-cols-7 gap-1.5">
+              {weekDays.map((day) => (
+                <button
+                  key={day.value}
+                  onClick={() => setDueDayOfWeek(day.value)}
+                  className={`h-9 rounded-lg text-[10px] font-bold ${
+                    dueDayOfWeek === day.value ? "bg-blue-500 text-white" : "bg-[#0f172a] text-slate-400"
+                  }`}
+                >
+                  {day.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="bg-[#0f172a] rounded-t-[40px] p-6 border-t border-blue-500/10">
         <div className="grid grid-cols-3 gap-4 mb-6">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
             <button key={num} onClick={() => handleKeypad(num.toString())} className="h-14 rounded-2xl bg-[#1e293b] text-2xl font-bold text-white active:scale-95 transition-transform">
               {num}
             </button>
@@ -198,18 +265,18 @@ export default function QuickAdd() {
           <button onClick={() => handleKeypad("0")} className="h-14 rounded-2xl bg-[#1e293b] text-2xl font-bold text-white active:scale-95 transition-transform">
             0
           </button>
-          <button onClick={handleBackspace} className="h-14 rounded-2xl bg-[#1e293b] text-slate-400 flex items-center justify-center active:scale-95 transition-transform">
+          <button onClick={() => setAmount((prev) => prev.slice(0, -1))} className="h-14 rounded-2xl bg-[#1e293b] text-slate-400 flex items-center justify-center active:scale-95 transition-transform">
             <span className="material-symbols-outlined">backspace</span>
           </button>
         </div>
 
-        <button 
+        <button
           onClick={handleSave}
           disabled={loading}
           className={`w-full py-5 rounded-2xl font-black text-xl shadow-xl active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${
-            type === "INCOME" 
-            ? "bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-emerald-500/20 text-white" 
-            : "bg-gradient-to-r from-red-600 to-red-400 shadow-red-500/20 text-white"
+            type === "INCOME"
+              ? "bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-emerald-500/20 text-white"
+              : "bg-gradient-to-r from-red-600 to-red-400 shadow-red-500/20 text-white"
           }`}
         >
           {loading ? (
