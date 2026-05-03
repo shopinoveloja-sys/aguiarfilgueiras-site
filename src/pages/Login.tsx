@@ -20,8 +20,8 @@ export default function Login() {
           <div className="w-20 h-20 rounded-2xl bg-[#0f172a] flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4 ring-1 ring-blue-500/30 overflow-hidden">
             <img
               alt="Driver Cash Logo"
-              className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida/ADBb0uix-t2e7gzeCwLcr7BUBinDskuZ7__kyqBtAnVXUVbq6F1Plgv5VbJ6ElIpMu9QfxlgRLctoCL7MxyeAFzMkBgHRU1rlTb44kHOWZWiFJke0mseDGy5OZHOZBOgRGPe68LK_XGmHm1DkH0qgDjAL3Nccw6PsDix78PuqxKlRZatY93cGD5ik7yhx5iOJvKLmpdjcdM5xqx7z2y5IUaxFNYxrQ99KYK9qwSjMWktqqeBmMEEcjW_SMfNatUy"
+              className="w-full h-full object-contain"
+              src="/drivercash-logo.svg"
             />
           </div>
           <h1 className="text-3xl font-black tracking-tight bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">

@@ -10,7 +10,7 @@ export default function AdminDashboard() {
           <button onClick={() => navigate("/profile")} className="text-slate-400 hover:text-blue-400">
             <span className="material-symbols-outlined">menu</span>
           </button>
-          <img alt="Driver Cash Logo" className="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0uix-t2e7gzeCwLcr7BUBinDskuZ7__kyqBtAnVXUVbq6F1Plgv5VbJ6ElIpMu9QfxlgRLctoCL7MxyeAFzMkBgHRU1rlTb44kHOWZWiFJke0mseDGy5OZHOZBOgRGPe68LK_XGmHm1DkH0qgDjAL3Nccw6PsDix78PuqxKlRZatY93cGD5ik7yhx5iOJvKLmpdjcdM5xqx7z2y5IUaxFNYxrQ99KYK9qwSjMWktqqeBmMEEcjW_SMfNatUy" />
+          <img alt="Driver Cash Logo" className="w-8 h-8 object-contain" src="/drivercash-logo.svg" />
           <h1 className="text-lg font-bold bg-gradient-to-br from-blue-800 to-blue-500 bg-clip-text text-transparent">Driver Cash Admin</h1>
         </div>
         <div className="flex items-center gap-4">
