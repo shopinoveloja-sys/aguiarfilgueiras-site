@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { createAnnualCheckout, login, register, saveSession } from "../lib/api";
+import { login, register, saveSession } from "../lib/api";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ export default function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [referralCode, setReferralCode] = useState(() => new URLSearchParams(window.location.search).get("ref") || "");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,7 +20,7 @@ export default function Login() {
       const session =
         mode === "login"
           ? await login({ email, password })
-          : await register({ name, email, password });
+          : await register({ name, email, password, referralCode: referralCode || undefined });
 
       saveSession(session);
       toast.success(mode === "login" ? "Login realizado com sucesso!" : "Conta criada com 15 dias de teste!");
@@ -28,19 +29,6 @@ export default function Login() {
       console.error(error);
       toast.error(mode === "login" ? "E-mail ou senha invalidos." : "Nao foi possivel criar sua conta.");
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubscribe = async () => {
-    setLoading(true);
-
-    try {
-      const checkout = await createAnnualCheckout();
-      window.location.href = checkout.mercadoPagoCheckoutUrl;
-    } catch (error) {
-      console.error(error);
-      toast.error("Crie sua conta ou entre antes de assinar.");
       setLoading(false);
     }
   };
@@ -66,7 +54,7 @@ export default function Login() {
           <header className="mb-8 text-center">
             <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
             <p className="text-slate-400 text-sm">
-              {mode === "login" ? "Acesse sua conta financeira" : "15 dias gratis, depois R$ 90 por ano"}
+              {mode === "login" ? "Acesse sua conta financeira" : "Teste gratis por 15 dias"}
             </p>
           </header>
 
@@ -84,6 +72,22 @@ export default function Login() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                />
+              </div>
+            )}
+
+            {mode === "register" && (
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="referralCode">
+                  Codigo de indicacao
+                </label>
+                <input
+                  className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
+                  id="referralCode"
+                  placeholder="Opcional"
+                  type="text"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
                 />
               </div>
             )}
@@ -127,15 +131,6 @@ export default function Login() {
               {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Comecar teste gratis"}
             </button>
           </form>
-
-          <button
-            type="button"
-            onClick={handleSubscribe}
-            disabled={loading}
-            className="mt-4 w-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 font-bold py-4 rounded-xl hover:bg-emerald-500/15 transition-all active:scale-[0.98] disabled:opacity-60"
-          >
-            Assinar anual por R$ 90
-          </button>
 
           <div className="mt-8 pt-6 border-t border-blue-500/10 text-center">
             <p className="text-sm text-slate-400">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { createAnnualCheckout, getDashboardData, getRecurringExpenses } from "../lib/api";
+import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, requestReferralWithdrawal } from "../lib/api";
 
 interface DashboardData {
   totalIncomeMonth: number;
@@ -50,6 +50,15 @@ interface AccessData {
   annualPrice: number;
 }
 
+interface ReferralData {
+  referralCode: string;
+  referralUrl: string;
+  confirmedCount: number;
+  pendingAmount: number;
+  requestedAmount: number;
+  paidAmount: number;
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
@@ -58,6 +67,9 @@ export default function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
+  const [referrals, setReferrals] = useState<ReferralData | null>(null);
+  const [pixKey, setPixKey] = useState("");
+  const [requestedFor, setRequestedFor] = useState("");
   const [access] = useState<AccessData | null>(() => {
     const saved = localStorage.getItem("drivercash_access");
     return saved ? JSON.parse(saved) : null;
@@ -75,6 +87,12 @@ export default function Dashboard() {
           setPlanning(planData);
         } catch (e) {
           console.warn("No planning data", e);
+        }
+        try {
+          const referralData = await getReferralSummary();
+          setReferrals(referralData);
+        } catch (e) {
+          console.warn("No referral data", e);
         }
       } catch (error) {
         console.error("Failed to load dashboard data", error);
@@ -164,6 +182,21 @@ export default function Dashboard() {
     window.location.href = checkout.mercadoPagoCheckoutUrl;
   };
 
+  const handleWithdrawal = async () => {
+    if (!pixKey.trim()) return;
+    const withdrawal = await requestReferralWithdrawal({
+      pixKey: pixKey.trim(),
+      requestedFor: requestedFor || undefined,
+    });
+    setPixKey("");
+    setRequestedFor("");
+    setReferrals((current) => current ? {
+      ...current,
+      pendingAmount: 0,
+      requestedAmount: current.requestedAmount + withdrawal.amount,
+    } : current);
+  };
+
   const projectionMessage =
     data.projectedMonth >= data.bestGoalMonth && data.bestGoalMonth > 0
       ? "Ritmo para igualar ou superar seu melhor cenario."
@@ -243,6 +276,70 @@ export default function Dashboard() {
               >
                 Assinar
               </button>
+            </div>
+          </section>
+        )}
+
+        {referrals && (
+          <section className="mb-6">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <p className="text-sm font-bold text-white">Indique e Ganhe</p>
+                  <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no segundo nivel.</p>
+                </div>
+                <span className="material-symbols-outlined text-emerald-400">group_add</span>
+              </div>
+
+              <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 mb-4">
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo</p>
+                <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
+                <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
+              </div>
+
+              {referrals.confirmedCount > 0 && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-[#0f172a] rounded-xl p-3">
+                      <p className="text-[10px] uppercase font-bold text-slate-500">Disponivel</p>
+                      <p className="text-lg font-black text-emerald-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
+                    </div>
+                    <div className="bg-[#0f172a] rounded-xl p-3">
+                      <p className="text-[10px] uppercase font-bold text-slate-500">Solicitado</p>
+                      <p className="text-lg font-black text-amber-300">{formatMoneyPrecise(referrals.requestedAmount)}</p>
+                    </div>
+                    <div className="bg-[#0f172a] rounded-xl p-3">
+                      <p className="text-[10px] uppercase font-bold text-slate-500">Pago</p>
+                      <p className="text-lg font-black text-blue-300">{formatMoneyPrecise(referrals.paidAmount)}</p>
+                    </div>
+                  </div>
+
+                  {referrals.pendingAmount > 0 && (
+                    <div className="grid gap-2 md:grid-cols-[1fr_180px_auto]">
+                      <input
+                        value={pixKey}
+                        onChange={(e) => setPixKey(e.target.value)}
+                        placeholder="Chave PIX"
+                        className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white outline-none focus:border-emerald-500"
+                      />
+                      <input
+                        type="date"
+                        value={requestedFor}
+                        onChange={(e) => setRequestedFor(e.target.value)}
+                        className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white outline-none focus:border-emerald-500"
+                      />
+                      <button
+                        onClick={handleWithdrawal}
+                        className="px-4 py-3 rounded-xl bg-emerald-500 text-white text-xs font-bold active:scale-95 transition-transform"
+                      >
+                        Solicitar saque
+                      </button>
+                    </div>
+                  )}
+
+                  <p className="text-[11px] text-slate-500">Pagamentos sao feitos em ate 48h apos o pedido de saque.</p>
+                </div>
+              )}
             </div>
           </section>
         )}

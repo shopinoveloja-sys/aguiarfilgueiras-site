@@ -17,13 +17,23 @@ export const login = async (data: { email: string; password: string }) => {
   return response.data;
 };
 
-export const register = async (data: { name: string; email: string; password: string }) => {
+export const register = async (data: { name: string; email: string; password: string; referralCode?: string }) => {
   const response = await api.post('/access/register', data);
   return response.data;
 };
 
 export const createAnnualCheckout = async () => {
   const response = await api.post('/access/billing/checkout');
+  return response.data;
+};
+
+export const getReferralSummary = async () => {
+  const response = await api.get('/access/referrals');
+  return response.data;
+};
+
+export const requestReferralWithdrawal = async (data: { pixKey: string; requestedFor?: string }) => {
+  const response = await api.post('/access/referrals/withdrawals', data);
   return response.data;
 };
 
