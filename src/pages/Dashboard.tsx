@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { getDashboardData, getRecurringExpenses } from "../lib/api";
 
 interface DashboardData {
@@ -119,6 +120,23 @@ export default function Dashboard() {
     const num = parseInt(val, 10);
     return (num / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
+
+  const formatMoney = (value: number) =>
+    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+  const projectionMessage =
+    data.projectedMonth >= data.bestGoalMonth && data.bestGoalMonth > 0
+      ? "Ritmo para igualar ou superar seu melhor cenario."
+      : data.projectedMonth >= data.averageGoalMonth && data.averageGoalMonth > 0
+        ? "Voce esta perto da media esperada para o mes."
+        : "Voce esta abaixo da media esperada para o mes.";
+
+  const projectionChart = data.chartData.labels.map((label, index) => ({
+    day: label,
+    media: data.chartData.averageLine[index],
+    recorde: data.chartData.bestLine[index],
+    projecao: data.chartData.projectionLine[index],
+  }));
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
@@ -248,14 +266,72 @@ export default function Dashboard() {
         <section className="mb-6">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
             <div className="size-12 shrink-0 rounded-lg bg-blue-500/20 flex items-center justify-center">
-              <span className="material-symbols-outlined text-blue-400">psychology</span>
+              <span className="material-symbols-outlined text-blue-400">show_chart</span>
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-white">Status da Projeção</p>
               <p className="text-xs text-slate-400">
                 Você está projetado para fechar o mês com R$ {data?.projectedMonth}. 
-                {data && data.projectedMonth > data.averageGoalMonth ? " Excelente ritmo!" : " Precisa acelerar um pouco."}
+                {data && data.projectedMonth >= data.averageGoalMonth ? " Excelente ritmo!" : " Precisa acelerar um pouco."}
               </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-6">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <p className="text-sm font-bold text-white">Comparativo do Mes</p>
+                <p className="text-xs text-slate-400">
+                  Projecao de fechamento: <b className="text-blue-300">{formatMoney(data.projectedMonth)}</b>. {projectionMessage}
+                </p>
+              </div>
+            </div>
+
+            <div className="h-56 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={projectionChart} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
+                  <XAxis
+                    dataKey="day"
+                    tick={{ fill: "#64748b", fontSize: 10 }}
+                    tickLine={false}
+                    axisLine={{ stroke: "#1e293b" }}
+                    interval="preserveStartEnd"
+                  />
+                  <YAxis
+                    tick={{ fill: "#64748b", fontSize: 10 }}
+                    tickLine={false}
+                    axisLine={false}
+                    width={54}
+                    tickFormatter={(value) => `R$ ${value}`}
+                  />
+                  <Tooltip
+                    contentStyle={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: 8, color: "#fff" }}
+                    labelStyle={{ color: "#93c5fd", fontWeight: 700 }}
+                    formatter={(value: number, name: string) => [formatMoney(value), name]}
+                    labelFormatter={(label) => `Dia ${label}`}
+                  />
+                  <Line type="monotone" dataKey="media" name="Media" stroke="#60a5fa" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="mt-4 grid grid-cols-3 gap-2 text-[10px] font-bold uppercase">
+              <div className="flex items-center gap-1 text-blue-300">
+                <span className="h-2 w-2 rounded-full bg-blue-400" />
+                Media
+              </div>
+              <div className="flex items-center gap-1 text-emerald-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                Recorde
+              </div>
+              <div className="flex items-center gap-1 text-amber-300">
+                <span className="h-2 w-2 rounded-full bg-amber-400" />
+                Projecao
+              </div>
             </div>
           </div>
         </section>
