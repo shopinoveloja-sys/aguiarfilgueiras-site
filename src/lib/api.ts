@@ -4,6 +4,35 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://api.drivercash.app',
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('drivercash_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const login = async (data: { email: string; password: string }) => {
+  const response = await api.post('/access/login', data);
+  return response.data;
+};
+
+export const register = async (data: { name: string; email: string; password: string }) => {
+  const response = await api.post('/access/register', data);
+  return response.data;
+};
+
+export const createAnnualCheckout = async () => {
+  const response = await api.post('/access/billing/checkout');
+  return response.data;
+};
+
+export const saveSession = (session: { token: string; user: unknown; access: unknown }) => {
+  localStorage.setItem('drivercash_token', session.token);
+  localStorage.setItem('drivercash_user', JSON.stringify(session.user));
+  localStorage.setItem('drivercash_access', JSON.stringify(session.access));
+};
+
 export const getDashboardData = async () => {
   const response = await api.get('/dashboard');
   return response.data;

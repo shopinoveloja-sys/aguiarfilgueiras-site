@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { getDashboardData, getRecurringExpenses } from "../lib/api";
+import { createAnnualCheckout, getDashboardData, getRecurringExpenses } from "../lib/api";
 
 interface DashboardData {
   totalIncomeMonth: number;
@@ -44,6 +44,12 @@ interface PlanningData {
   expenses?: unknown[];
 }
 
+interface AccessData {
+  status: "TRIALING" | "ACTIVE" | "EXPIRED";
+  daysRemaining: number;
+  annualPrice: number;
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
@@ -52,6 +58,10 @@ export default function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
+  const [access] = useState<AccessData | null>(() => {
+    const saved = localStorage.getItem("drivercash_access");
+    return saved ? JSON.parse(saved) : null;
+  });
   
   useEffect(() => {
     async function loadData() {
@@ -149,6 +159,11 @@ export default function Dashboard() {
       .toLowerCase()
       .replace(/\b\w/g, (char) => char.toUpperCase());
 
+  const handleSubscribe = async () => {
+    const checkout = await createAnnualCheckout();
+    window.location.href = checkout.mercadoPagoCheckoutUrl;
+  };
+
   const projectionMessage =
     data.projectedMonth >= data.bestGoalMonth && data.bestGoalMonth > 0
       ? "Ritmo para igualar ou superar seu melhor cenario."
@@ -213,6 +228,25 @@ export default function Dashboard() {
       </header>
 
       <main className="flex-1 overflow-y-auto p-4">
+        {access && access.status !== "ACTIVE" && (
+          <section className="mb-6">
+            <div className={`border rounded-xl p-4 flex items-center justify-between gap-3 ${access.status === "EXPIRED" ? "bg-red-500/10 border-red-500/20" : "bg-emerald-500/10 border-emerald-500/20"}`}>
+              <div>
+                <p className="text-sm font-bold text-white">
+                  {access.status === "EXPIRED" ? "Teste expirado" : `Teste gratis: ${access.daysRemaining} dia(s) restantes`}
+                </p>
+                <p className="text-xs text-slate-400">Assinatura anual por R$ {access.annualPrice}.</p>
+              </div>
+              <button
+                onClick={handleSubscribe}
+                className="shrink-0 px-4 py-3 rounded-xl bg-emerald-500 text-white text-xs font-bold active:scale-95 transition-transform"
+              >
+                Assinar
+              </button>
+            </div>
+          </section>
+        )}
+
         <section className="mb-6">
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="text-xl font-bold">Resumo Mensal</h2>

@@ -1,16 +1,48 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { createAnnualCheckout, login, register, saveSession } from "../lib/api";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Login realizado com sucesso!");
-    navigate("/dashboard");
+    setLoading(true);
+
+    try {
+      const session =
+        mode === "login"
+          ? await login({ email, password })
+          : await register({ name, email, password });
+
+      saveSession(session);
+      toast.success(mode === "login" ? "Login realizado com sucesso!" : "Conta criada com 15 dias de teste!");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+      toast.error(mode === "login" ? "E-mail ou senha invalidos." : "Nao foi possivel criar sua conta.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubscribe = async () => {
+    setLoading(true);
+
+    try {
+      const checkout = await createAnnualCheckout();
+      window.location.href = checkout.mercadoPagoCheckoutUrl;
+    } catch (error) {
+      console.error(error);
+      toast.error("Crie sua conta ou entre antes de assinar.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,62 +59,94 @@ export default function Login() {
           <h1 className="text-3xl font-black tracking-tight bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
             Driver Cash
           </h1>
-          <p className="text-slate-400 text-sm mt-1 font-medium">Finanças para quem acelera</p>
+          <p className="text-slate-400 text-sm mt-1 font-medium">Financas para quem acelera</p>
         </div>
 
         <div className="bg-[#1e293b66] rounded-xl p-8 shadow-2xl ring-1 ring-blue-500/10">
           <header className="mb-8 text-center">
-            <h2 className="text-xl font-bold text-white">Bem-vindo de volta</h2>
-            <p className="text-slate-400 text-sm">Acesse sua conta financeira</p>
+            <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
+            <p className="text-slate-400 text-sm">
+              {mode === "login" ? "Acesse sua conta financeira" : "15 dias gratis, depois R$ 90 por ano"}
+            </p>
           </header>
 
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {mode === "register" && (
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="name">
+                  Nome
+                </label>
+                <input
+                  className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                  id="name"
+                  placeholder="Seu nome"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="email">
                 E-mail
               </label>
-              <div className="relative">
-                <input
-                  className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
-                  id="email"
-                  placeholder="seu@email.com"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+              <input
+                className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                id="email"
+                placeholder="seu@email.com"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
 
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="password">
                 Senha
               </label>
-              <div className="relative">
-                <input
-                  className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
-                  id="password"
-                  placeholder="••••••••"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+              <input
+                className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                id="password"
+                placeholder="********"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
             </div>
 
             <button
-              className="w-full bg-gradient-to-br from-blue-800 to-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all active:scale-[0.98]"
+              className="w-full bg-gradient-to-br from-blue-800 to-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all active:scale-[0.98] disabled:opacity-60"
               type="submit"
+              disabled={loading}
             >
-              Entrar
+              {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Comecar teste gratis"}
             </button>
           </form>
 
+          <button
+            type="button"
+            onClick={handleSubscribe}
+            disabled={loading}
+            className="mt-4 w-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 font-bold py-4 rounded-xl hover:bg-emerald-500/15 transition-all active:scale-[0.98] disabled:opacity-60"
+          >
+            Assinar anual por R$ 90
+          </button>
+
           <div className="mt-8 pt-6 border-t border-blue-500/10 text-center">
             <p className="text-sm text-slate-400">
-              Não possui uma conta?{" "}
-              <a className="text-blue-500 font-bold hover:underline underline-offset-4" href="#">
-                Criar conta
-              </a>
+              {mode === "login" ? "Nao possui uma conta?" : "Ja possui uma conta?"}{" "}
+              <button
+                type="button"
+                className="text-blue-500 font-bold hover:underline underline-offset-4"
+                onClick={() => setMode(mode === "login" ? "register" : "login")}
+              >
+                {mode === "login" ? "Criar conta" : "Entrar"}
+              </button>
             </p>
           </div>
         </div>
