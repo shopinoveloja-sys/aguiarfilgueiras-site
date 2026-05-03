@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createTransaction, createRecurringExpense } from "../lib/api";
+import { createTransaction, createRecurringExpense, createKmDaily } from "../lib/api";
 import { toast } from "sonner";
 
 type RecurrenceType = "SPECIFIC_DATE" | "WEEKLY" | "MONTHLY";
@@ -17,6 +17,8 @@ export default function QuickAdd() {
   const [selectedDate, setSelectedDate] = useState(todayInputValue());
   const [dueDay, setDueDay] = useState("5");
   const [dueDayOfWeek, setDueDayOfWeek] = useState(new Date().getDay().toString());
+  const [kmStart, setKmStart] = useState("");
+  const [kmEnd, setKmEnd] = useState("");
   const [loading, setLoading] = useState(false);
 
   const apps = [
@@ -81,6 +83,15 @@ export default function QuickAdd() {
       return;
     }
 
+    const shouldSaveKm = recurrenceType === "SPECIFIC_DATE" && kmStart && kmEnd;
+    const parsedKmStart = parseInt(kmStart, 10);
+    const parsedKmEnd = parseInt(kmEnd, 10);
+
+    if (shouldSaveKm && (Number.isNaN(parsedKmStart) || Number.isNaN(parsedKmEnd) || parsedKmEnd < parsedKmStart)) {
+      toast.error("Confira o KM inicial e final do dia.");
+      return;
+    }
+
     setLoading(true);
     try {
       const finalValue = parseInt(amount, 10) / 100;
@@ -98,6 +109,14 @@ export default function QuickAdd() {
         date: transactionDate,
         ...recurrencePayload,
       });
+
+      if (shouldSaveKm) {
+        await createKmDaily({
+          date: selectedDate,
+          kmStart: parsedKmStart,
+          kmEnd: parsedKmEnd,
+        });
+      }
 
       if (type === "EXPENSE" && recurrenceType !== "SPECIFIC_DATE") {
         await createRecurringExpense({
@@ -207,14 +226,40 @@ export default function QuickAdd() {
         </div>
 
         {recurrenceType === "SPECIFIC_DATE" && (
-          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Data do lancamento</label>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
-            />
+          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20 space-y-3">
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Data do lancamento</label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">KM do dia</p>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="0"
+                  placeholder="Inicial"
+                  value={kmStart}
+                  onChange={(e) => setKmStart(e.target.value)}
+                  className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
+                />
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="0"
+                  placeholder="Final"
+                  value={kmEnd}
+                  onChange={(e) => setKmEnd(e.target.value)}
+                  className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
+                />
+              </div>
+            </div>
           </div>
         )}
 

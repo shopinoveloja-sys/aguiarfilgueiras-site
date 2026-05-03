@@ -34,6 +34,11 @@ export const createTransaction = async (data: Record<string, unknown>) => {
   return response.data;
 };
 
+export const createKmDaily = async (data: { date: string; kmStart: number; kmEnd: number }) => {
+  const response = await api.post('/km', data);
+  return response.data;
+};
+
 export const createRecurringExpense = async (data: {
   name: string;
   value: number;

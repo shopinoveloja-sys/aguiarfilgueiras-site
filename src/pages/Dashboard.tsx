@@ -5,6 +5,8 @@ import { getDashboardData, getRecurringExpenses } from "../lib/api";
 
 interface DashboardData {
   totalIncomeMonth: number;
+  totalExpenseMonth: number;
+  netProfitMonth: number;
   daysWorked: number;
   daysRemaining: number;
   averageGoalMonth: number;
@@ -13,12 +15,26 @@ interface DashboardData {
   dailyGoalTodayAverage: number;
   dailyGoalTodayBest: number;
   performanceStatus: 'below_average' | 'on_track' | 'above_average';
+  incomeByCategory: CategorySummary[];
+  expenseByCategory: CategorySummary[];
+  todayKm: {
+    kmStart: number;
+    kmEnd: number;
+    kmTotal: number;
+    incomePerKm: number;
+  } | null;
   chartData: {
     labels: number[];
     averageLine: number[];
     bestLine: number[];
     projectionLine: number[];
   };
+}
+
+interface CategorySummary {
+  category: string;
+  total: number;
+  percentage: number;
 }
 
 interface PlanningData {
@@ -123,6 +139,15 @@ export default function Dashboard() {
 
   const formatMoney = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+  const formatMoneyPrecise = (value: number) =>
+    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const formatCategory = (category: string) =>
+    category
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
 
   const projectionMessage =
     data.projectedMonth >= data.bestGoalMonth && data.bestGoalMonth > 0
@@ -261,6 +286,34 @@ export default function Dashboard() {
               <p className="text-2xl font-black text-emerald-400">R$ {data?.dailyGoalTodayBest?.toFixed(2)}</p>
             </div>
           </div>
+          <div className="mt-4 bg-[#1e293b66] border border-amber-500/10 rounded-xl p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs text-slate-400 font-bold uppercase mb-1">Resultado por KM</p>
+                <p className="text-2xl font-black text-amber-300">
+                  {data.todayKm ? formatMoneyPrecise(data.todayKm.incomePerKm) : "R$ 0,00"}
+                  <span className="text-xs font-bold text-slate-500"> / km</span>
+                </p>
+              </div>
+              <div className="size-11 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-amber-300">speed</span>
+              </div>
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] font-bold uppercase text-slate-400">
+              <div>
+                <p>Inicial</p>
+                <p className="text-sm text-white">{data.todayKm?.kmStart ?? 0}</p>
+              </div>
+              <div>
+                <p>Final</p>
+                <p className="text-sm text-white">{data.todayKm?.kmEnd ?? 0}</p>
+              </div>
+              <div>
+                <p>Total</p>
+                <p className="text-sm text-white">{data.todayKm?.kmTotal ?? 0} km</p>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="mb-6">
@@ -332,6 +385,64 @@ export default function Dashboard() {
                 <span className="h-2 w-2 rounded-full bg-amber-400" />
                 Projecao
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-6 grid gap-4 md:grid-cols-2">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-bold text-white">Receita por Fonte</p>
+                <p className="text-xs text-slate-400">Comparacao dentro do mes atual</p>
+              </div>
+              <span className="material-symbols-outlined text-emerald-400">payments</span>
+            </div>
+
+            <div className="space-y-3">
+              {(data.incomeByCategory || []).length > 0 ? (
+                data.incomeByCategory.map((item) => (
+                  <div key={item.category}>
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
+                      <span className="text-xs font-bold text-emerald-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                      <div className="h-full rounded-full bg-emerald-400" style={{ width: `${Math.min(item.percentage, 100)}%` }} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">Nenhuma receita registrada neste mes.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-bold text-white">Despesas por Categoria</p>
+                <p className="text-xs text-slate-400">Peso de cada despesa no mes</p>
+              </div>
+              <span className="material-symbols-outlined text-red-400">receipt_long</span>
+            </div>
+
+            <div className="space-y-3">
+              {(data.expenseByCategory || []).length > 0 ? (
+                data.expenseByCategory.map((item) => (
+                  <div key={item.category}>
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
+                      <span className="text-xs font-bold text-red-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                      <div className="h-full rounded-full bg-red-400" style={{ width: `${Math.min(item.percentage, 100)}%` }} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste mes.</p>
+              )}
             </div>
           </div>
         </section>
