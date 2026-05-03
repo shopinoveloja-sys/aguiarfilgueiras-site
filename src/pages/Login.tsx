@@ -1,7 +1,20 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { login, register, saveSession } from "../lib/api";
+import { googleLogin, login, register, saveSession } from "../lib/api";
+
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: { client_id: string; callback: (response: { credential: string }) => void }) => void;
+          renderButton: (element: HTMLElement, options: Record<string, unknown>) => void;
+        };
+      };
+    };
+  }
+}
 
 export default function Login() {
   const navigate = useNavigate();
@@ -9,8 +22,62 @@ export default function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [documentNumber, setDocumentNumber] = useState("");
   const [referralCode, setReferralCode] = useState(() => new URLSearchParams(window.location.search).get("ref") || "");
   const [loading, setLoading] = useState(false);
+  const googleButtonRef = useRef<HTMLDivElement | null>(null);
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  useEffect(() => {
+    if (!googleClientId || !googleButtonRef.current) return;
+
+    const initializeGoogle = () => {
+      window.google?.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: async (response) => {
+          setLoading(true);
+          try {
+            const session = await googleLogin({
+              credential: response.credential,
+              phone: phone || undefined,
+              document: documentNumber || undefined,
+              referralCode: referralCode || undefined,
+            });
+            saveSession(session);
+            toast.success("Conta Google conectada com sucesso!");
+            navigate("/dashboard");
+          } catch (error) {
+            console.error(error);
+            toast.error("Para criar conta com Google, informe celular e CPF/CNPJ.");
+          } finally {
+            setLoading(false);
+          }
+        },
+      });
+      if (googleButtonRef.current) {
+        googleButtonRef.current.innerHTML = "";
+        window.google?.accounts.id.renderButton(googleButtonRef.current, {
+          theme: "outline",
+          size: "large",
+          width: googleButtonRef.current.offsetWidth,
+          text: mode === "login" ? "signin_with" : "signup_with",
+          locale: "pt-BR",
+        });
+      }
+    };
+
+    if (window.google) {
+      initializeGoogle();
+      return;
+    }
+
+    const script = window.document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.onload = initializeGoogle;
+    window.document.body.appendChild(script);
+  }, [documentNumber, googleClientId, mode, navigate, phone, referralCode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +87,7 @@ export default function Login() {
       const session =
         mode === "login"
           ? await login({ email, password })
-          : await register({ name, email, password, referralCode: referralCode || undefined });
+          : await register({ name, email, password, phone, document: documentNumber, referralCode: referralCode || undefined });
 
       saveSession(session);
       toast.success(mode === "login" ? "Login realizado com sucesso!" : "Conta criada com 15 dias de teste!");
@@ -73,6 +140,40 @@ export default function Login() {
                   onChange={(e) => setName(e.target.value)}
                   required
                 />
+              </div>
+            )}
+
+            {mode === "register" && (
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="phone">
+                    Celular
+                  </label>
+                  <input
+                    className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                    id="phone"
+                    placeholder="(00) 00000-0000"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="document">
+                    CPF/CNPJ
+                  </label>
+                  <input
+                    className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                    id="document"
+                    placeholder="Somente numeros"
+                    type="text"
+                    value={documentNumber}
+                    onChange={(e) => setDocumentNumber(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
             )}
 
@@ -131,6 +232,12 @@ export default function Login() {
               {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Comecar teste gratis"}
             </button>
           </form>
+
+          {googleClientId && (
+            <div className="mt-4">
+              <div ref={googleButtonRef} className="w-full flex justify-center" />
+            </div>
+          )}
 
           <div className="mt-8 pt-6 border-t border-blue-500/10 text-center">
             <p className="text-sm text-slate-400">

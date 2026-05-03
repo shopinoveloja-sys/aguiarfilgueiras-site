@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, requestReferralWithdrawal } from "../lib/api";
+import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, requestReferralWithdrawal, sendPhoneCode, updateProfile, verifyPhoneCode } from "../lib/api";
 
 interface DashboardData {
   totalIncomeMonth: number;
@@ -51,12 +51,23 @@ interface AccessData {
 }
 
 interface ReferralData {
+  eligible: boolean;
+  reason?: string;
   referralCode: string;
-  referralUrl: string;
+  referralUrl: string | null;
   confirmedCount: number;
   pendingAmount: number;
   requestedAmount: number;
   paidAmount: number;
+}
+
+interface SessionUser {
+  name: string;
+  email: string;
+  phone?: string;
+  document?: string;
+  phoneVerifiedAt?: string | null;
+  profileCompletedAt?: string | null;
 }
 
 export default function Dashboard() {
@@ -70,6 +81,14 @@ export default function Dashboard() {
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [pixKey, setPixKey] = useState("");
   const [requestedFor, setRequestedFor] = useState("");
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
+    const saved = localStorage.getItem("drivercash_user");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [profileName, setProfileName] = useState(() => sessionUser?.name || "");
+  const [profilePhone, setProfilePhone] = useState(() => sessionUser?.phone || "");
+  const [profileDocument, setProfileDocument] = useState(() => sessionUser?.document || "");
+  const [smsCode, setSmsCode] = useState("");
   const [access] = useState<AccessData | null>(() => {
     const saved = localStorage.getItem("drivercash_access");
     return saved ? JSON.parse(saved) : null;
@@ -197,6 +216,28 @@ export default function Dashboard() {
     } : current);
   };
 
+  const persistUser = (session: { user: SessionUser; access: unknown; token?: string }) => {
+    localStorage.setItem("drivercash_user", JSON.stringify(session.user));
+    localStorage.setItem("drivercash_access", JSON.stringify(session.access));
+    setSessionUser(session.user);
+  };
+
+  const handleProfileSave = async () => {
+    const session = await updateProfile({ name: profileName, phone: profilePhone, document: profileDocument });
+    persistUser(session);
+  };
+
+  const handleSendCode = async () => {
+    await sendPhoneCode();
+  };
+
+  const handleVerifyCode = async () => {
+    const session = await verifyPhoneCode(smsCode);
+    persistUser(session);
+    const referralData = await getReferralSummary();
+    setReferrals(referralData);
+  };
+
   const projectionMessage =
     data.projectedMonth >= data.bestGoalMonth && data.bestGoalMonth > 0
       ? "Ritmo para igualar ou superar seu melhor cenario."
@@ -291,13 +332,30 @@ export default function Dashboard() {
                 <span className="material-symbols-outlined text-emerald-400">group_add</span>
               </div>
 
-              <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 mb-4">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo</p>
-                <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
-                <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
-              </div>
+              {!referrals.eligible ? (
+                <div className="space-y-3">
+                  <p className="text-xs text-slate-400">{referrals.reason}</p>
+                  <div className="grid gap-2 md:grid-cols-3">
+                    <input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Nome completo" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white outline-none focus:border-emerald-500" />
+                    <input value={profilePhone} onChange={(e) => setProfilePhone(e.target.value)} placeholder="Celular" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white outline-none focus:border-emerald-500" />
+                    <input value={profileDocument} onChange={(e) => setProfileDocument(e.target.value)} placeholder="CPF/CNPJ" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white outline-none focus:border-emerald-500" />
+                  </div>
+                  <div className="grid gap-2 md:grid-cols-[auto_1fr_auto]">
+                    <button onClick={handleProfileSave} className="px-4 py-3 rounded-xl bg-blue-500 text-white text-xs font-bold active:scale-95 transition-transform">Salvar e enviar SMS</button>
+                    <input value={smsCode} onChange={(e) => setSmsCode(e.target.value)} placeholder="Codigo SMS" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white outline-none focus:border-emerald-500" />
+                    <button onClick={handleVerifyCode} className="px-4 py-3 rounded-xl bg-emerald-500 text-white text-xs font-bold active:scale-95 transition-transform">Confirmar celular</button>
+                  </div>
+                  <button onClick={handleSendCode} className="text-xs font-bold text-blue-300">Reenviar codigo SMS</button>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 mb-4">
+                    <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo</p>
+                    <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
+                    <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
+                  </div>
 
-              {referrals.confirmedCount > 0 && (
+                  {referrals.confirmedCount > 0 && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-2">
                     <div className="bg-[#0f172a] rounded-xl p-3">
@@ -339,6 +397,8 @@ export default function Dashboard() {
 
                   <p className="text-[11px] text-slate-500">Pagamentos sao feitos em ate 48h apos o pedido de saque.</p>
                 </div>
+              )}
+                </>
               )}
             </div>
           </section>

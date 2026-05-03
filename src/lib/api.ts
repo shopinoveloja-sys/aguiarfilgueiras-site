@@ -17,8 +17,28 @@ export const login = async (data: { email: string; password: string }) => {
   return response.data;
 };
 
-export const register = async (data: { name: string; email: string; password: string; referralCode?: string }) => {
+export const register = async (data: { name: string; email: string; password: string; phone: string; document: string; referralCode?: string }) => {
   const response = await api.post('/access/register', data);
+  return response.data;
+};
+
+export const googleLogin = async (data: { credential: string; phone?: string; document?: string; referralCode?: string }) => {
+  const response = await api.post('/access/google', data);
+  return response.data;
+};
+
+export const updateProfile = async (data: { name: string; phone: string; document: string }) => {
+  const response = await api.post('/access/profile', data);
+  return response.data;
+};
+
+export const sendPhoneCode = async () => {
+  const response = await api.post('/access/phone/send-code');
+  return response.data;
+};
+
+export const verifyPhoneCode = async (code: string) => {
+  const response = await api.post('/access/phone/verify', { code });
   return response.data;
 };
 
