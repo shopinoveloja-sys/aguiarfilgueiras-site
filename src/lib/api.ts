@@ -29,7 +29,7 @@ export const getRecurringExpenses = async () => {
   return response.data;
 };
 
-export const createTransaction = async (data: any) => {
+export const createTransaction = async (data: Record<string, unknown>) => {
   const response = await api.post('/transactions', data);
   return response.data;
 };

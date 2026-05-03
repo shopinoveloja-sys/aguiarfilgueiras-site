@@ -5,12 +5,27 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { saveNonWorkingDays, getRecurringExpenses } from "../lib/api";
 
+interface PlannedExpense {
+  id: string | number;
+  name: string;
+  workingDaysRemaining: number;
+  requiredPerDay: number;
+}
+
+interface PlanningData {
+  offDates?: string[];
+  summary?: {
+    requiredPerDay: number;
+  };
+  expenses?: PlannedExpense[];
+}
+
 export default function WorkCalendar() {
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [nonWorkingDays, setNonWorkingDays] = useState<Date[]>([]);
   const [loading, setLoading] = useState(false);
-  const [planning, setPlanning] = useState<any>(null);
+  const [planning, setPlanning] = useState<PlanningData | null>(null);
 
   useEffect(() => {
     const fetchPlanning = async () => {
@@ -172,7 +187,7 @@ export default function WorkCalendar() {
             <p className="text-xs text-slate-400 mt-2">
               Esse é o valor que você precisa separar por dia de trabalho para cobrir suas despesas fixas até o vencimento.
             </p>
-            {planning.expenses && planning.expenses.map((exp: any) => (
+            {planning.expenses && planning.expenses.map((exp) => (
               <div key={exp.id} className="flex items-center justify-between mt-3 pt-3 border-t border-amber-500/10">
                 <div>
                   <p className="text-sm font-bold text-white">{exp.name}</p>

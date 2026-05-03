@@ -20,10 +20,17 @@ interface DashboardData {
   };
 }
 
+interface PlanningData {
+  summary?: {
+    requiredPerDay: number;
+  };
+  expenses?: unknown[];
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
-  const [planning, setPlanning] = useState<any>(null);
+  const [planning, setPlanning] = useState<PlanningData | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
