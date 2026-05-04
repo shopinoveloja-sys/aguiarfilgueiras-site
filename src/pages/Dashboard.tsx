@@ -8,6 +8,9 @@ interface DashboardData {
   totalIncomeMonth: number;
   totalExpenseMonth: number;
   netProfitMonth: number;
+  todayIncome: number;
+  todayExpense: number;
+  todayProfit: number;
   daysWorked: number;
   daysRemaining: number;
   averageGoalMonth: number;
@@ -506,16 +509,33 @@ export default function Dashboard() {
                 Proj: {formatMoney(data.projectedMonth)}
               </span>
             </div>
-            <div className="mt-4 pt-4 border-t border-blue-500/20 flex items-center justify-between">
+            <div className="mt-4 pt-4 border-t border-blue-500/20 grid grid-cols-2 gap-4">
               <div>
                 <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mês</p>
-                <p className={`text-2xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <p className={`text-xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                   {formatMoney(data.netProfitMonth)}
                 </p>
               </div>
-              <div className="text-right">
-                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Despesas</p>
-                <p className="text-lg font-bold text-red-400">{formatMoney(data.totalExpenseMonth)}</p>
+              <div>
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Dia</p>
+                <p className={`text-xl font-black ${data.todayProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatMoney(data.todayProfit)}
+                </p>
+              </div>
+            </div>
+          </div>
+            <div className="mt-4 pt-4 border-t border-blue-500/20 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mês</p>
+                <p className={`text-xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatMoney(data.netProfitMonth)}
+                </p>
+              </div>
+              <div>
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Dia</p>
+                <p className={`text-xl font-black ${data.todayProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatMoney(data.todayProfit)}
+                </p>
               </div>
             </div>
           </div>
