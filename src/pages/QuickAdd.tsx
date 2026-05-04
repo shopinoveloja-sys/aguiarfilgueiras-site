@@ -106,7 +106,13 @@ export default function QuickAdd() {
           ? description.trim()
           : category;
 
-      if (hasAmount && type === "EXPENSE" && recurrenceType !== "SPECIFIC_DATE") {
+      const shouldCreateRecurring =
+        hasAmount &&
+        type === "EXPENSE" &&
+        (recurrenceType !== "SPECIFIC_DATE" ||
+          (recurrenceType === "SPECIFIC_DATE" && selectedDate > new Date().toISOString().split("T")[0]));
+
+      if (shouldCreateRecurring) {
         await createRecurringExpense({
           name: description || `Despesa fixa - ${category}`,
           value: finalValue,
