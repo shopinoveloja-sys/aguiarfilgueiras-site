@@ -87,6 +87,8 @@ export default function Dashboard() {
   const [editTransactions, setEditTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [editIncomeCategory, setEditIncomeCategory] = useState<CategorySummary | null>(null);
+  const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     const saved = localStorage.getItem("drivercash_user");
@@ -228,6 +230,26 @@ export default function Dashboard() {
     }
   };
 
+  const openEditIncomeCategory = async (cat: CategorySummary) => {
+    setEditIncomeCategory(cat);
+    try {
+      const { default: api } = await import("../lib/api");
+      const res = await api.get("/transactions");
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+      const txs = (res.data || []).filter((t: any) =>
+        t.type === "INCOME" &&
+        t.category === cat.category &&
+        t.date >= startOfMonth &&
+        t.date <= endOfMonth
+      );
+      setEditIncomeTransactions(txs.map((t: any) => ({ id: t.id, value: Number(t.value), date: t.date?.split("T")[0] || "", description: t.description || "" })));
+    } catch {
+      setEditIncomeTransactions([]);
+    }
+  };
+
   const handleEditTx = (tx: typeof editTransactions[0]) => {
     setEditingId(tx.id);
     const val = (tx.value * 100).toFixed(0);
@@ -256,6 +278,72 @@ export default function Dashboard() {
       if (editingId === id) { setEditingId(null); setEditValue(""); }
       loadDashboard();
       toast.success("Despesa removida!");
+    } catch {
+      toast.error("Erro ao remover.");
+    }
+  };
+
+  const handleEditIncomeTx = (tx: typeof editIncomeTransactions[0]) => {
+    setEditingId(tx.id);
+    const val = (tx.value * 100).toFixed(0);
+    setEditValue(val);
+  };
+
+  const handleSaveIncomeEdit = async () => {
+    if (!editingId || !editValue) return;
+    const val = parseInt(editValue, 10) / 100;
+    try {
+      await updateTransaction(editingId, { value: val });
+      setEditIncomeTransactions((prev) => prev.map((t) => t.id === editingId ? { ...t, value: val } : t));
+      setEditingId(null);
+      setEditValue("");
+      loadDashboard();
+      toast.success("Valor atualizado!");
+    } catch {
+      toast.error("Erro ao atualizar.");
+    }
+  };
+
+  const handleDeleteIncomeTx = async (id: string) => {
+    try {
+      await deleteTransaction(id);
+      setEditIncomeTransactions((prev) => prev.filter((t) => t.id !== id));
+      if (editingId === id) { setEditingId(null); setEditValue(""); }
+      loadDashboard();
+      toast.success("Receita removida!");
+    } catch {
+      toast.error("Erro ao remover.");
+    }
+  };
+
+  const handleEditIncomeTx = (tx: typeof editIncomeTransactions[0]) => {
+    setEditingId(tx.id);
+    const val = (tx.value * 100).toFixed(0);
+    setEditValue(val);
+  };
+
+  const handleSaveIncomeEdit = async () => {
+    if (!editingId || !editValue) return;
+    const val = parseInt(editValue, 10) / 100;
+    try {
+      await updateTransaction(editingId, { value: val });
+      setEditIncomeTransactions((prev) => prev.map((t) => t.id === editingId ? { ...t, value: val } : t));
+      setEditingId(null);
+      setEditValue("");
+      loadDashboard();
+      toast.success("Valor atualizado!");
+    } catch {
+      toast.error("Erro ao atualizar.");
+    }
+  };
+
+  const handleDeleteIncomeTx = async (id: string) => {
+    try {
+      await deleteTransaction(id);
+      setEditIncomeTransactions((prev) => prev.filter((t) => t.id !== id));
+      if (editingId === id) { setEditingId(null); setEditValue(""); }
+      loadDashboard();
+      toast.success("Receita removida!");
     } catch {
       toast.error("Erro ao remover.");
     }
@@ -418,6 +506,18 @@ export default function Dashboard() {
                 Proj: {formatMoney(data.projectedMonth)}
               </span>
             </div>
+            <div className="mt-4 pt-4 border-t border-blue-500/20 flex items-center justify-between">
+              <div>
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mês</p>
+                <p className={`text-2xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatMoney(data.netProfitMonth)}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Despesas</p>
+                <p className="text-lg font-bold text-red-400">{formatMoney(data.totalExpenseMonth)}</p>
+              </div>
+            </div>
           </div>
 
           <button onClick={() => setShowBalanceModal(true)} className="w-full flex items-center gap-3 bg-[#1e293b44] border border-dashed border-slate-700 rounded-xl p-3 mb-4 hover:bg-slate-800/50 transition-colors">
@@ -493,10 +593,15 @@ export default function Dashboard() {
             <div className="space-y-3">
               {(data.incomeByCategory || []).length > 0 ? (
                 data.incomeByCategory.map((item) => (
-                  <div key={item.category}>
+                  <div key={item.category} onClick={() => openEditIncomeCategory(item)} className="cursor-pointer hover:bg-white/5 rounded-lg -mx-2 px-2 py-1 transition-colors group">
                     <div className="flex items-center justify-between gap-3 mb-1">
-                      <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
-                      <span className="text-xs font-bold text-emerald-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-emerald-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                        <span className="material-symbols-outlined text-slate-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+                      </div>
                     </div>
                     <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
                       <div className="h-full rounded-full bg-emerald-400" style={{ width: `${Math.min(item.percentage, 100)}%` }} />
@@ -592,6 +697,118 @@ export default function Dashboard() {
               )}
 
               <button onClick={() => { setEditCategory(null); setEditingId(null); }} className="w-full py-4 rounded-2xl bg-slate-700 text-slate-300 font-bold active:scale-95">
+                FECHAR
+              </button>
+            </div>
+          </div>
+        )}
+
+        {editIncomeCategory && (
+          <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => { setEditIncomeCategory(null); setEditingId(null); }}>
+            <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
+              <h3 className="text-lg font-bold text-white mb-1">Editar {formatCategory(editIncomeCategory.category)}</h3>
+              <p className="text-xs text-slate-400 mb-4">Clique no valor para editar ou no icone de lixeira para remover.</p>
+
+              {editIncomeTransactions.length === 0 ? (
+                <p className="text-sm text-slate-500 text-center py-6">Nenhuma transacao encontrada.</p>
+              ) : (
+                <div className="space-y-2 mb-4">
+                  {editIncomeTransactions.map((tx) => (
+                    <div key={tx.id} className="bg-[#1e293b] rounded-xl p-3 flex items-center justify-between gap-3">
+                      {editingId === tx.id ? (
+                        <>
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
+                            autoFocus
+                          />
+                          <span className="text-[10px] text-slate-500">
+                            {(parseInt(editValue, 10) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          </span>
+                          <div className="flex gap-1 ml-auto">
+                            <button onClick={handleSaveIncomeEdit} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-[10px] font-bold">Salvar</button>
+                            <button onClick={() => { setEditingId(null); setEditValue(""); }} className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-[10px] font-bold">Cancelar</button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="cursor-pointer flex-1" onClick={() => handleEditIncomeTx(tx)}>
+                            <p className="text-sm font-bold text-white">
+                              {tx.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                            </p>
+                            <p className="text-[10px] text-slate-500">{tx.date}</p>
+                          </div>
+                          <button onClick={() => handleDeleteIncomeTx(tx.id)} className="p-2 rounded-lg hover:bg-emerald-500/10 text-slate-500 hover:text-emerald-400 transition-colors">
+                            <span className="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button onClick={() => { setEditIncomeCategory(null); setEditingId(null); }} className="w-full py-4 rounded-2xl bg-slate-700 text-slate-300 font-bold active:scale-95">
+                FECHAR
+              </button>
+            </div>
+          </div>
+        )}
+
+        {editIncomeCategory && (
+          <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => { setEditIncomeCategory(null); setEditingId(null); }}>
+            <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
+              <h3 className="text-lg font-bold text-white mb-1">Editar {formatCategory(editIncomeCategory.category)}</h3>
+              <p className="text-xs text-slate-400 mb-4">Clique no valor para editar ou no icone de lixeira para remover.</p>
+
+              {editIncomeTransactions.length === 0 ? (
+                <p className="text-sm text-slate-500 text-center py-6">Nenhuma transacao encontrada.</p>
+              ) : (
+                <div className="space-y-2 mb-4">
+                  {editIncomeTransactions.map((tx) => (
+                    <div key={tx.id} className="bg-[#1e293b] rounded-xl p-3 flex items-center justify-between gap-3">
+                      {editingId === tx.id ? (
+                        <>
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
+                            autoFocus
+                          />
+                          <span className="text-[10px] text-slate-500">
+                            {(parseInt(editValue, 10) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          </span>
+                          <div className="flex gap-1 ml-auto">
+                            <button onClick={handleSaveIncomeEdit} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-[10px] font-bold">Salvar</button>
+                            <button onClick={() => { setEditingId(null); setEditValue(""); }} className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-[10px] font-bold">Cancelar</button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="cursor-pointer flex-1" onClick={() => handleEditIncomeTx(tx)}>
+                            <p className="text-sm font-bold text-white">
+                              {tx.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                            </p>
+                            <p className="text-[10px] text-slate-500">{tx.date}</p>
+                          </div>
+                          <button onClick={() => handleDeleteIncomeTx(tx.id)} className="p-2 rounded-lg hover:bg-emerald-500/10 text-slate-500 hover:text-emerald-400 transition-colors">
+                            <span className="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button onClick={() => { setEditIncomeCategory(null); setEditingId(null); }} className="w-full py-4 rounded-2xl bg-slate-700 text-slate-300 font-bold active:scale-95">
                 FECHAR
               </button>
             </div>
