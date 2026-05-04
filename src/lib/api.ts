@@ -98,6 +98,16 @@ export const createTransaction = async (data: Record<string, unknown>) => {
   return response.data;
 };
 
+export const updateTransaction = async (id: string, data: Record<string, unknown>) => {
+  const response = await api.patch(`/transactions/${id}`, data);
+  return response.data;
+};
+
+export const deleteTransaction = async (id: string) => {
+  const response = await api.delete(`/transactions/${id}`);
+  return response.data;
+};
+
 export const createKmDaily = async (data: { date: string; kmStart: number; kmEnd: number }) => {
   const response = await api.post('/km', data);
   return response.data;

@@ -106,7 +106,13 @@ export default function QuickAdd() {
           ? description.trim()
           : category;
 
-      if (hasAmount) {
+      if (hasAmount && type === "EXPENSE" && recurrenceType !== "SPECIFIC_DATE") {
+        await createRecurringExpense({
+          name: description || `Despesa fixa - ${category}`,
+          value: finalValue,
+          ...recurrencePayload,
+        });
+      } else if (hasAmount) {
         await createTransaction({
           type,
           value: finalValue,
@@ -122,14 +128,6 @@ export default function QuickAdd() {
           date: selectedDate,
           kmStart: parsedKmStart,
           kmEnd: parsedKmEnd,
-        });
-      }
-
-      if (hasAmount && type === "EXPENSE" && recurrenceType !== "SPECIFIC_DATE") {
-        await createRecurringExpense({
-          name: description || `Despesa fixa - ${category}`,
-          value: finalValue,
-          ...recurrencePayload,
         });
       }
 

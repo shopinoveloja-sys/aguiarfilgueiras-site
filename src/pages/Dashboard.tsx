@@ -43,6 +43,7 @@ interface PlanningData {
     requiredPerDay: number;
     totalAccumulated: number;
     totalExpense: number;
+    remainingAmount: number;
   };
   expenses?: unknown[];
 }
@@ -489,7 +490,9 @@ export default function Dashboard() {
               <p className="text-[9px] text-slate-500 mt-1 font-medium">Separe hoje para cobrir suas despesas fixas.</p>
               <div className="mt-3 pt-3 border-t border-amber-500/20 flex justify-between items-center">
                 <span className="text-[10px] font-bold uppercase text-slate-400">Total Reservado</span>
-                <span className="text-sm font-black text-amber-300">{formatMoneyPrecise(planning.summary.totalAccumulated || 0)}</span>
+                <span className="text-sm font-black text-amber-300">
+                  {formatMoneyPrecise((planning.summary.totalExpense || 0) - (planning.summary.remainingAmount || 0))}
+                </span>
               </div>
             </div>
           </section>
