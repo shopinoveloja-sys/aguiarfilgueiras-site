@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode } from "../lib/api";
+import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction } from "../lib/api";
 import { toast } from "sonner";
 
 interface DashboardData {
@@ -83,6 +83,10 @@ export default function Dashboard() {
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
   const [balanceNegative, setBalanceNegative] = useState(false);
+  const [editCategory, setEditCategory] = useState<CategorySummary | null>(null);
+  const [editTransactions, setEditTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     const saved = localStorage.getItem("drivercash_user");
@@ -96,27 +100,30 @@ export default function Dashboard() {
   const [redeemCode, setRedeemCode] = useState("");
   const [redeeming, setRedeeming] = useState(false);
   
-  useEffect(() => {
-    async function loadData() {
+  const loadDashboard = async () => {
+    try {
+      const dashboard = await getDashboardData();
+      setData(dashboard);
       try {
-        const dashboard = await getDashboardData();
-        setData(dashboard);
-        try {
-          const planData = await getRecurringExpenses();
-          setPlanning(planData);
-        } catch (e) {}
-        try {
-          const referralData = await getReferralSummary();
-          setReferrals(referralData);
-        } catch (e) {}
-      } catch (error) {
-        console.error("Failed to load dashboard data", error);
-        setErrorMessage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
-      } finally {
-        setLoading(false);
-      }
+        const planData = await getRecurringExpenses();
+        setPlanning(planData);
+      } catch (e) {}
+    } catch (error) {
+      console.error("Failed to load dashboard data", error);
+      setErrorMessage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
     }
-    loadData();
+  };
+
+  useEffect(() => {
+    async function init() {
+      await loadDashboard();
+      try {
+        const referralData = await getReferralSummary();
+        setReferrals(referralData);
+      } catch (e) {}
+      setLoading(false);
+    }
+    init();
   }, []);
 
   const handleRedeemCode = async () => {
@@ -199,6 +206,59 @@ export default function Dashboard() {
 
   const formatCategory = (category: string) =>
     category.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+
+  const openEditCategory = async (cat: CategorySummary) => {
+    setEditCategory(cat);
+    try {
+      const { default: api } = await import("../lib/api");
+      const res = await api.get("/transactions");
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+      const txs = (res.data || []).filter((t: any) =>
+        t.type === "EXPENSE" &&
+        t.category === cat.category &&
+        t.date >= startOfMonth &&
+        t.date <= endOfMonth
+      );
+      setEditTransactions(txs.map((t: any) => ({ id: t.id, value: Number(t.value), date: t.date?.split("T")[0] || "", description: t.description || "" })));
+    } catch {
+      setEditTransactions([]);
+    }
+  };
+
+  const handleEditTx = (tx: typeof editTransactions[0]) => {
+    setEditingId(tx.id);
+    const val = (tx.value * 100).toFixed(0);
+    setEditValue(val);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingId || !editValue) return;
+    const val = parseInt(editValue, 10) / 100;
+    try {
+      await updateTransaction(editingId, { value: val });
+      setEditTransactions((prev) => prev.map((t) => t.id === editingId ? { ...t, value: val } : t));
+      setEditingId(null);
+      setEditValue("");
+      loadDashboard();
+      toast.success("Valor atualizado!");
+    } catch {
+      toast.error("Erro ao atualizar.");
+    }
+  };
+
+  const handleDeleteTx = async (id: string) => {
+    try {
+      await deleteTransaction(id);
+      setEditTransactions((prev) => prev.filter((t) => t.id !== id));
+      if (editingId === id) { setEditingId(null); setEditValue(""); }
+      loadDashboard();
+      toast.success("Despesa removida!");
+    } catch {
+      toast.error("Erro ao remover.");
+    }
+  };
 
   const handleSubscribe = async () => {
     try {
@@ -459,10 +519,15 @@ export default function Dashboard() {
             <div className="space-y-3">
               {(data.expenseByCategory || []).length > 0 ? (
                 data.expenseByCategory.map((item) => (
-                  <div key={item.category}>
+                  <div key={item.category} onClick={() => openEditCategory(item)} className="cursor-pointer hover:bg-white/5 rounded-lg -mx-2 px-2 py-1 transition-colors group">
                     <div className="flex items-center justify-between gap-3 mb-1">
-                      <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
-                      <span className="text-xs font-bold text-red-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-red-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                        <span className="material-symbols-outlined text-slate-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+                      </div>
                     </div>
                     <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
                       <div className="h-full rounded-full bg-red-400" style={{ width: `${Math.min(item.percentage, 100)}%` }} />
@@ -475,6 +540,62 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+
+        {editCategory && (
+          <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => { setEditCategory(null); setEditingId(null); }}>
+            <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
+              <h3 className="text-lg font-bold text-white mb-1">Editar {formatCategory(editCategory.category)}</h3>
+              <p className="text-xs text-slate-400 mb-4">Clique no valor para editar ou no icone de lixeira para remover.</p>
+
+              {editTransactions.length === 0 ? (
+                <p className="text-sm text-slate-500 text-center py-6">Nenhuma transacao encontrada.</p>
+              ) : (
+                <div className="space-y-2 mb-4">
+                  {editTransactions.map((tx) => (
+                    <div key={tx.id} className="bg-[#1e293b] rounded-xl p-3 flex items-center justify-between gap-3">
+                      {editingId === tx.id ? (
+                        <>
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
+                            autoFocus
+                          />
+                          <span className="text-[10px] text-slate-500">
+                            {(parseInt(editValue, 10) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          </span>
+                          <div className="flex gap-1 ml-auto">
+                            <button onClick={handleSaveEdit} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-[10px] font-bold">Salvar</button>
+                            <button onClick={() => { setEditingId(null); setEditValue(""); }} className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-[10px] font-bold">Cancelar</button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="cursor-pointer flex-1" onClick={() => handleEditTx(tx)}>
+                            <p className="text-sm font-bold text-white">
+                              {tx.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                            </p>
+                            <p className="text-[10px] text-slate-500">{tx.date}</p>
+                          </div>
+                          <button onClick={() => handleDeleteTx(tx.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition-colors">
+                            <span className="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button onClick={() => { setEditCategory(null); setEditingId(null); }} className="w-full py-4 rounded-2xl bg-slate-700 text-slate-300 font-bold active:scale-95">
+                FECHAR
+              </button>
+            </div>
+          </div>
+        )}
 
         {planning?.summary && planning.summary.requiredPerDay > 0 && (
           <section className="mb-6">
