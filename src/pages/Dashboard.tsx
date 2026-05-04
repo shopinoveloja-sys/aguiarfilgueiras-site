@@ -612,7 +612,11 @@ export default function Dashboard() {
               <div className="mt-3 pt-3 border-t border-amber-500/20 flex justify-between items-center">
                 <span className="text-[10px] font-bold uppercase text-slate-400">Total Reservado</span>
                 <span className="text-sm font-black text-amber-300">
-                  {formatMoneyPrecise((planning.summary.totalExpense || 0) - (planning.summary.remainingAmount || 0))}
+                  {(() => {
+                    const perDay = planning.summary.requiredPerDay || 0;
+                    const daysFromStart = Math.max(1, new Date().getDate());
+                    return formatMoneyPrecise(perDay * daysFromStart);
+                  })()}
                 </span>
               </div>
             </div>
