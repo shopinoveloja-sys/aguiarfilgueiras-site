@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, requestReferralWithdrawal, sendPhoneCode, updateProfile, verifyPhoneCode, redeemReferralCode } from "../lib/api";
+import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode } from "../lib/api";
 import { toast } from "sonner";
 
 interface DashboardData {
@@ -80,16 +80,10 @@ export default function Dashboard() {
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
-  const [pixKey, setPixKey] = useState("");
-  const [requestedFor, setRequestedFor] = useState("");
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     const saved = localStorage.getItem("drivercash_user");
     return saved ? JSON.parse(saved) : null;
   });
-  const [profileName, setProfileName] = useState(() => sessionUser?.name || "");
-  const [profilePhone, setProfilePhone] = useState(() => sessionUser?.phone || "");
-  const [profileDocument, setProfileDocument] = useState(() => sessionUser?.document || "");
-  const [smsCode, setSmsCode] = useState("");
   const [access, setAccess] = useState<AccessData | null>(() => {
     const saved = localStorage.getItem("drivercash_access");
     return saved ? JSON.parse(saved) : null;
@@ -195,9 +189,6 @@ export default function Dashboard() {
   const formatMoney = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 
-  const formatMoneyPrecise = (value: number) =>
-    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
   const formatCategory = (category: string) =>
     category.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 
@@ -207,65 +198,6 @@ export default function Dashboard() {
       window.location.href = checkout.mercadoPagoCheckoutUrl;
     } catch (e) {
       toast.error("Erro ao iniciar checkout.");
-    }
-  };
-
-  const handleWithdrawal = async () => {
-    if (!pixKey.trim()) return;
-    try {
-      const withdrawal = await requestReferralWithdrawal({
-        pixKey: pixKey.trim(),
-        requestedFor: requestedFor || undefined,
-      });
-      setPixKey("");
-      setRequestedFor("");
-      setReferrals((current) => current ? {
-        ...current,
-        pendingAmount: 0,
-        requestedAmount: current.requestedAmount + withdrawal.amount,
-      } : current);
-      toast.success("Pedido de saque realizado!");
-    } catch (e) {
-      toast.error("Erro ao solicitar saque.");
-    }
-  };
-
-  const persistUser = (session: any) => {
-    localStorage.setItem("drivercash_user", JSON.stringify(session.user));
-    localStorage.setItem("drivercash_access", JSON.stringify(session.access));
-    setSessionUser(session.user);
-    setAccess(session.access);
-  };
-
-  const handleProfileSave = async () => {
-    try {
-      const session = await updateProfile({ name: profileName, phone: profilePhone, document: profileDocument });
-      persistUser(session);
-      toast.success("Perfil atualizado! Enviando código SMS...");
-      await sendPhoneCode();
-    } catch (e) {
-      toast.error("Erro ao atualizar perfil.");
-    }
-  };
-
-  const handleSendCode = async () => {
-    try {
-      await sendPhoneCode();
-      toast.success("Código enviado por SMS.");
-    } catch (e) {
-      toast.error("Erro ao enviar SMS.");
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    try {
-      const session = await verifyPhoneCode(smsCode);
-      persistUser(session);
-      const referralData = await getReferralSummary();
-      setReferrals(referralData);
-      toast.success("Celular verificado com sucesso!");
-    } catch (e) {
-      toast.error("Código inválido ou expirado.");
     }
   };
 
@@ -374,56 +306,16 @@ export default function Dashboard() {
           </section>
         )}
 
-        {referrals && (
+        {referrals?.eligible && referrals.referralCode && (
           <section className="mb-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <div>
-                  <p className="text-sm font-bold text-white">Indique e Ganhe</p>
-                  <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no nível 2.</p>
-                </div>
-                <span className="material-symbols-outlined text-emerald-400">group_add</span>
+            <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu código de indicação</p>
+                <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
               </div>
-
-              {!referrals.eligible ? (
-                <div className="space-y-3">
-                  <p className="text-xs text-slate-400">{referrals.reason}</p>
-                  <div className="grid gap-2">
-                    <input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Nome completo" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
-                    <input value={profilePhone} onChange={(e) => setProfilePhone(e.target.value)} placeholder="Celular" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
-                    <input value={profileDocument} onChange={(e) => setProfileDocument(e.target.value)} placeholder="CPF/CNPJ" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <button onClick={handleProfileSave} className="w-full py-3 rounded-xl bg-blue-500 text-white text-xs font-bold active:scale-95">Salvar e enviar SMS</button>
-                    <div className="flex gap-2">
-                      <input value={smsCode} onChange={(e) => setSmsCode(e.target.value)} placeholder="Código SMS" className="flex-1 bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
-                      <button onClick={handleVerifyCode} className="px-4 py-3 rounded-xl bg-emerald-500 text-white text-xs font-bold active:scale-95">Verificar</button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 mb-4">
-                    <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu código</p>
-                    <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
-                    <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="bg-[#0f172a] rounded-xl p-2 text-center">
-                      <p className="text-[8px] uppercase font-bold text-slate-500">Saldo</p>
-                      <p className="text-sm font-black text-emerald-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
-                    </div>
-                    <div className="bg-[#0f172a] rounded-xl p-2 text-center">
-                      <p className="text-[8px] uppercase font-bold text-slate-500">Saques</p>
-                      <p className="text-sm font-black text-amber-300">{formatMoneyPrecise(referrals.requestedAmount)}</p>
-                    </div>
-                    <div className="bg-[#0f172a] rounded-xl p-2 text-center">
-                      <p className="text-[8px] uppercase font-bold text-slate-500">Pago</p>
-                      <p className="text-sm font-black text-blue-300">{formatMoneyPrecise(referrals.paidAmount)}</p>
-                    </div>
-                  </div>
-                </>
-              )}
+              <button onClick={() => navigate("/profile")} className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 text-[10px] font-bold uppercase">
+                Ajustes
+              </button>
             </div>
           </section>
         )}

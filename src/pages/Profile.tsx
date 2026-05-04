@@ -1,7 +1,53 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getReferralSummary, requestReferralWithdrawal } from "../lib/api";
+import { toast } from "sonner";
+
+interface ReferralData {
+  eligible: boolean;
+  reason?: string;
+  referralCode: string | null;
+  referralUrl: string | null;
+  confirmedCount: number;
+  pendingAmount: number;
+  requestedAmount: number;
+  paidAmount: number;
+}
 
 export default function Profile() {
   const navigate = useNavigate();
+  const [referrals, setReferrals] = useState<ReferralData | null>(null);
+  const [pixKey, setPixKey] = useState("");
+  const [requestedFor, setRequestedFor] = useState("");
+
+  useEffect(() => {
+    getReferralSummary()
+      .then(setReferrals)
+      .catch(() => setReferrals(null));
+  }, []);
+
+  const formatMoneyPrecise = (value: number) =>
+    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const handleWithdrawal = async () => {
+    if (!pixKey.trim()) return;
+    try {
+      const withdrawal = await requestReferralWithdrawal({
+        pixKey: pixKey.trim(),
+        requestedFor: requestedFor || undefined,
+      });
+      setPixKey("");
+      setRequestedFor("");
+      setReferrals((current) => current ? {
+        ...current,
+        pendingAmount: 0,
+        requestedAmount: current.requestedAmount + withdrawal.amount,
+      } : current);
+      toast.success("Pedido de saque realizado!");
+    } catch (e) {
+      toast.error("Erro ao solicitar saque.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
@@ -89,6 +135,51 @@ export default function Profile() {
             </div>
           </button>
         </section>
+
+        {referrals && (
+          <section className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-white">Indique e Ganhe</p>
+                <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no nível 2.</p>
+              </div>
+              <span className="material-symbols-outlined text-emerald-400">group_add</span>
+            </div>
+
+            {!referrals.eligible ? (
+              <p className="text-xs text-slate-400">{referrals.reason}</p>
+            ) : (
+              <>
+                <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3">
+                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu código</p>
+                  <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
+                  <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-[#0f172a] rounded-xl p-2 text-center">
+                    <p className="text-[8px] uppercase font-bold text-slate-500">Saldo</p>
+                    <p className="text-sm font-black text-emerald-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
+                  </div>
+                  <div className="bg-[#0f172a] rounded-xl p-2 text-center">
+                    <p className="text-[8px] uppercase font-bold text-slate-500">Saques</p>
+                    <p className="text-sm font-black text-amber-300">{formatMoneyPrecise(referrals.requestedAmount)}</p>
+                  </div>
+                  <div className="bg-[#0f172a] rounded-xl p-2 text-center">
+                    <p className="text-[8px] uppercase font-bold text-slate-500">Pago</p>
+                    <p className="text-sm font-black text-blue-300">{formatMoneyPrecise(referrals.paidAmount)}</p>
+                  </div>
+                </div>
+                {referrals.pendingAmount > 0 && (
+                  <div className="grid gap-2">
+                    <input value={pixKey} onChange={(e) => setPixKey(e.target.value)} placeholder="Chave Pix" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
+                    <input value={requestedFor} onChange={(e) => setRequestedFor(e.target.value)} placeholder="Data desejada para saque (opcional)" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
+                    <button onClick={handleWithdrawal} className="w-full py-3 rounded-xl bg-emerald-500 text-white text-xs font-bold active:scale-95">Solicitar saque</button>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+        )}
 
         <section className="bg-[#1e293b66] rounded-xl p-6 border border-blue-500/10 space-y-4">
           <h4 className="text-[10px] font-bold tracking-wider uppercase text-blue-500">Performance Rápida</h4>
