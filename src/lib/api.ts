@@ -57,6 +57,11 @@ export const requestReferralWithdrawal = async (data: { pixKey: string; requeste
   return response.data;
 };
 
+export const redeemReferralCode = async (code: string) => {
+  const response = await api.post('/access/referrals/redeem', { code });
+  return response.data;
+};
+
 export const saveSession = (session: { token: string; user: unknown; access: unknown }) => {
   localStorage.setItem('drivercash_token', session.token);
   localStorage.setItem('drivercash_user', JSON.stringify(session.user));

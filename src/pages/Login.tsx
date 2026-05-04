@@ -126,7 +126,7 @@ export default function Login() {
           <header className="mb-8 text-center">
             <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
             <p className="text-slate-400 text-sm">
-              {mode === "login" ? "Acesse sua conta financeira" : "Ganhe 15 dias usando um codigo de indicacao"}
+              {mode === "login" ? "Acesse sua conta financeira" : "Peça o código a quem te indicou para ganhar 15 dias grátis"}
             </p>
           </header>
 
@@ -182,24 +182,22 @@ export default function Login() {
               </div>
             )}
 
-            {mode === "register" && (
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="referralCode">
-                  Codigo de indicacao
-                </label>
-                <input
-                  className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
-                  id="referralCode"
-                  placeholder="Código para ganhar 15 dias"
-                  type="text"
-                  value={referralCode}
-                  onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-                />
-                {!referralCode && (
-                  <p className="text-[9px] text-blue-400 text-center animate-pulse">Sem código você precisará assinar para acessar.</p>
-                )}
-              </div>
-            )}
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="referralCode">
+                Codigo de indicacao {mode === "register" ? "(Obrigatório para 15 dias)" : "(Opcional)"}
+              </label>
+              <input
+                className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
+                id="referralCode"
+                placeholder="CÓDIGO PARA GANHAR 15 DIAS"
+                type="text"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+              />
+              {!referralCode && mode === "register" && (
+                <p className="text-[9px] text-blue-400 text-center animate-pulse">Sem código você precisará assinar para acessar.</p>
+              )}
+            </div>
 
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="email">
@@ -242,7 +240,15 @@ export default function Login() {
           </form>
 
           {googleClientId ? (
-            <div className="mt-4">
+            <div className="mt-4 space-y-4">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-blue-500/10"></span>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-[#1e293b] px-2 text-slate-500">Ou continue com</span>
+                </div>
+              </div>
               <div ref={googleButtonRef} className="w-full flex justify-center" />
             </div>
           ) : (
