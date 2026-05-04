@@ -759,62 +759,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {editIncomeCategory && (
-          <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => { setEditIncomeCategory(null); setEditingId(null); }}>
-            <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-              <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
-              <h3 className="text-lg font-bold text-white mb-1">Editar {formatCategory(editIncomeCategory.category)}</h3>
-              <p className="text-xs text-slate-400 mb-4">Clique no valor para editar ou no icone de lixeira para remover.</p>
-
-              {editIncomeTransactions.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-6">Nenhuma transacao encontrada.</p>
-              ) : (
-                <div className="space-y-2 mb-4">
-                  {editIncomeTransactions.map((tx) => (
-                    <div key={tx.id} className="bg-[#1e293b] rounded-xl p-3 flex items-center justify-between gap-3">
-                      {editingId === tx.id ? (
-                        <>
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            value={editValue}
-                            onChange={(e) => setEditValue(e.target.value)}
-                            className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
-                            autoFocus
-                          />
-                          <span className="text-[10px] text-slate-500">
-                            {(parseInt(editValue, 10) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                          </span>
-                          <div className="flex gap-1 ml-auto">
-                            <button onClick={handleSaveIncomeEdit} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-[10px] font-bold">Salvar</button>
-                            <button onClick={() => { setEditingId(null); setEditValue(""); }} className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-[10px] font-bold">Cancelar</button>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="cursor-pointer flex-1" onClick={() => handleEditIncomeTx(tx)}>
-                            <p className="text-sm font-bold text-white">
-                              {tx.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                            </p>
-                            <p className="text-[10px] text-slate-500">{tx.date}</p>
-                          </div>
-                          <button onClick={() => handleDeleteIncomeTx(tx.id)} className="p-2 rounded-lg hover:bg-emerald-500/10 text-slate-500 hover:text-emerald-400 transition-colors">
-                            <span className="material-symbols-outlined text-lg">delete</span>
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <button onClick={() => { setEditIncomeCategory(null); setEditingId(null); }} className="w-full py-4 rounded-2xl bg-slate-700 text-slate-300 font-bold active:scale-95">
-                FECHAR
-              </button>
-            </div>
-          </div>
-        )}
-
         {planning?.summary && planning.summary.requiredPerDay > 0 && (
           <section className="mb-6">
             <div onClick={() => navigate('/calendar')} className="bg-gradient-to-br from-amber-500/10 border border-amber-500/20 rounded-xl p-5 cursor-pointer active:scale-[0.98]">
