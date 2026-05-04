@@ -30,6 +30,12 @@ export default function Login() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   useEffect(() => {
+    if (localStorage.getItem("drivercash_token")) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     if (!googleButtonRef.current) return;
 
     const initializeGoogle = () => {

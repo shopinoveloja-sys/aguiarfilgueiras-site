@@ -189,6 +189,9 @@ export default function Dashboard() {
   const formatMoney = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 
+  const formatMoneyPrecise = (value: number) =>
+    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   const formatCategory = (category: string) =>
     category.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 
