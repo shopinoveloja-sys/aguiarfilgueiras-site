@@ -419,6 +419,62 @@ export default function Dashboard() {
           </div>
         </section>
 
+        <section className="mb-6 grid gap-4 md:grid-cols-2">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-bold text-white">Receita por Fonte</p>
+                <p className="text-xs text-slate-400">Comparacao dentro do mes atual</p>
+              </div>
+              <span className="material-symbols-outlined text-emerald-400">payments</span>
+            </div>
+            <div className="space-y-3">
+              {(data.incomeByCategory || []).length > 0 ? (
+                data.incomeByCategory.map((item) => (
+                  <div key={item.category}>
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
+                      <span className="text-xs font-bold text-emerald-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                      <div className="h-full rounded-full bg-emerald-400" style={{ width: `${Math.min(item.percentage, 100)}%` }} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">Nenhuma receita registrada neste mes.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-bold text-white">Despesas por Categoria</p>
+                <p className="text-xs text-slate-400">Peso de cada despesa no mes</p>
+              </div>
+              <span className="material-symbols-outlined text-red-400">receipt_long</span>
+            </div>
+            <div className="space-y-3">
+              {(data.expenseByCategory || []).length > 0 ? (
+                data.expenseByCategory.map((item) => (
+                  <div key={item.category}>
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
+                      <span className="text-xs font-bold text-red-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                      <div className="h-full rounded-full bg-red-400" style={{ width: `${Math.min(item.percentage, 100)}%` }} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste mes.</p>
+              )}
+            </div>
+          </div>
+        </section>
+
         {planning?.summary && planning.summary.requiredPerDay > 0 && (
           <section className="mb-6">
             <div onClick={() => navigate('/calendar')} className="bg-gradient-to-br from-amber-500/10 border border-amber-500/20 rounded-xl p-5 cursor-pointer active:scale-[0.98]">
