@@ -180,6 +180,7 @@ export default function Dashboard() {
         type: finalValue > 0 ? "INCOME" : "EXPENSE",
         value: Math.abs(finalValue),
         category: "SALDO_ANTERIOR",
+        source: "MANUAL",
         description: "Saldo anterior ao começar a usar o app",
         date: new Date().toISOString()
       });
