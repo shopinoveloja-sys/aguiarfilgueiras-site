@@ -30,9 +30,14 @@ export default function Login() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   useEffect(() => {
-    if (!googleClientId || !googleButtonRef.current) return;
+    if (!googleButtonRef.current) return;
 
     const initializeGoogle = () => {
+      if (!googleClientId) {
+        console.warn("VITE_GOOGLE_CLIENT_ID não configurada no ambiente.");
+        return;
+      }
+
       window.google?.accounts.id.initialize({
         client_id: googleClientId,
         callback: async (response) => {
@@ -45,38 +50,38 @@ export default function Login() {
               referralCode: referralCode || undefined,
             });
             saveSession(session);
-            toast.success("Conta Google conectada com sucesso!");
+            toast.success("Autenticação Google realizada com sucesso!");
             navigate("/dashboard");
-          } catch (error) {
+          } catch (error: any) {
             console.error(error);
-            toast.error("Para criar conta com Google, informe celular e CPF/CNPJ.");
+            const message = error.response?.data?.message || "Falha na autenticação Google.";
+            toast.error(message);
           } finally {
             setLoading(false);
           }
         },
       });
-      if (googleButtonRef.current) {
-        googleButtonRef.current.innerHTML = "";
-        window.google?.accounts.id.renderButton(googleButtonRef.current, {
-          theme: "outline",
-          size: "large",
-          width: googleButtonRef.current.offsetWidth,
-          text: mode === "login" ? "signin_with" : "signup_with",
-          locale: "pt-BR",
-        });
-      }
+
+      window.google?.accounts.id.renderButton(googleButtonRef.current, {
+        theme: "outline",
+        size: "large",
+        width: googleButtonRef.current.offsetWidth,
+        text: mode === "login" ? "signin_with" : "signup_with",
+        locale: "pt-BR",
+        shape: "pill",
+      });
     };
 
     if (window.google) {
       initializeGoogle();
-      return;
+    } else {
+      const script = window.document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogle;
+      window.document.body.appendChild(script);
     }
-
-    const script = window.document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.onload = initializeGoogle;
-    window.document.body.appendChild(script);
   }, [documentNumber, googleClientId, mode, navigate, phone, referralCode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,7 +126,7 @@ export default function Login() {
           <header className="mb-8 text-center">
             <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
             <p className="text-slate-400 text-sm">
-              {mode === "login" ? "Acesse sua conta financeira" : "Teste gratis por 15 dias"}
+              {mode === "login" ? "Acesse sua conta financeira" : "Ganhe 15 dias usando um codigo de indicacao"}
             </p>
           </header>
 
@@ -185,11 +190,14 @@ export default function Login() {
                 <input
                   className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
                   id="referralCode"
-                  placeholder="Opcional"
+                  placeholder="Código para ganhar 15 dias"
                   type="text"
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
                 />
+                {!referralCode && (
+                  <p className="text-[9px] text-blue-400 text-center animate-pulse">Sem código você precisará assinar para acessar.</p>
+                )}
               </div>
             )}
 
@@ -229,13 +237,19 @@ export default function Login() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Comecar teste gratis"}
+              {loading ? "Aguarde..." : mode === "login" ? "Entrar" : referralCode ? "Começar teste grátis" : "Criar conta e assinar"}
             </button>
           </form>
 
-          {googleClientId && (
+          {googleClientId ? (
             <div className="mt-4">
               <div ref={googleButtonRef} className="w-full flex justify-center" />
+            </div>
+          ) : (
+            <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-center">
+              <p className="text-amber-500 text-xs font-medium">
+                Google Auth não configurado. Adicione VITE_GOOGLE_CLIENT_ID no Coolify.
+              </p>
             </div>
           )}
 
