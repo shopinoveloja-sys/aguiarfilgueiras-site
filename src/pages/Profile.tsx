@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getReferralSummary, requestReferralWithdrawal } from "../lib/api";
+import { getDashboardData, getReferralSummary, requestReferralWithdrawal } from "../lib/api";
 import { toast } from "sonner";
 
 interface ReferralData {
@@ -14,9 +14,17 @@ interface ReferralData {
   paidAmount: number;
 }
 
+interface DashboardData {
+  totalIncomeMonth: number;
+  netProfitMonth: number;
+  daysWorked: number;
+  projectedMonth: number;
+}
+
 export default function Profile() {
   const navigate = useNavigate();
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
+  const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [pixKey, setPixKey] = useState("");
   const [requestedFor, setRequestedFor] = useState("");
 
@@ -24,10 +32,16 @@ export default function Profile() {
     getReferralSummary()
       .then(setReferrals)
       .catch(() => setReferrals(null));
+    getDashboardData()
+      .then(setDashboard)
+      .catch(() => setDashboard(null));
   }, []);
 
   const formatMoneyPrecise = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const formatMoney = (value: number) =>
+    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 
   const handleWithdrawal = async () => {
     if (!pixKey.trim()) return;
@@ -114,30 +128,10 @@ export default function Profile() {
             </div>
             <span className="material-symbols-outlined text-slate-500">chevron_right</span>
           </button>
-
-          <button className="flex flex-col items-start p-5 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors text-left space-y-3">
-            <div className="bg-blue-500/10 p-2 rounded-lg">
-              <span className="material-symbols-outlined text-blue-500">emoji_events</span>
-            </div>
-            <div>
-              <h3 className="font-bold">Sorteio Semanal</h3>
-              <p className="text-slate-400 text-xs mt-1">Participe e ganhe bônus</p>
-            </div>
-          </button>
-
-          <button className="flex flex-col items-start p-5 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors text-left space-y-3">
-            <div className="bg-blue-500/10 p-2 rounded-lg">
-              <span className="material-symbols-outlined text-blue-500">groups</span>
-            </div>
-            <div>
-              <h3 className="font-bold">Grupo de Facebook</h3>
-              <p className="text-slate-400 text-xs mt-1">Comunidade de motoristas</p>
-            </div>
-          </button>
         </section>
 
         {referrals && (
-          <section className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4">
+          <section id="partner-panel" className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-bold text-white">Indique e Ganhe</p>
@@ -186,26 +180,26 @@ export default function Profile() {
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <p className="text-xs text-slate-400">Ganhos</p>
-              <p className="text-lg font-bold">R$ 1.240</p>
+              <p className="text-lg font-bold">{formatMoney(dashboard?.totalIncomeMonth || 0)}</p>
             </div>
             <div className="text-center border-x border-blue-500/10">
-              <p className="text-xs text-slate-400">Horas</p>
-              <p className="text-lg font-bold">38h</p>
+              <p className="text-xs text-slate-400">Lucro</p>
+              <p className="text-lg font-bold">{formatMoney(dashboard?.netProfitMonth || 0)}</p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-slate-400">Viagens</p>
-              <p className="text-lg font-bold">142</p>
+              <p className="text-xs text-slate-400">Dias</p>
+              <p className="text-lg font-bold">{dashboard?.daysWorked || 0}</p>
             </div>
           </div>
         </section>
 
-        <button onClick={() => navigate("/admin")} className="w-full flex items-center gap-4 p-4 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors">
+        <button onClick={() => document.getElementById("partner-panel")?.scrollIntoView({ behavior: "smooth" })} className="w-full flex items-center gap-4 p-4 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors">
           <div className="bg-blue-500/10 p-2 rounded-lg">
-            <span className="material-symbols-outlined text-blue-500">admin_panel_settings</span>
+            <span className="material-symbols-outlined text-blue-500">handshake</span>
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-white">Admin Panel</h3>
-            <p className="text-slate-400 text-xs">Acesso administrativo</p>
+            <h3 className="font-bold text-white">Painel do Parceiro</h3>
+            <p className="text-slate-400 text-xs">Assinantes indicados, saldo e pedidos de saque</p>
           </div>
           <span className="material-symbols-outlined text-slate-500">chevron_right</span>
         </button>
