@@ -41,6 +41,8 @@ interface CategorySummary {
 interface PlanningData {
   summary?: {
     requiredPerDay: number;
+    totalAccumulated: number;
+    totalExpense: number;
   };
   expenses?: unknown[];
 }
@@ -79,6 +81,7 @@ export default function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
+  const [balanceNegative, setBalanceNegative] = useState(false);
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     const saved = localStorage.getItem("drivercash_user");
@@ -161,22 +164,23 @@ export default function Dashboard() {
 
   const handleSaveBalance = async () => {
     const val = parseInt(previousBalance, 10) / 100;
-    if (val > 0) {
-      try {
-        const { createTransaction } = await import("../lib/api");
-        await createTransaction({
-          type: "INCOME",
-          value: val,
-          category: "SALDO_ANTERIOR",
-          description: "Saldo anterior ao começar a usar o app",
-          date: new Date().toISOString()
-        });
-        setShowBalanceModal(false);
-        setPreviousBalance("");
-        window.location.reload();
-      } catch (e) {
-        toast.error("Erro ao salvar saldo anterior.");
-      }
+    const finalValue = balanceNegative ? -val : val;
+    if (finalValue === 0) return;
+    try {
+      const { createTransaction } = await import("../lib/api");
+      await createTransaction({
+        type: finalValue > 0 ? "INCOME" : "EXPENSE",
+        value: Math.abs(finalValue),
+        category: "SALDO_ANTERIOR",
+        description: "Saldo anterior ao começar a usar o app",
+        date: new Date().toISOString()
+      });
+      setShowBalanceModal(false);
+      setPreviousBalance("");
+      setBalanceNegative(false);
+      window.location.reload();
+    } catch (e) {
+      toast.error("Erro ao salvar saldo anterior.");
     }
   };
 
@@ -226,11 +230,24 @@ export default function Dashboard() {
           <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
             <h3 className="text-lg font-bold text-white mb-2">Saldo Anterior</h3>
-            <p className="text-xs text-slate-400 mb-5">Informe quanto você já ganhou neste mês antes de usar o app.</p>
-            <div className="flex items-baseline justify-center gap-2 mb-6 py-4">
-              <span className="text-2xl font-bold text-slate-500">R$</span>
-              <span className="text-5xl font-black text-emerald-400">{formatBalanceInput(previousBalance)}</span>
-            </div>
+            <p className="text-xs text-slate-400 mb-5">Informe quanto voce ja tinha de saldo antes de usar o app.</p>
+            {balanceNegative ? (
+              <>
+                <div className="flex items-baseline justify-center gap-2 mb-2 py-4">
+                  <span className="text-2xl font-bold text-slate-500">-R$</span>
+                  <span className="text-5xl font-black text-red-400">{formatBalanceInput(previousBalance)}</span>
+                </div>
+                <button onClick={() => setBalanceNegative(false)} className="w-full text-xs text-emerald-400 font-bold mb-4 py-2 rounded-xl hover:bg-emerald-500/10">Mudar para positivo (+)</button>
+              </>
+            ) : (
+              <>
+                <div className="flex items-baseline justify-center gap-2 mb-2 py-4">
+                  <span className="text-2xl font-bold text-slate-500">R$</span>
+                  <span className="text-5xl font-black text-emerald-400">{formatBalanceInput(previousBalance)}</span>
+                </div>
+                <button onClick={() => setBalanceNegative(true)} className="w-full text-xs text-red-400 font-bold mb-4 py-2 rounded-xl hover:bg-red-500/10">Mudar para negativo (-)</button>
+              </>
+            )}
             <div className="grid grid-cols-3 gap-3 mb-5">
               {[1,2,3,4,5,6,7,8,9].map(n => (
                 <button key={n} onClick={() => setPreviousBalance(p => p.length < 8 ? p + n : p)} className="h-12 rounded-xl bg-[#1e293b] text-xl font-bold text-white active:scale-95">{n}</button>
@@ -408,12 +425,16 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-amber-400">savings</span>
-                  <h3 className="text-xs font-bold uppercase text-amber-300">Reserva Diária</h3>
+                  <h3 className="text-xs font-bold uppercase text-amber-300">Reserva Diaria</h3>
                 </div>
                 <span className="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
               </div>
               <p className="text-3xl font-black text-amber-400">{formatMoneyPrecise(planning.summary.requiredPerDay)}</p>
               <p className="text-[9px] text-slate-500 mt-1 font-medium">Separe hoje para cobrir suas despesas fixas.</p>
+              <div className="mt-3 pt-3 border-t border-amber-500/20 flex justify-between items-center">
+                <span className="text-[10px] font-bold uppercase text-slate-400">Total Reservado</span>
+                <span className="text-sm font-black text-amber-300">{formatMoneyPrecise(planning.summary.totalAccumulated || 0)}</span>
+              </div>
             </div>
           </section>
         )}

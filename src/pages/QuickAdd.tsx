@@ -170,18 +170,6 @@ export default function QuickAdd() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center py-5">
-        <p className={`text-sm font-bold uppercase tracking-widest mb-2 ${type === "INCOME" ? "text-emerald-400" : "text-red-400"}`}>
-          Valor {type === "INCOME" ? "Recebido" : "Gasto"}
-        </p>
-        <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-slate-500">R$</span>
-          <span className={`text-6xl font-black tracking-tighter ${type === "INCOME" ? "text-emerald-400" : "text-red-400"}`}>
-            {formatCurrency(amount)}
-          </span>
-        </div>
-      </div>
-
       <div className="px-4 mb-4">
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
           {currentCategories.map((cat) => (
@@ -302,6 +290,15 @@ export default function QuickAdd() {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="flex items-center justify-center py-4">
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl font-bold text-slate-500">R$</span>
+          <span className={`text-6xl font-black tracking-tighter ${type === "INCOME" ? "text-emerald-400" : "text-red-400"}`}>
+            {formatCurrency(amount)}
+          </span>
+        </div>
       </div>
 
       <div className="bg-[#0f172a] rounded-t-[40px] p-6 border-t border-blue-500/10">
