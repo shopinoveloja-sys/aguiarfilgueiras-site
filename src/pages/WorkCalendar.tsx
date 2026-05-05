@@ -12,12 +12,20 @@ interface PlannedExpense {
   requiredPerDay: number;
 }
 
+interface TodayExpense {
+  id: string | number;
+  name: string;
+  requiredPerDay: number;
+}
+
 interface PlanningData {
   offDates?: string[];
   summary?: {
     requiredPerDay: number;
   };
   expenses?: PlannedExpense[];
+  todayExpenses?: TodayExpense[];
+  todayTransactionAmount?: number;
 }
 
 export default function WorkCalendar() {
@@ -187,6 +195,17 @@ export default function WorkCalendar() {
             <p className="text-xs text-slate-400 mt-2">
               Esse é o valor que você precisa separar por dia de trabalho para cobrir suas despesas fixas até o vencimento.
             </p>
+            {planning.todayExpenses && planning.todayExpenses.length > 0 && (
+              <div className="mt-4">
+                <p className="text-[10px] font-bold uppercase text-amber-300/80 mb-2">Despesas de hoje</p>
+                {planning.todayExpenses.map((exp) => (
+                  <div key={exp.id} className="flex items-center justify-between mt-2 pt-2 border-t border-amber-500/10">
+                    <p className="text-sm font-bold text-white">{exp.name}</p>
+                    <p className="text-sm font-bold text-amber-400">R$ {exp.requiredPerDay.toFixed(2).replace('.', ',')}</p>
+                  </div>
+                ))}
+              </div>
+            )}
             {planning.expenses && planning.expenses.map((exp) => (
               <div key={exp.id} className="flex items-center justify-between mt-3 pt-3 border-t border-amber-500/10">
                 <div>

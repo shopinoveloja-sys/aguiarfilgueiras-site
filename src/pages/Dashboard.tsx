@@ -49,6 +49,7 @@ interface PlanningData {
     remainingAmount: number;
   };
   expenses?: unknown[];
+  todayTransactionAmount?: number;
 }
 
 interface AccessData {
@@ -892,13 +893,11 @@ export default function Dashboard() {
               <p className="text-3xl font-black text-amber-400">{formatMoneyPrecise(planning.summary.requiredPerDay)}</p>
               <p className="text-[9px] text-slate-500 mt-1 font-medium">Separe hoje para cobrir suas despesas fixas.</p>
               <div className="mt-3 pt-3 border-t border-amber-500/20 flex justify-between items-center">
-                <span className="text-[10px] font-bold uppercase text-slate-400">Total Reservado</span>
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  {(planning.todayTransactionAmount || 0) > 0 ? "Despesas de hoje" : "Reserva de hoje"}
+                </span>
                 <span className="text-sm font-black text-amber-300">
-                  {(() => {
-                    const perDay = planning.summary.requiredPerDay || 0;
-                    const daysFromStart = Math.max(1, new Date().getDate());
-                    return formatMoneyPrecise(perDay * daysFromStart);
-                  })()}
+                  {formatMoneyPrecise(planning.todayTransactionAmount || planning.summary.requiredPerDay || 0)}
                 </span>
               </div>
             </div>
