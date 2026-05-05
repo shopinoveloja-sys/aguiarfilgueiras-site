@@ -614,7 +614,7 @@ export default function Dashboard() {
             <div className="space-y-3">
               {(data.incomeByCategory || []).length > 0 ? (
                 data.incomeByCategory.map((item) => (
-                  <div key={item.category} onClick={() => openEditIncomeCategory(item)} className="cursor-pointer hover:bg-white/5 rounded-lg -mx-2 px-2 py-1 transition-colors group">
+                  <div key={item.category} onClick={console.log('CLICK INCOME', item.category) || (() => openEditIncomeCategory(item))} className="cursor-pointer hover:bg-white/5 rounded-lg -mx-2 px-2 py-1 transition-colors group">
                     <div className="flex items-center justify-between gap-3 mb-1">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
