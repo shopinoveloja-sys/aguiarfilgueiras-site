@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Onboarding from "./pages/Onboarding";
 import QuickAdd from "./pages/QuickAdd";
 import WorkCalendar from "./pages/WorkCalendar";
+import Metrics from "./pages/Metrics";
 import "./index.css";
 
 class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -76,6 +77,8 @@ function App() {
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/add" element={<QuickAdd />} />
           <Route path="/calendar" element={<WorkCalendar />} />
+          <Route path="/metrics" element={<Metrics />} />
+          <Route path="/map" element={<Metrics />} />
         </Routes>
 
         <Toaster position="top-center" />

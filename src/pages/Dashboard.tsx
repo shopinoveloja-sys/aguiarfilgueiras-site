@@ -982,9 +982,9 @@ export default function Dashboard() {
             <span className="material-symbols-outlined text-4xl">add</span>
           </button>
         </a>
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/map"); }}>
-          <span className="material-symbols-outlined">map</span>
-          <span className="text-[10px] font-bold uppercase">Mapa</span>
+        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/metrics"); }}>
+          <span className="material-symbols-outlined">query_stats</span>
+          <span className="text-[10px] font-bold uppercase">Metricas</span>
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/profile"); }}>
           <span className="material-symbols-outlined">settings</span>
