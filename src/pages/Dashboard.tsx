@@ -77,6 +77,15 @@ interface SessionUser {
   profileCompletedAt?: string | null;
 }
 
+function safeParse<T>(value: string | null): T | null {
+  if (!value) return null;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return null;
+  }
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
@@ -94,12 +103,10 @@ export default function Dashboard() {
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
-    const saved = localStorage.getItem("drivercash_user");
-    return saved ? JSON.parse(saved) : null;
+    return safeParse<SessionUser>(localStorage.getItem("drivercash_user"));
   });
   const [access, setAccess] = useState<AccessData | null>(() => {
-    const saved = localStorage.getItem("drivercash_access");
-    return saved ? JSON.parse(saved) : null;
+    return safeParse<AccessData>(localStorage.getItem("drivercash_access"));
   });
 
   const [redeemCode, setRedeemCode] = useState("");
@@ -611,7 +618,17 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-emerald-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
-                        <span className="material-symbols-outlined text-emerald-300 text-sm">edit</span>
+                        <button
+                          type="button"
+                          aria-label={`Editar receita ${formatCategory(item.category)}`}
+                          className="p-1 rounded-md hover:bg-emerald-500/10 text-emerald-300 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openEditIncomeCategory(item);
+                          }}
+                        >
+                          <span className="material-symbols-outlined text-sm">edit</span>
+                        </button>
                       </div>
                     </div>
                     <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
