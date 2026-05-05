@@ -76,8 +76,8 @@ export const saveSession = (session: { token: string; user: unknown; access: unk
   localStorage.setItem('drivercash_access', JSON.stringify(session.access));
 };
 
-export const getDashboardData = async () => {
-  const response = await api.get('/dashboard');
+export const getDashboardData = async (period?: 'day' | 'week' | 'month') => {
+  const response = await api.get('/dashboard', { params: period ? { period } : undefined });
   return response.data;
 };
 

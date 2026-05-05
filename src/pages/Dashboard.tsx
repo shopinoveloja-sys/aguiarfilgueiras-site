@@ -41,6 +41,8 @@ interface CategorySummary {
   percentage: number;
 }
 
+type CategoryPeriod = "day" | "week" | "month";
+
 interface PlanningData {
   summary?: {
     requiredPerDay: number;
@@ -183,6 +185,7 @@ export default function Dashboard() {
   const [editValue, setEditValue] = useState("");
   const [editIncomeCategory, setEditIncomeCategory] = useState<CategorySummary | null>(null);
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
+  const [categoryPeriod, setCategoryPeriod] = useState<CategoryPeriod>("month");
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     return parseSessionUser(readStorage("drivercash_user"));
@@ -196,7 +199,7 @@ export default function Dashboard() {
   
   const loadDashboard = async () => {
     try {
-      const dashboard = await getDashboardData();
+      const dashboard = await getDashboardData(categoryPeriod);
       setData(normalizeDashboardData(dashboard));
       try {
         const planData = await getRecurringExpenses();
@@ -219,6 +222,12 @@ export default function Dashboard() {
     }
     init();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      loadDashboard();
+    }
+  }, [categoryPeriod]);
 
   const handleRedeemCode = async () => {
     if (!redeemCode.trim()) return;
@@ -314,19 +323,71 @@ export default function Dashboard() {
   const formatCategory = (category: string) =>
     category.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 
+  const categoryPeriodLabels: Record<CategoryPeriod, string> = {
+    day: "Hoje",
+    week: "Semana",
+    month: "Mes",
+  };
+
+  const getCategoryPeriodRange = () => {
+    const now = new Date();
+    const start = new Date(now);
+    const end = new Date(now);
+
+    if (categoryPeriod === "day") {
+      start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+      return { start: start.toISOString(), end: end.toISOString() };
+    }
+
+    if (categoryPeriod === "week") {
+      const day = start.getDay();
+      const daysFromMonday = day === 0 ? 6 : day - 1;
+      start.setDate(start.getDate() - daysFromMonday);
+      start.setHours(0, 0, 0, 0);
+      end.setTime(start.getTime());
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
+      return { start: start.toISOString(), end: end.toISOString() };
+    }
+
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+    end.setMonth(start.getMonth() + 1, 0);
+    end.setHours(23, 59, 59, 999);
+    return { start: start.toISOString(), end: end.toISOString() };
+  };
+
+  const CategoryPeriodFilter = () => (
+    <div className="flex rounded-lg bg-slate-950/70 border border-slate-800 p-1">
+      {(["day", "week", "month"] as CategoryPeriod[]).map((period) => (
+        <button
+          key={period}
+          type="button"
+          onClick={() => setCategoryPeriod(period)}
+          className={`px-2.5 py-1.5 text-[10px] font-bold uppercase rounded-md transition-colors ${
+            categoryPeriod === period
+              ? "bg-blue-500 text-white shadow-sm"
+              : "text-slate-400 hover:text-white hover:bg-slate-800"
+          }`}
+        >
+          {categoryPeriodLabels[period]}
+        </button>
+      ))}
+    </div>
+  );
+
   const openEditCategory = async (cat: CategorySummary) => {
     setEditCategory(cat);
     try {
       const { default: api } = await import("../lib/api");
       const res = await api.get("/transactions");
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+      const { start, end } = getCategoryPeriodRange();
       const txs = (res.data || []).filter((t: any) =>
         t.type === "EXPENSE" &&
         t.category === cat.category &&
-        t.date >= startOfMonth &&
-        t.date <= endOfMonth
+        t.date >= start &&
+        t.date <= end
       );
       setEditTransactions(txs.map((t: any) => ({ id: t.id, value: Number(t.value), date: t.date?.split("T")[0] || "", description: t.description || "" })));
     } catch {
@@ -342,13 +403,11 @@ export default function Dashboard() {
     try {
       const { default: api } = await import("../lib/api");
       const res = await api.get("/transactions");
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+      const { start, end } = getCategoryPeriodRange();
       const txs = (res.data || []).filter((t: any) => {
         const txDate = t.date || t.createdAt || "";
         const categoryMatch = t.category === cat.category || t.source === cat.category || t.description === cat.category;
-        return t.type === "INCOME" && categoryMatch && txDate >= startOfMonth && txDate <= endOfMonth;
+        return t.type === "INCOME" && categoryMatch && txDate >= start && txDate <= end;
       });
       setEditIncomeTransactions(txs.map((t: any) => ({ id: t.id, value: Number(t.value), date: t.date?.split("T")[0] || "", description: t.description || "" })));
     } catch {
@@ -694,12 +753,15 @@ export default function Dashboard() {
 
         <section className="mb-6 grid gap-4 md:grid-cols-2">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-start justify-between gap-3 mb-4">
               <div>
                 <p className="text-sm font-bold text-white">Receita por Fonte</p>
                 <p className="text-xs text-slate-400">Toque em uma fonte para editar</p>
               </div>
-              <span className="material-symbols-outlined text-emerald-400">payments</span>
+              <div className="flex items-center gap-3">
+                <CategoryPeriodFilter />
+                <span className="material-symbols-outlined text-emerald-400">payments</span>
+              </div>
             </div>
             <div className="space-y-3">
               {(data.incomeByCategory || []).length > 0 ? (
@@ -730,18 +792,21 @@ export default function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-slate-500">Nenhuma receita registrada neste mes.</p>
+                <p className="text-xs text-slate-500">Nenhuma receita registrada neste periodo.</p>
               )}
             </div>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-start justify-between gap-3 mb-4">
               <div>
                 <p className="text-sm font-bold text-white">Despesas por Categoria</p>
-                <p className="text-xs text-slate-400">Peso de cada despesa no mes</p>
+                <p className="text-xs text-slate-400">Peso de cada despesa no periodo</p>
               </div>
-              <span className="material-symbols-outlined text-red-400">receipt_long</span>
+              <div className="flex items-center gap-3">
+                <CategoryPeriodFilter />
+                <span className="material-symbols-outlined text-red-400">receipt_long</span>
+              </div>
             </div>
             <div className="space-y-3">
               {(data.expenseByCategory || []).length > 0 ? (
@@ -762,7 +827,7 @@ export default function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste mes.</p>
+                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste periodo.</p>
               )}
             </div>
           </div>
