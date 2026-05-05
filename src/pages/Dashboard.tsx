@@ -234,6 +234,7 @@ export default function Dashboard() {
   };
 
   const openEditIncomeCategory = async (cat: CategorySummary) => {
+    console.log('openEditIncomeCategory clicked:', cat);
     setEditIncomeCategory(cat);
     try {
       const { default: api } = await import("../lib/api");
