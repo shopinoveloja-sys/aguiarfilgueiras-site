@@ -4,8 +4,16 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://api.drivercash.app',
 });
 
+const readStorage = (key: string) => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('drivercash_token');
+  const token = readStorage('drivercash_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

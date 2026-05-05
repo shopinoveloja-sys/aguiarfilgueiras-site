@@ -86,6 +86,30 @@ function safeParse<T>(value: string | null): T | null {
   }
 }
 
+function readStorage(key: string) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function parseSessionUser(value: string | null): SessionUser | null {
+  const parsed = safeParse<Partial<SessionUser>>(value);
+  if (!parsed || typeof parsed.name !== "string" || typeof parsed.email !== "string") {
+    return null;
+  }
+  return parsed as SessionUser;
+}
+
+function parseAccess(value: string | null): AccessData | null {
+  const parsed = safeParse<Partial<AccessData>>(value);
+  if (!parsed || typeof parsed.status !== "string" || typeof parsed.daysRemaining !== "number") {
+    return null;
+  }
+  return parsed as AccessData;
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
@@ -103,10 +127,10 @@ export default function Dashboard() {
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
-    return safeParse<SessionUser>(localStorage.getItem("drivercash_user"));
+    return parseSessionUser(readStorage("drivercash_user"));
   });
   const [access, setAccess] = useState<AccessData | null>(() => {
-    return safeParse<AccessData>(localStorage.getItem("drivercash_access"));
+    return parseAccess(readStorage("drivercash_access"));
   });
 
   const [redeemCode, setRedeemCode] = useState("");
@@ -162,6 +186,8 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const firstName = sessionUser?.name?.trim().split(/\s+/)[0] || "Motorista";
 
   if (errorMessage) {
     return (
@@ -429,7 +455,7 @@ export default function Dashboard() {
           </div>
           <div>
             <p className="text-sm text-slate-500">Bem-vindo,</p>
-            <p className="text-base font-bold">{sessionUser?.name.split(' ')[0] || 'Motorista'}</p>
+            <p className="text-base font-bold">{firstName}</p>
           </div>
         </div>
         <button className="p-2 rounded-full bg-blue-500/10 text-blue-400">
