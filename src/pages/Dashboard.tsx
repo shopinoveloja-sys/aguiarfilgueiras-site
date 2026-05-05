@@ -174,7 +174,17 @@ export default function Dashboard() {
     );
   }
 
-  if (!data) return null;
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center flex-col text-center p-4">
+        <div className="text-slate-300 text-lg font-bold mb-2">Painel sem dados no momento</div>
+        <div className="text-slate-500 text-sm mb-4 max-w-sm">A página carregou, mas ainda não recebeu os dados do dashboard. Tente recarregar.</div>
+        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
+          Recarregar
+        </button>
+      </div>
+    );
+  }
 
   const performanceLabel = {
     below_average: { text: "Abaixo da Média", color: "text-red-400", bg: "bg-red-500/10" },
@@ -251,12 +261,11 @@ export default function Dashboard() {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
-      const txs = (res.data || []).filter((t: any) =>
-        t.type === "INCOME" &&
-        t.category === cat.category &&
-        t.date >= startOfMonth &&
-        t.date <= endOfMonth
-      );
+      const txs = (res.data || []).filter((t: any) => {
+        const txDate = t.date || t.createdAt || "";
+        const categoryMatch = t.category === cat.category || t.source === cat.category || t.description === cat.category;
+        return t.type === "INCOME" && categoryMatch && txDate >= startOfMonth && txDate <= endOfMonth;
+      });
       setEditIncomeTransactions(txs.map((t: any) => ({ id: t.id, value: Number(t.value), date: t.date?.split("T")[0] || "", description: t.description || "" })));
     } catch {
       setEditIncomeTransactions([]);
