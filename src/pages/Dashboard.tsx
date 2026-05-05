@@ -320,36 +320,21 @@ export default function Dashboard() {
     }
   };
 
-  const handleEditIncomeTx = (tx: typeof editIncomeTransactions[0]) => {
-    setEditingId(tx.id);
-    const val = (tx.value * 100).toFixed(0);
-    setEditValue(val);
-  };
-
-  const handleSaveIncomeEdit = async () => {
-    if (!editingId || !editValue) return;
-    const val = parseInt(editValue, 10) / 100;
+  const handlePayExpense = async (expense: any) => {
     try {
-      await updateTransaction(editingId, { value: val });
-      setEditIncomeTransactions((prev) => prev.map((t) => t.id === editingId ? { ...t, value: val } : t));
-      setEditingId(null);
-      setEditValue("");
+      const { default: api } = await import("../lib/api");
+      await api.patch(`/planning/expenses/${expense.id}/accumulate`, { amount: expense.remainingAmount });
+      await api.post("/transactions", {
+        type: "EXPENSE",
+        source: "MANUAL",
+        category: expense.name,
+        value: expense.remainingAmount,
+        date: new Date().toISOString(),
+      });
+      toast.success(`${expense.name} marcado como quitado!`);
       loadDashboard();
-      toast.success("Valor atualizado!");
     } catch {
-      toast.error("Erro ao atualizar.");
-    }
-  };
-
-  const handleDeleteIncomeTx = async (id: string) => {
-    try {
-      await deleteTransaction(id);
-      setEditIncomeTransactions((prev) => prev.filter((t) => t.id !== id));
-      if (editingId === id) { setEditingId(null); setEditValue(""); }
-      loadDashboard();
-      toast.success("Receita removida!");
-    } catch {
-      toast.error("Erro ao remover.");
+      toast.error(`Erro ao quitar ${expense.name}.`);
     }
   };
 
@@ -494,6 +479,23 @@ export default function Dashboard() {
           </section>
         )}
 
+        {planning?.expenses?.filter((e: any) => e.isDueToday && e.remainingAmount > 0).length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Vencem Hoje</h2>
+            <div className="space-y-3">
+              {planning.expenses.filter((e: any) => e.isDueToday && e.remainingAmount > 0).map((expense: any) => (
+                <div key={expense.id} className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-red-300">{expense.name}</p>
+                    <p className="text-xs text-red-500/70">{formatMoneyPrecise(expense.remainingAmount)}</p>
+                  </div>
+                  <button onClick={() => handlePayExpense(expense)} className="text-[10px] font-bold bg-red-500 text-white px-3 py-1.5 rounded-lg active:scale-95">QUITAR</button>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section className="mb-6">
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="text-xl font-bold">Resumo Mensal</h2>
@@ -525,21 +527,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-            <div className="mt-4 pt-4 border-t border-blue-500/20 grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mês</p>
-                <p className={`text-xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {formatMoney(data.netProfitMonth)}
-                </p>
-              </div>
-              <div>
-                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Dia</p>
-                <p className={`text-xl font-black ${data.todayProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {formatMoney(data.todayProfit)}
-                </p>
-              </div>
-            </div>
-          </div>
+
 
           <button onClick={() => setShowBalanceModal(true)} className="w-full flex items-center gap-3 bg-[#1e293b44] border border-dashed border-slate-700 rounded-xl p-3 mb-4 hover:bg-slate-800/50 transition-colors">
             <span className="material-symbols-outlined text-slate-500 text-lg">account_balance_wallet</span>
@@ -614,7 +602,7 @@ export default function Dashboard() {
             <div className="space-y-3">
               {(data.incomeByCategory || []).length > 0 ? (
                 data.incomeByCategory.map((item) => (
-                  <div key={item.category} onClick={console.log('CLICK INCOME', item.category) || (() => openEditIncomeCategory(item))} className="cursor-pointer hover:bg-white/5 rounded-lg -mx-2 px-2 py-1 transition-colors group">
+                  <div key={item.category} onClick={() => openEditIncomeCategory(item)} className="cursor-pointer hover:bg-white/5 rounded-lg -mx-2 px-2 py-1 transition-colors group">
                     <div className="flex items-center justify-between gap-3 mb-1">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-slate-300">{formatCategory(item.category)}</span>
