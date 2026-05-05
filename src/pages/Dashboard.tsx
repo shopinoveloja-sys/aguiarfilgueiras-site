@@ -234,8 +234,10 @@ export default function Dashboard() {
   };
 
   const openEditIncomeCategory = async (cat: CategorySummary) => {
-    console.log('openEditIncomeCategory clicked:', cat);
     setEditIncomeCategory(cat);
+    setEditingId(null);
+    setEditValue("");
+    setEditIncomeTransactions([]);
     try {
       const { default: api } = await import("../lib/api");
       const res = await api.get("/transactions");
@@ -594,8 +596,8 @@ export default function Dashboard() {
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm font-bold text-white">Receita por Fonte ⭐</p>
-                <p className="text-xs text-slate-400">Comparacao dentro do mes atual</p>
+                <p className="text-sm font-bold text-white">Receita por Fonte</p>
+                <p className="text-xs text-slate-400">Toque em uma fonte para editar</p>
               </div>
               <span className="material-symbols-outlined text-emerald-400">payments</span>
             </div>
@@ -609,7 +611,7 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-emerald-300">{formatMoneyPrecise(item.total)} - {item.percentage}%</span>
-                        <span className="material-symbols-outlined text-slate-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+                        <span className="material-symbols-outlined text-emerald-300 text-sm">edit</span>
                       </div>
                     </div>
                     <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
@@ -716,11 +718,11 @@ export default function Dashboard() {
           <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => { setEditIncomeCategory(null); setEditingId(null); }}>
             <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
-              <h3 className="text-lg font-bold text-white mb-1">Editar {formatCategory(editIncomeCategory.category)}</h3>
+              <h3 className="text-lg font-bold text-white mb-1">Editar Receita - {formatCategory(editIncomeCategory.category)}</h3>
               <p className="text-xs text-slate-400 mb-4">Clique no valor para editar ou no icone de lixeira para remover.</p>
 
               {editIncomeTransactions.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-6">Nenhuma transacao encontrada.</p>
+                <p className="text-sm text-slate-500 text-center py-6">Nenhuma receita encontrada para esta fonte no mes atual.</p>
               ) : (
                 <div className="space-y-2 mb-4">
                   {editIncomeTransactions.map((tx) => (
