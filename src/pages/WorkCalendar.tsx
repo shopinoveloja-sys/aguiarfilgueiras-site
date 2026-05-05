@@ -22,6 +22,7 @@ interface PlanningData {
   offDates?: string[];
   summary?: {
     requiredPerDay: number;
+    totalAccumulated: number;
   };
   expenses?: PlannedExpense[];
   todayExpenses?: TodayExpense[];
@@ -195,6 +196,10 @@ export default function WorkCalendar() {
             <p className="text-xs text-slate-400 mt-2">
               Esse é o valor que você precisa separar por dia de trabalho para cobrir suas despesas fixas até o vencimento.
             </p>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-amber-500/10">
+              <p className="text-[10px] font-bold uppercase text-slate-500">Total reservado</p>
+              <p className="text-sm font-bold text-amber-300">R$ {(planning.summary.totalAccumulated || 0).toFixed(2).replace('.', ',')}</p>
+            </div>
             {planning.todayExpenses && planning.todayExpenses.length > 0 && (
               <div className="mt-4">
                 <p className="text-[10px] font-bold uppercase text-amber-300/80 mb-2">Despesas de hoje</p>
