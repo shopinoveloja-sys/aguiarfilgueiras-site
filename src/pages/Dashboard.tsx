@@ -606,7 +606,7 @@ export default function Dashboard() {
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm font-bold text-white">Receita por Fonte</p>
+                <p className="text-sm font-bold text-white">Receita por Fonte ⭐</p>
                 <p className="text-xs text-slate-400">Comparacao dentro do mes atual</p>
               </div>
               <span className="material-symbols-outlined text-emerald-400">payments</span>
