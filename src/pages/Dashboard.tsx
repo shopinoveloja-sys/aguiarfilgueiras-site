@@ -77,6 +77,63 @@ interface SessionUser {
   profileCompletedAt?: string | null;
 }
 
+const emptyChartData: DashboardData["chartData"] = {
+  labels: [],
+  averageLine: [],
+  bestLine: [],
+  projectionLine: [],
+};
+
+const toNumber = (value: unknown) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const toCategoryList = (value: unknown): CategorySummary[] => {
+  if (!Array.isArray(value)) return [];
+  return value.map((item: Partial<CategorySummary>) => ({
+    category: typeof item.category === "string" && item.category.trim() ? item.category : "OUTROS",
+    total: toNumber(item.total),
+    percentage: toNumber(item.percentage),
+  }));
+};
+
+function normalizeDashboardData(value: Partial<DashboardData> | null | undefined): DashboardData {
+  const chart = value?.chartData;
+  return {
+    totalIncomeMonth: toNumber(value?.totalIncomeMonth),
+    totalExpenseMonth: toNumber(value?.totalExpenseMonth),
+    netProfitMonth: toNumber(value?.netProfitMonth),
+    todayIncome: toNumber(value?.todayIncome),
+    todayExpense: toNumber(value?.todayExpense),
+    todayProfit: toNumber(value?.todayProfit),
+    daysWorked: toNumber(value?.daysWorked),
+    daysRemaining: toNumber(value?.daysRemaining),
+    averageGoalMonth: toNumber(value?.averageGoalMonth),
+    bestGoalMonth: toNumber(value?.bestGoalMonth),
+    projectedMonth: toNumber(value?.projectedMonth),
+    dailyGoalTodayAverage: toNumber(value?.dailyGoalTodayAverage),
+    dailyGoalTodayBest: toNumber(value?.dailyGoalTodayBest),
+    performanceStatus: value?.performanceStatus || "on_track",
+    incomeByCategory: toCategoryList(value?.incomeByCategory),
+    expenseByCategory: toCategoryList(value?.expenseByCategory),
+    todayKm: value?.todayKm
+      ? {
+          kmStart: toNumber(value.todayKm.kmStart),
+          kmEnd: toNumber(value.todayKm.kmEnd),
+          kmTotal: toNumber(value.todayKm.kmTotal),
+          incomePerKm: toNumber(value.todayKm.incomePerKm),
+        }
+      : null,
+    chartData: {
+      labels: Array.isArray(chart?.labels) ? chart.labels.map(toNumber) : emptyChartData.labels,
+      averageLine: Array.isArray(chart?.averageLine) ? chart.averageLine.map(toNumber) : emptyChartData.averageLine,
+      bestLine: Array.isArray(chart?.bestLine) ? chart.bestLine.map(toNumber) : emptyChartData.bestLine,
+      projectionLine: Array.isArray(chart?.projectionLine) ? chart.projectionLine.map(toNumber) : emptyChartData.projectionLine,
+    },
+  };
+}
+
 function safeParse<T>(value: string | null): T | null {
   if (!value) return null;
   try {
@@ -139,7 +196,7 @@ export default function Dashboard() {
   const loadDashboard = async () => {
     try {
       const dashboard = await getDashboardData();
-      setData(dashboard);
+      setData(normalizeDashboardData(dashboard));
       try {
         const planData = await getRecurringExpenses();
         setPlanning(planData);
