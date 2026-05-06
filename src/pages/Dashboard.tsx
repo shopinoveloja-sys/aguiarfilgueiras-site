@@ -581,6 +581,19 @@ export default function Dashboard() {
       </header>
 
       <main className="flex-1 overflow-y-auto p-4">
+        <section className="mb-6">
+          <button onClick={() => navigate("/agent")} className="w-full rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 flex items-center gap-3 text-left active:scale-[0.99]">
+            <div className="size-11 rounded-xl bg-blue-500/10 text-blue-300 flex items-center justify-center">
+              <span className="material-symbols-outlined">smart_toy</span>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-white">Agente DriverCash</p>
+              <p className="text-xs text-slate-400">Converse com seus dados e receba insights práticos.</p>
+            </div>
+            <span className="material-symbols-outlined text-slate-500">chevron_right</span>
+          </button>
+        </section>
+
         {access && access.status !== "ACTIVE" && (
           <section className="mb-6 space-y-4">
             <div className={`border rounded-xl p-4 flex flex-col gap-4 ${access.status === "EXPIRED" ? "bg-red-500/10 border-red-500/20" : "bg-emerald-500/10 border-emerald-500/20"}`}>

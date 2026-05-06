@@ -116,6 +116,16 @@ export const getMaintenanceAlerts = async () => {
   return response.data;
 };
 
+export const getAgentIntro = async () => {
+  const response = await api.get('/agent/intro');
+  return response.data;
+};
+
+export const sendAgentMessage = async (message: string) => {
+  const response = await api.post('/agent/chat', { message });
+  return response.data;
+};
+
 export const createTransaction = async (data: Record<string, unknown>) => {
   const response = await api.post('/transactions', data);
   return response.data;
