@@ -529,7 +529,7 @@ export default function Dashboard() {
     try {
       const { default: api } = await import("../lib/api");
       await api.patch(`/planning/expenses/${expense.id}/accumulate`, { amount: expense.remainingAmount });
-      toast.success(`${expense.name} marcado como quitado!`);
+      toast.success(`${expense.name} quitado com sucesso!`);
       loadDashboard();
     } catch {
       toast.error(`Erro ao quitar ${expense.name}.`);
