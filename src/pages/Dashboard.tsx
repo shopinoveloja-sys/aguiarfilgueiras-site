@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction } from "../lib/api";
+import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
 import { toast } from "sonner";
 
 interface DashboardData {
@@ -39,6 +39,14 @@ interface CategorySummary {
   category: string;
   total: number;
   percentage: number;
+}
+
+interface EditableExpenseItem {
+  id: string;
+  kind: "transaction" | "recurring";
+  value: number;
+  date: string;
+  description: string;
 }
 
 type CategoryPeriod = "day" | "week" | "month";
@@ -180,7 +188,7 @@ export default function Dashboard() {
   const [previousBalance, setPreviousBalance] = useState("");
   const [balanceNegative, setBalanceNegative] = useState(false);
   const [editCategory, setEditCategory] = useState<CategorySummary | null>(null);
-  const [editTransactions, setEditTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
+  const [editTransactions, setEditTransactions] = useState<EditableExpenseItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [editIncomeCategory, setEditIncomeCategory] = useState<CategorySummary | null>(null);
@@ -196,6 +204,7 @@ export default function Dashboard() {
 
   const [redeemCode, setRedeemCode] = useState("");
   const [redeeming, setRedeeming] = useState(false);
+  const [payingExpenseId, setPayingExpenseId] = useState<string | null>(null);
   
   const loadDashboard = async () => {
     try {
@@ -381,15 +390,36 @@ export default function Dashboard() {
     setEditCategory(cat);
     try {
       const { default: api } = await import("../lib/api");
-      const res = await api.get("/transactions");
+      const [transactionsRes, planningRes] = await Promise.all([
+        api.get("/transactions"),
+        api.get("/planning/expenses/planning"),
+      ]);
       const { start, end } = getCategoryPeriodRange();
-      const txs = (res.data || []).filter((t: any) =>
+      const txs = (transactionsRes.data || []).filter((t: any) =>
         t.type === "EXPENSE" &&
         t.category === cat.category &&
         t.date >= start &&
         t.date <= end
       );
-      setEditTransactions(txs.map((t: any) => ({ id: t.id, value: Number(t.value), date: t.date?.split("T")[0] || "", description: t.description || "" })));
+      const recurring = ((planningRes.data?.expenses || []) as any[])
+        .filter((expense: any) => expense.name === cat.category)
+        .map((expense: any) => ({
+          id: expense.id,
+          kind: "recurring" as const,
+          value: Number(expense.totalExpense || expense.value || 0),
+          date: expense.dueDate?.split("T")[0] || "",
+          description: "Despesa recorrente",
+        }));
+      setEditTransactions([
+        ...txs.map((t: any) => ({
+          id: t.id,
+          kind: "transaction" as const,
+          value: Number(t.value),
+          date: t.date?.split("T")[0] || "",
+          description: t.description || "",
+        })),
+        ...recurring,
+      ]);
     } catch {
       setEditTransactions([]);
     }
@@ -425,7 +455,13 @@ export default function Dashboard() {
     if (!editingId || !editValue) return;
     const val = parseInt(editValue, 10) / 100;
     try {
-      await updateTransaction(editingId, { value: val });
+      const currentItem = editTransactions.find((t) => t.id === editingId);
+      if (!currentItem) return;
+      if (currentItem.kind === "recurring") {
+        await updateRecurringExpense(editingId, { value: val, name: editCategory?.category });
+      } else {
+        await updateTransaction(editingId, { value: val });
+      }
       setEditTransactions((prev) => prev.map((t) => t.id === editingId ? { ...t, value: val } : t));
       setEditingId(null);
       setEditValue("");
@@ -438,7 +474,13 @@ export default function Dashboard() {
 
   const handleDeleteTx = async (id: string) => {
     try {
-      await deleteTransaction(id);
+      const currentItem = editTransactions.find((t) => t.id === id);
+      if (!currentItem) return;
+      if (currentItem.kind === "recurring") {
+        await deleteRecurringExpense(id);
+      } else {
+        await deleteTransaction(id);
+      }
       setEditTransactions((prev) => prev.filter((t) => t.id !== id));
       if (editingId === id) { setEditingId(null); setEditValue(""); }
       loadDashboard();
@@ -482,20 +524,17 @@ export default function Dashboard() {
   };
 
   const handlePayExpense = async (expense: any) => {
+    if (payingExpenseId === expense.id) return;
+    setPayingExpenseId(expense.id);
     try {
       const { default: api } = await import("../lib/api");
       await api.patch(`/planning/expenses/${expense.id}/accumulate`, { amount: expense.remainingAmount });
-      await api.post("/transactions", {
-        type: "EXPENSE",
-        source: "MANUAL",
-        category: expense.name,
-        value: expense.remainingAmount,
-        date: new Date().toISOString(),
-      });
       toast.success(`${expense.name} marcado como quitado!`);
       loadDashboard();
     } catch {
       toast.error(`Erro ao quitar ${expense.name}.`);
+    } finally {
+      setPayingExpenseId(null);
     }
   };
 
@@ -663,7 +702,13 @@ export default function Dashboard() {
                     <p className="text-sm font-bold text-red-300">{expense.name}</p>
                     <p className="text-xs text-red-500/70">{formatMoneyPrecise(expense.remainingAmount)}</p>
                   </div>
-                  <button onClick={() => handlePayExpense(expense)} className="text-[10px] font-bold bg-red-500 text-white px-3 py-1.5 rounded-lg active:scale-95">QUITAR</button>
+                  <button
+                    onClick={() => handlePayExpense(expense)}
+                    disabled={payingExpenseId === expense.id}
+                    className="text-[10px] font-bold bg-red-500 text-white px-3 py-1.5 rounded-lg active:scale-95 disabled:opacity-60"
+                  >
+                    {payingExpenseId === expense.id ? "..." : "QUITAR"}
+                  </button>
                 </div>
               ))}
             </div>

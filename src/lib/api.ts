@@ -158,6 +158,16 @@ export const createRecurringExpense = async (data: {
   return response.data;
 };
 
+export const updateRecurringExpense = async (id: string, data: Record<string, unknown>) => {
+  const response = await api.patch(`/planning/expenses/${id}`, data);
+  return response.data;
+};
+
+export const deleteRecurringExpense = async (id: string) => {
+  const response = await api.delete(`/planning/expenses/${id}`);
+  return response.data;
+};
+
 export const getNonWorkingDays = async () => {
   const response = await api.get('/planning/expenses/planning');
   return response.data;
