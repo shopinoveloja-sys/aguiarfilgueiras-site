@@ -47,6 +47,10 @@ interface EditableExpenseItem {
   value: number;
   date: string;
   description: string;
+  recurrenceType?: "MONTHLY" | "WEEKLY" | "SPECIFIC_DATE";
+  dueDay?: number | null;
+  dueDayOfWeek?: number | null;
+  dueDate?: string | null;
 }
 
 type CategoryPeriod = "day" | "week" | "month";
@@ -191,6 +195,10 @@ export default function Dashboard() {
   const [editTransactions, setEditTransactions] = useState<EditableExpenseItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [editRecurringType, setEditRecurringType] = useState<EditableExpenseItem["recurrenceType"]>("MONTHLY");
+  const [editRecurringDueDay, setEditRecurringDueDay] = useState("1");
+  const [editRecurringDueDayOfWeek, setEditRecurringDueDayOfWeek] = useState("0");
+  const [editRecurringDueDate, setEditRecurringDueDate] = useState("");
   const [editIncomeCategory, setEditIncomeCategory] = useState<CategorySummary | null>(null);
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [categoryPeriod, setCategoryPeriod] = useState<CategoryPeriod>("month");
@@ -338,6 +346,16 @@ export default function Dashboard() {
     month: "Mes",
   };
 
+  const weekDays = [
+    { value: "0", label: "Dom" },
+    { value: "1", label: "Seg" },
+    { value: "2", label: "Ter" },
+    { value: "3", label: "Qua" },
+    { value: "4", label: "Qui" },
+    { value: "5", label: "Sex" },
+    { value: "6", label: "Sab" },
+  ];
+
   const getCategoryPeriodRange = () => {
     const now = new Date();
     const start = new Date(now);
@@ -409,6 +427,10 @@ export default function Dashboard() {
           value: Number(expense.totalExpense || expense.value || 0),
           date: expense.dueDate?.split("T")[0] || "",
           description: "Despesa recorrente",
+          recurrenceType: expense.recurrenceType,
+          dueDay: expense.dueDay ?? null,
+          dueDayOfWeek: expense.dueDayOfWeek ?? null,
+          dueDate: expense.dueDate?.split("T")[0] || null,
         }));
       setEditTransactions([
         ...txs.map((t: any) => ({
@@ -449,6 +471,12 @@ export default function Dashboard() {
     setEditingId(tx.id);
     const val = (tx.value * 100).toFixed(0);
     setEditValue(val);
+    if (tx.kind === "recurring") {
+      setEditRecurringType(tx.recurrenceType || "MONTHLY");
+      setEditRecurringDueDay(String(tx.dueDay ?? 1));
+      setEditRecurringDueDayOfWeek(String(tx.dueDayOfWeek ?? 0));
+      setEditRecurringDueDate(tx.dueDate || "");
+    }
   };
 
   const handleSaveEdit = async () => {
@@ -458,13 +486,28 @@ export default function Dashboard() {
       const currentItem = editTransactions.find((t) => t.id === editingId);
       if (!currentItem) return;
       if (currentItem.kind === "recurring") {
-        await updateRecurringExpense(editingId, { value: val, name: editCategory?.category });
+        const payload: Record<string, unknown> = {
+          value: val,
+          name: editCategory?.category,
+          recurrenceType: editRecurringType,
+        };
+        if (editRecurringType === "MONTHLY") {
+          payload.dueDay = Math.min(Math.max(parseInt(editRecurringDueDay, 10) || 1, 1), 31);
+        }
+        if (editRecurringType === "WEEKLY") {
+          payload.dueDayOfWeek = parseInt(editRecurringDueDayOfWeek, 10) || 0;
+        }
+        if (editRecurringType === "SPECIFIC_DATE" && editRecurringDueDate) {
+          payload.dueDate = new Date(`${editRecurringDueDate}T12:00:00`).toISOString();
+        }
+        await updateRecurringExpense(editingId, payload);
       } else {
         await updateTransaction(editingId, { value: val });
       }
       setEditTransactions((prev) => prev.map((t) => t.id === editingId ? { ...t, value: val } : t));
       setEditingId(null);
       setEditValue("");
+      setEditRecurringDueDate("");
       loadDashboard();
       toast.success("Valor atualizado!");
     } catch {
@@ -482,7 +525,7 @@ export default function Dashboard() {
         await deleteTransaction(id);
       }
       setEditTransactions((prev) => prev.filter((t) => t.id !== id));
-      if (editingId === id) { setEditingId(null); setEditValue(""); }
+      if (editingId === id) { setEditingId(null); setEditValue(""); setEditRecurringDueDate(""); }
       loadDashboard();
       toast.success("Despesa removida!");
     } catch {
@@ -906,20 +949,74 @@ export default function Dashboard() {
                     <div key={tx.id} className="bg-[#1e293b] rounded-xl p-3 flex items-center justify-between gap-3">
                       {editingId === tx.id ? (
                         <>
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            value={editValue}
-                            onChange={(e) => setEditValue(e.target.value)}
-                            className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
-                            autoFocus
-                          />
-                          <span className="text-[10px] text-slate-500">
-                            {(parseInt(editValue, 10) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                          </span>
+                          <div className="flex-1 space-y-2">
+                            <input
+                              type="number"
+                              inputMode="decimal"
+                              value={editValue}
+                              onChange={(e) => setEditValue(e.target.value)}
+                              className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
+                              autoFocus
+                            />
+                            <span className="block text-[10px] text-slate-500">
+                              {(parseInt(editValue, 10) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                            </span>
+                            {currentEditingExpense?.kind === "recurring" && (
+                              <div className="space-y-2">
+                                <div className="grid grid-cols-3 gap-2">
+                                  {(["MONTHLY", "WEEKLY", "SPECIFIC_DATE"] as const).map((type) => (
+                                    <button
+                                      key={type}
+                                      type="button"
+                                      onClick={() => setEditRecurringType(type)}
+                                      className={`h-9 rounded-lg text-[10px] font-bold ${
+                                        editRecurringType === type ? "bg-blue-500 text-white" : "bg-[#0f172a] text-slate-400"
+                                      }`}
+                                    >
+                                      {type === "MONTHLY" ? "Mensal" : type === "WEEKLY" ? "Semanal" : "Data"}
+                                    </button>
+                                  ))}
+                                </div>
+                                {editRecurringType === "WEEKLY" && (
+                                  <div className="grid grid-cols-7 gap-1.5">
+                                    {weekDays.map((day) => (
+                                      <button
+                                        key={day.value}
+                                        type="button"
+                                        onClick={() => setEditRecurringDueDayOfWeek(day.value)}
+                                        className={`h-8 rounded-lg text-[10px] font-bold ${
+                                          editRecurringDueDayOfWeek === day.value ? "bg-blue-500 text-white" : "bg-[#0f172a] text-slate-400"
+                                        }`}
+                                      >
+                                        {day.label}
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+                                {editRecurringType === "MONTHLY" && (
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    max="31"
+                                    value={editRecurringDueDay}
+                                    onChange={(e) => setEditRecurringDueDay(e.target.value)}
+                                    className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                                  />
+                                )}
+                                {editRecurringType === "SPECIFIC_DATE" && (
+                                  <input
+                                    type="date"
+                                    value={editRecurringDueDate}
+                                    onChange={(e) => setEditRecurringDueDate(e.target.value)}
+                                    className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </div>
                           <div className="flex gap-1 ml-auto">
                             <button onClick={handleSaveEdit} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-[10px] font-bold">Salvar</button>
-                            <button onClick={() => { setEditingId(null); setEditValue(""); }} className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-[10px] font-bold">Cancelar</button>
+                            <button onClick={() => { setEditingId(null); setEditValue(""); setEditRecurringDueDate(""); }} className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-[10px] font-bold">Cancelar</button>
                           </div>
                         </>
                       ) : (
@@ -928,7 +1025,7 @@ export default function Dashboard() {
                             <p className="text-sm font-bold text-white">
                               {tx.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                             </p>
-                            <p className="text-[10px] text-slate-500">{tx.date}</p>
+                            <p className="text-[10px] text-slate-500">{recurringScheduleLabel(tx)}</p>
                           </div>
                           <button onClick={() => handleDeleteTx(tx.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition-colors">
                             <span className="material-symbols-outlined text-lg">delete</span>
@@ -1052,3 +1149,18 @@ export default function Dashboard() {
     </div>
   );
 }
+  const currentEditingExpense = editingId ? editTransactions.find((item) => item.id === editingId) : null;
+
+  const recurringScheduleLabel = (tx: EditableExpenseItem) => {
+    if (tx.kind !== "recurring") return tx.date;
+    if (tx.recurrenceType === "WEEKLY" && typeof tx.dueDayOfWeek === "number") {
+      return `Semanal - ${weekDays.find((day) => day.value === String(tx.dueDayOfWeek))?.label || "Dia"}`;
+    }
+    if (tx.recurrenceType === "MONTHLY" && tx.dueDay) {
+      return `Mensal - dia ${tx.dueDay}`;
+    }
+    if (tx.recurrenceType === "SPECIFIC_DATE" && tx.dueDate) {
+      return `Data - ${tx.dueDate}`;
+    }
+    return "Despesa recorrente";
+  };
