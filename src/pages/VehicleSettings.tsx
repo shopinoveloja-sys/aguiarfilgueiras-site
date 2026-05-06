@@ -1,14 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+const vehicleStorageKey = "drivercash_vehicle";
+
+const defaultVehicle = {
+  model: "Toyota Corolla",
+  consumption: "12.5",
+  fuelPrice: "5.89",
+  fuelType: "gasolina"
+};
+
+const loadVehicle = () => {
+  try {
+    const saved = localStorage.getItem(vehicleStorageKey);
+    return saved ? { ...defaultVehicle, ...JSON.parse(saved) } : defaultVehicle;
+  } catch {
+    return defaultVehicle;
+  }
+};
 
 export default function VehicleSettings() {
   const navigate = useNavigate();
-  const [vehicle, setVehicle] = useState({
-    model: "Toyota Corolla",
-    consumption: "12.5",
-    fuelPrice: "5.89",
-    fuelType: "gasolina"
-  });
+  const [vehicle, setVehicle] = useState(loadVehicle);
+
+  const handleSave = () => {
+    localStorage.setItem(vehicleStorageKey, JSON.stringify(vehicle));
+    toast.success("Configuracoes do veiculo salvas!");
+  };
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
@@ -97,7 +116,7 @@ export default function VehicleSettings() {
           </p>
         </div>
 
-        <button className="w-full bg-gradient-to-br from-blue-800 to-blue-500 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]">
+        <button onClick={handleSave} className="w-full bg-gradient-to-br from-blue-800 to-blue-500 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]">
           Salvar Configurações
         </button>
       </main>
