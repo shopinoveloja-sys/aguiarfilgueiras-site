@@ -10,11 +10,13 @@ interface Transaction {
   category: string;
   value: number | string;
   date: string;
+  createdAt?: string;
 }
 
 interface KmDaily {
   id: string;
   date: string;
+  createdAt?: string;
   kmStart: number;
   kmEnd: number;
   kmTotal: number;
@@ -53,6 +55,8 @@ const normalizeText = (value: string) =>
 
 const money = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const metricDate = (value: { createdAt?: string; date: string }) => value.createdAt || value.date;
 
 const getPeriodRange = (period: Period) => {
   const now = new Date();
@@ -125,8 +129,8 @@ export default function Metrics() {
       return parsed >= start && parsed <= end;
     };
 
-    const periodTransactions = transactions.filter((item) => inRange(item.date));
-    const periodKm = kmHistory.filter((item) => inRange(item.date));
+    const periodTransactions = transactions.filter((item) => inRange(metricDate(item)));
+    const periodKm = kmHistory.filter((item) => inRange(metricDate(item)));
     const income = periodTransactions
       .filter((item) => item.type === "INCOME")
       .reduce((sum, item) => sum + toNumber(item.value), 0);

@@ -146,6 +146,16 @@ export const createKmDaily = async (data: { date: string; kmStart: number; kmEnd
   return response.data;
 };
 
+export const updateKmDaily = async (id: string, data: { date: string; kmStart: number; kmEnd: number }) => {
+  const response = await api.patch(`/km/${id}`, data);
+  return response.data;
+};
+
+export const deleteKmDaily = async (id: string) => {
+  const response = await api.delete(`/km/${id}`);
+  return response.data;
+};
+
 export const createRecurringExpense = async (data: {
   name: string;
   value: number;
