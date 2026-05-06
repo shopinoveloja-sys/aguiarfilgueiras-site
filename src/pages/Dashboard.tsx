@@ -67,6 +67,13 @@ interface PlanningData {
   todayTransactionAmount?: number;
 }
 
+interface PlanningExpenseItem {
+  id: string;
+  name: string;
+  recurrenceType?: "MONTHLY" | "WEEKLY" | "SPECIFIC_DATE";
+  isDueToday?: boolean;
+}
+
 interface AccessData {
   status: "TRIALING" | "ACTIVE" | "EXPIRED";
   daysRemaining: number;
@@ -619,6 +626,20 @@ export default function Dashboard() {
     projecao: data.chartData.projectionLine[index],
   }));
 
+  const recurringExpenses = Array.isArray(planning?.expenses) ? (planning?.expenses as PlanningExpenseItem[]) : [];
+  const hiddenRecurringDayCategories = new Set(
+    categoryPeriod === "day"
+      ? recurringExpenses
+          .filter((expense) => expense.name && expense.isDueToday === false)
+          .map((expense) => expense.name.trim().toLowerCase())
+      : [],
+  );
+
+  const visibleExpenseCategories = (data.expenseByCategory || []).filter((item) => {
+    if (categoryPeriod !== "day") return true;
+    return !hiddenRecurringDayCategories.has(item.category.trim().toLowerCase());
+  });
+
   const currentEditingExpense = editingId ? editTransactions.find((item) => item.id === editingId) : null;
 
   const recurringScheduleLabel = (tx: EditableExpenseItem, days: typeof weekDays) => {
@@ -941,8 +962,8 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="space-y-3">
-              {(data.expenseByCategory || []).length > 0 ? (
-                data.expenseByCategory.map((item) => (
+              {visibleExpenseCategories.length > 0 ? (
+                visibleExpenseCategories.map((item) => (
                   <div key={item.category} onClick={() => openEditCategory(item)} className="cursor-pointer hover:bg-white/5 rounded-lg -mx-2 px-2 py-1 transition-colors group">
                     <div className="flex items-center justify-between gap-3 mb-1">
                       <div className="flex items-center gap-2">
