@@ -1,5 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -81,6 +81,7 @@ function App() {
           <Route path="/metrics" element={<Metrics />} />
           <Route path="/agent" element={<AgentChat />} />
           <Route path="/map" element={<Metrics />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
         <Toaster position="top-center" />
