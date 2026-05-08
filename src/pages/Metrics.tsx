@@ -45,6 +45,15 @@ const defaultVehicle: VehicleConfig = {
   fuelType: "gasolina",
 };
 
+const fuelUnitMap: Record<string, string> = {
+  gasolina: "L",
+  alcool: "L",
+  etanol: "L",
+  gnv: "m³",
+  diesel: "L",
+  eletrico: "kWh",
+};
+
 const toNumber = (value: unknown) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
@@ -179,6 +188,7 @@ export default function Metrics() {
     week: calculatePeriodStats("week"),
     month: calculatePeriodStats("month"),
   }), [transactions, kmHistory, vehicle]);
+  const fuelUnit = fuelUnitMap[vehicle.fuelType] || "L";
 
   const periodLabels: Record<Period, string> = {
     day: "Hoje",
@@ -270,7 +280,7 @@ export default function Metrics() {
           <div className="flex items-center justify-between gap-3 mb-4">
             <div>
               <h2 className="text-sm font-bold">Consumo de combustivel</h2>
-              <p className="text-xs text-slate-500">KM rodado, litros estimados e media por periodo</p>
+              <p className="text-xs text-slate-500">{`KM rodado, consumo em ${fuelUnit} e media por periodo`}</p>
             </div>
             <button onClick={() => navigate("/vehicle")} className="size-10 rounded-full bg-amber-500/10 text-amber-300 flex items-center justify-center">
               <span className="material-symbols-outlined">tune</span>
@@ -280,19 +290,19 @@ export default function Metrics() {
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
               <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Media Real</p>
-              <p className="text-xl font-black text-amber-300">{stats.consumptionKmPerLiter.toFixed(1).replace(".", ",")} km/L</p>
+              <p className="text-xl font-black text-amber-300">{stats.consumptionKmPerLiter.toFixed(1).replace(".", ",")} {`km/${fuelUnit}`}</p>
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
-              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Litros</p>
-              <p className="text-xl font-black text-blue-300">{stats.liters.toFixed(1).replace(".", ",")} L</p>
+              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Quantidade</p>
+              <p className="text-xl font-black text-blue-300">{stats.liters.toFixed(1).replace(".", ",")} {fuelUnit}</p>
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
-              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Preco/Litro</p>
+              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">{`Preco/${fuelUnit}`}</p>
               <p className="text-xl font-black text-slate-200">{money(stats.fuelPrice)}</p>
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
               <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Referencia</p>
-              <p className="text-xl font-black text-emerald-300">{stats.expectedConsumption.toFixed(1).replace(".", ",")} km/L</p>
+              <p className="text-xl font-black text-emerald-300">{stats.expectedConsumption.toFixed(1).replace(".", ",")} {`km/${fuelUnit}`}</p>
             </div>
           </div>
 
@@ -305,10 +315,10 @@ export default function Metrics() {
               <div key={label} className="flex items-center justify-between border-b border-slate-800 pb-2 last:border-0 last:pb-0">
                 <div>
                   <p className="text-xs font-bold text-slate-300">{label}</p>
-                  <p className="text-[10px] text-slate-500">{item.kmTotal.toLocaleString("pt-BR")} km - {item.liters.toFixed(1).replace(".", ",")} L</p>
+                  <p className="text-[10px] text-slate-500">{item.kmTotal.toLocaleString("pt-BR")} km - {item.liters.toFixed(1).replace(".", ",")} {fuelUnit}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-black text-amber-300">{item.consumptionKmPerLiter.toFixed(1).replace(".", ",")} km/L</p>
+                  <p className="text-sm font-black text-amber-300">{item.consumptionKmPerLiter.toFixed(1).replace(".", ",")} {`km/${fuelUnit}`}</p>
                   <p className="text-[10px] text-slate-500">{money(item.fuel)}</p>
                 </div>
               </div>

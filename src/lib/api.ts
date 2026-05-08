@@ -179,7 +179,7 @@ export const deleteRecurringExpense = async (id: string) => {
 };
 
 export const getNonWorkingDays = async () => {
-  const response = await api.get('/planning/expenses/planning');
+  const response = await api.get('/planning/non-working-days');
   return response.data;
 };
 

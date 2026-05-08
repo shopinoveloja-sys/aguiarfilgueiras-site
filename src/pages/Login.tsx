@@ -40,7 +40,7 @@ export default function Login() {
 
     const initializeGoogle = () => {
       if (!googleClientId) {
-        console.warn("VITE_GOOGLE_CLIENT_ID não configurada no ambiente.");
+        console.warn("VITE_GOOGLE_CLIENT_ID nao configurada no ambiente.");
         return;
       }
 
@@ -56,11 +56,11 @@ export default function Login() {
               referralCode: referralCode || undefined,
             });
             saveSession(session);
-            toast.success("Autenticação Google realizada com sucesso!");
+            toast.success("Autenticacao Google realizada com sucesso!");
             navigate("/dashboard");
           } catch (error: any) {
             console.error(error);
-            const message = error.response?.data?.message || "Falha na autenticação Google.";
+            const message = error.response?.data?.message || "Falha na autenticacao Google.";
             toast.error(message);
           } finally {
             setLoading(false);
@@ -132,7 +132,7 @@ export default function Login() {
           <header className="mb-8 text-center">
             <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
             <p className="text-slate-400 text-sm">
-              {mode === "login" ? "Acesse sua conta financeira" : "Peça o código a quem te indicou para ganhar 15 dias grátis"}
+              {mode === "login" ? "Acesse sua conta financeira" : "Crie sua conta e ganhe 15 dias gratis para testar"}
             </p>
           </header>
 
@@ -190,18 +190,18 @@ export default function Login() {
 
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="referralCode">
-                Codigo de indicacao {mode === "register" ? "(Obrigatório para 15 dias)" : "(Opcional)"}
+                Codigo de indicacao (Opcional)
               </label>
               <input
                 className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
                 id="referralCode"
-                placeholder="CÓDIGO PARA GANHAR 15 DIAS"
+                placeholder="CODIGO DE INDICACAO"
                 type="text"
                 value={referralCode}
                 onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
               />
               {!referralCode && mode === "register" && (
-                <p className="text-[9px] text-blue-400 text-center animate-pulse">Sem código você precisará assinar para acessar.</p>
+                <p className="text-[9px] text-blue-400 text-center animate-pulse">Com indicacao, voce ainda participa do programa de parceiros.</p>
               )}
             </div>
 
@@ -241,7 +241,7 @@ export default function Login() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Aguarde..." : mode === "login" ? "Entrar" : referralCode ? "Começar teste grátis" : "Criar conta e assinar"}
+              {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Comecar teste gratis"}
             </button>
           </form>
 
@@ -260,7 +260,7 @@ export default function Login() {
           ) : (
             <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-center">
               <p className="text-amber-500 text-xs font-medium">
-                Google Auth não configurado. Adicione VITE_GOOGLE_CLIENT_ID no Coolify.
+                Google Auth nao configurado. Adicione VITE_GOOGLE_CLIENT_ID no Coolify.
               </p>
             </div>
           )}

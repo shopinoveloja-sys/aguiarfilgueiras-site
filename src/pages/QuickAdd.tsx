@@ -33,6 +33,7 @@ export default function QuickAdd() {
     { id: "99", name: "99", icon: "local_taxi", color: "bg-[#FFD100] text-black" },
     { id: "INDRIVE", name: "InDrive", icon: "hail", color: "bg-[#bcfc01] text-black" },
     { id: "PARTICULAR", name: "Particular", icon: "person", color: "bg-blue-600 text-white" },
+    { id: "OUTRAS", name: "Outras", icon: "payments", color: "bg-emerald-600 text-white" },
   ];
 
   const expenses = [
@@ -109,7 +110,7 @@ export default function QuickAdd() {
           ? recurrencePayload.dueDate
           : new Date().toISOString();
       const transactionCategory =
-        type === "EXPENSE" && category === "OUTROS" && description.trim()
+        description.trim() && ((type === "EXPENSE" && category === "OUTROS") || (type === "INCOME" && category === "OUTRAS"))
           ? description.trim()
           : category;
 
@@ -201,10 +202,10 @@ export default function QuickAdd() {
       </div>
 
       <div className="px-6 mb-4 space-y-4 animate-fade-in">
-        {(category === "OUTROS" || recurrenceType !== "SPECIFIC_DATE") && (
+        {((type === "INCOME" && category === "OUTRAS") || (type === "EXPENSE" && (category === "OUTROS" || recurrenceType !== "SPECIFIC_DATE"))) && (
           <input
             type="text"
-            placeholder={type === "INCOME" ? "Observacao interna (opcional)" : "Nome da despesa (ex: Aluguel do carro)"}
+            placeholder={type === "INCOME" ? "Fonte da receita (ex: Bonus, aluguel, acerto)" : "Nome da despesa (ex: Aluguel do carro)"}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full bg-[#1e293b66] border border-blue-500/20 rounded-xl p-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"

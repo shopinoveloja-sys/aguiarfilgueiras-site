@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getDashboardData, getReferralSummary, requestReferralWithdrawal } from "../lib/api";
 import { toast } from "sonner";
 
@@ -21,14 +21,46 @@ interface DashboardData {
   projectedMonth: number;
 }
 
+interface SessionUser {
+  name: string;
+  email: string;
+  phone?: string;
+  profileCompletedAt?: string | null;
+  phoneVerifiedAt?: string | null;
+}
+
+interface VehicleConfig {
+  model?: string;
+}
+
+const readStorage = (key: string) => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
 export default function Profile() {
   const navigate = useNavigate();
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [pixKey, setPixKey] = useState("");
   const [requestedFor, setRequestedFor] = useState("");
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [vehicle, setVehicle] = useState<VehicleConfig | null>(null);
 
   useEffect(() => {
+    try {
+      const storedUser = readStorage("drivercash_user");
+      const storedVehicle = readStorage("drivercash_vehicle");
+      setSessionUser(storedUser ? JSON.parse(storedUser) : null);
+      setVehicle(storedVehicle ? JSON.parse(storedVehicle) : null);
+    } catch {
+      setSessionUser(null);
+      setVehicle(null);
+    }
+
     getReferralSummary()
       .then(setReferrals)
       .catch(() => setReferrals(null));
@@ -58,10 +90,17 @@ export default function Profile() {
         requestedAmount: current.requestedAmount + withdrawal.amount,
       } : current);
       toast.success("Pedido de saque realizado!");
-    } catch (e) {
+    } catch {
       toast.error("Erro ao solicitar saque.");
     }
   };
+
+  const userInitial = useMemo(() => (sessionUser?.name?.trim()?.[0] || "D").toUpperCase(), [sessionUser]);
+  const profileStatus = sessionUser?.profileCompletedAt
+    ? "Cadastro completo"
+    : sessionUser?.phoneVerifiedAt
+      ? "Cadastro quase pronto"
+      : "Complete seu cadastro";
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
@@ -81,19 +120,18 @@ export default function Profile() {
         <section className="flex flex-col items-center text-center space-y-4">
           <div className="relative">
             <div className="w-32 h-32 rounded-full border-4 border-blue-500/20 p-1 bg-gradient-to-tr from-blue-800 to-blue-500">
-              <img
-                alt="Driver Profile"
-                className="w-full h-full rounded-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX_BrWh_fOlKBNm4QLZHTP7JSymtqCP73UkamtpZP9rkg06scfNsYaWt-HSC6duLom32PNXdbd_HIA4W5kjoptK-NcPBPBkrTvOtbWBv1Qvmnk_C06BWhxbUe4SquYONfW41DUB3pFzHG5U3XmJZ92Q51dJNCqmuyzQveFTazcLZrX0oCJKCQQz9jBJQlZZB87cOv5QT8O4zl8PpT6C0ilseEwwHt-BuYjamv3eXTcxIpK6keKmfpDaRmUrkujuKP2f59HRTVGw1ib"
-              />
+              <div className="w-full h-full rounded-full bg-[#0f172a] flex items-center justify-center text-4xl font-black text-blue-300">
+                {userInitial}
+              </div>
             </div>
             <div className="absolute bottom-1 right-1 bg-blue-500 text-white rounded-full p-1.5 shadow-lg">
               <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
             </div>
           </div>
           <div className="space-y-1">
-            <h2 className="text-2xl font-bold">Alex Rivera</h2>
-            <p className="text-slate-400 text-sm font-medium">Motorista Elite • 4.98 ★</p>
+            <h2 className="text-2xl font-bold">{sessionUser?.name || "Motorista DriverCash"}</h2>
+            <p className="text-slate-400 text-sm font-medium">{profileStatus}</p>
+            <p className="text-slate-500 text-xs">{sessionUser?.email || "Sem e-mail carregado"}</p>
           </div>
         </section>
 
@@ -103,18 +141,18 @@ export default function Profile() {
               <span className="material-symbols-outlined text-blue-500">directions_car</span>
             </div>
             <div>
-              <h3 className="font-bold">Veículo</h3>
-              <p className="text-slate-400 text-xs mt-1">Toyota Corolla</p>
+              <h3 className="font-bold">Veiculo</h3>
+              <p className="text-slate-400 text-xs mt-1">{vehicle?.model || "Nao configurado"}</p>
             </div>
           </button>
-          
+
           <button onClick={() => navigate("/earnings")} className="flex flex-col items-start p-5 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors text-left space-y-3">
             <div className="bg-blue-500/10 p-2 rounded-lg">
               <span className="material-symbols-outlined text-blue-500">attach_money</span>
             </div>
             <div>
               <h3 className="font-bold">Ganhos</h3>
-              <p className="text-slate-400 text-xs mt-1">Configurar métricas</p>
+              <p className="text-slate-400 text-xs mt-1">Configurar metricas</p>
             </div>
           </button>
 
@@ -123,8 +161,8 @@ export default function Profile() {
               <span className="material-symbols-outlined text-purple-500">calendar_month</span>
             </div>
             <div className="flex-1">
-              <h3 className="font-bold">Rotina & Folgas</h3>
-              <p className="text-slate-400 text-xs mt-1">Marque seus dias de descanso e planeje suas despesas</p>
+              <h3 className="font-bold">Rotina e Folgas</h3>
+              <p className="text-slate-400 text-xs mt-1">Marque seus descansos e planeje suas despesas</p>
             </div>
             <span className="material-symbols-outlined text-slate-500">chevron_right</span>
           </button>
@@ -146,7 +184,7 @@ export default function Profile() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-bold text-white">Indique e Ganhe</p>
-                <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no nível 2.</p>
+                <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no nivel 2.</p>
               </div>
               <span className="material-symbols-outlined text-emerald-400">group_add</span>
             </div>
@@ -156,7 +194,7 @@ export default function Profile() {
             ) : (
               <>
                 <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3">
-                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu código</p>
+                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo</p>
                   <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
                   <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
                 </div>
@@ -187,7 +225,7 @@ export default function Profile() {
         )}
 
         <section className="bg-[#1e293b66] rounded-xl p-6 border border-blue-500/10 space-y-4">
-          <h4 className="text-[10px] font-bold tracking-wider uppercase text-blue-500">Performance Rápida</h4>
+          <h4 className="text-[10px] font-bold tracking-wider uppercase text-blue-500">Performance Rapida</h4>
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <p className="text-xs text-slate-400">Ganhos</p>
@@ -219,19 +257,19 @@ export default function Profile() {
       <nav className="fixed bottom-0 left-0 right-0 bg-[#1e293b66] border-t border-blue-500/10 px-6 py-3 pb-8 flex items-center justify-around">
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/dashboard"); }}>
           <span className="material-symbols-outlined">explore</span>
-          <span className="text-[10px] font-bold uppercase tracking-tighter">DRIVE</span>
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Drive</span>
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#">
           <span className="material-symbols-outlined">analytics</span>
-          <span className="text-[10px] font-bold uppercase tracking-tighter">STATS</span>
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Stats</span>
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/agent"); }}>
           <span className="material-symbols-outlined">memory</span>
-          <span className="text-[10px] font-bold uppercase tracking-tighter">TECH</span>
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Tech</span>
         </a>
         <a className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-800 to-blue-500 text-white rounded-xl px-3 py-1.5 shadow-lg" href="#" onClick={(e) => { e.preventDefault(); navigate("/profile"); }}>
           <span className="material-symbols-outlined">settings</span>
-          <span className="text-[10px] font-bold uppercase tracking-tighter">GEAR</span>
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Gear</span>
         </a>
       </nav>
     </div>

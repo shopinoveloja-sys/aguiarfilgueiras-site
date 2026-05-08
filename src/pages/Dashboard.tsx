@@ -60,6 +60,7 @@ interface PlanningData {
   summary?: {
     requiredPerDay: number;
     totalAccumulated: number;
+    plannedToDate?: number;
     totalExpense: number;
     remainingAmount: number;
   };
@@ -72,6 +73,10 @@ interface PlanningExpenseItem {
   name: string;
   recurrenceType?: "MONTHLY" | "WEEKLY" | "SPECIFIC_DATE";
   isDueToday?: boolean;
+  remainingAmount?: number;
+  requiredPerDay?: number;
+  totalExpense?: number;
+  accumulated?: number;
 }
 
 interface AccessData {
@@ -224,6 +229,7 @@ export default function Dashboard() {
   const [redeemCode, setRedeemCode] = useState("");
   const [redeeming, setRedeeming] = useState(false);
   const [payingExpenseId, setPayingExpenseId] = useState<string | null>(null);
+  const [paidTodayExpenses, setPaidTodayExpenses] = useState<Array<{ id: string; name: string; amount: number }>>([]);
   
   const loadDashboard = async () => {
     try {
@@ -594,6 +600,11 @@ export default function Dashboard() {
     try {
       const { default: api } = await import("../lib/api");
       await api.patch(`/planning/expenses/${expense.id}/accumulate`, { amount: expense.remainingAmount });
+      setPaidTodayExpenses((current) =>
+        current.some((item) => item.id === expense.id)
+          ? current
+          : [...current, { id: expense.id, name: expense.name, amount: Number(expense.remainingAmount || 0) }],
+      );
       toast.success(`${expense.name} quitado com sucesso!`);
       loadDashboard();
     } catch {
@@ -627,6 +638,12 @@ export default function Dashboard() {
   }));
 
   const recurringExpenses = Array.isArray(planning?.expenses) ? (planning?.expenses as PlanningExpenseItem[]) : [];
+  const dueTodayExpenses = recurringExpenses.filter(
+    (expense) =>
+      expense.isDueToday &&
+      Number(expense.remainingAmount || 0) > 0 &&
+      !paidTodayExpenses.some((paid) => paid.id === expense.id),
+  );
   const hiddenRecurringDayCategories = new Set(
     categoryPeriod === "day"
       ? recurringExpenses
@@ -787,11 +804,11 @@ export default function Dashboard() {
           </section>
         )}
 
-        {planning?.expenses?.filter((e: any) => e.isDueToday && e.remainingAmount > 0).length > 0 && (
+        {(dueTodayExpenses.length > 0 || paidTodayExpenses.length > 0) && (
           <section className="mb-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Vencem Hoje</h2>
             <div className="space-y-3">
-              {planning.expenses.filter((e: any) => e.isDueToday && e.remainingAmount > 0).map((expense: any) => (
+              {dueTodayExpenses.map((expense: any) => (
                 <div key={expense.id} className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-bold text-red-300">{expense.name}</p>
@@ -803,6 +820,20 @@ export default function Dashboard() {
                     className="text-[10px] font-bold bg-red-500 text-white px-3 py-1.5 rounded-lg active:scale-95 disabled:opacity-60"
                   >
                     {payingExpenseId === expense.id ? "..." : "QUITAR"}
+                  </button>
+                </div>
+              ))}
+              {paidTodayExpenses.map((expense) => (
+                <div key={expense.id} className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-emerald-300">{expense.name}</p>
+                    <p className="text-xs text-emerald-500/70">{formatMoneyPrecise(expense.amount)}</p>
+                  </div>
+                  <button
+                    disabled
+                    className="text-[10px] font-bold bg-emerald-500 text-white px-3 py-1.5 rounded-lg opacity-90"
+                  >
+                    QUITADO
                   </button>
                 </div>
               ))}
