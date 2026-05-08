@@ -77,6 +77,9 @@ interface PlanningExpenseItem {
   requiredPerDay?: number;
   totalExpense?: number;
   accumulated?: number;
+  reservedToDate?: number;
+  progressPercentage?: number;
+  payableAmount?: number;
 }
 
 interface AccessData {
@@ -599,11 +602,11 @@ export default function Dashboard() {
     setPayingExpenseId(expense.id);
     try {
       const { default: api } = await import("../lib/api");
-      await api.patch(`/planning/expenses/${expense.id}/accumulate`, { amount: expense.remainingAmount });
+      await api.patch(`/planning/expenses/${expense.id}/accumulate`, { amount: expense.totalExpense });
       setPaidTodayExpenses((current) =>
         current.some((item) => item.id === expense.id)
           ? current
-          : [...current, { id: expense.id, name: expense.name, amount: Number(expense.remainingAmount || 0) }],
+          : [...current, { id: expense.id, name: expense.name, amount: Number(expense.payableAmount || expense.totalExpense || 0) }],
       );
       toast.success(`${expense.name} quitado com sucesso!`);
       loadDashboard();
@@ -641,7 +644,7 @@ export default function Dashboard() {
   const dueTodayExpenses = recurringExpenses.filter(
     (expense) =>
       expense.isDueToday &&
-      Number(expense.remainingAmount || 0) > 0 &&
+      Number(expense.payableAmount || expense.totalExpense || 0) > 0 &&
       !paidTodayExpenses.some((paid) => paid.id === expense.id),
   );
   const hiddenRecurringDayCategories = new Set(
@@ -812,7 +815,7 @@ export default function Dashboard() {
                 <div key={expense.id} className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-bold text-red-300">{expense.name}</p>
-                    <p className="text-xs text-red-500/70">{formatMoneyPrecise(expense.remainingAmount)}</p>
+                    <p className="text-xs text-red-500/70">{formatMoneyPrecise(expense.payableAmount || expense.totalExpense || 0)}</p>
                   </div>
                   <button
                     onClick={() => handlePayExpense(expense)}
@@ -1217,6 +1220,27 @@ export default function Dashboard() {
                   {formatMoneyPrecise(planning.summary.totalAccumulated || 0)}
                 </span>
               </div>
+              {planning.summary.totalExpense > 0 && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
+                    <span>Reservado ate hoje</span>
+                    <span>
+                      {formatMoneyPrecise(planning.summary.totalAccumulated || 0)} de {formatMoneyPrecise(planning.summary.totalExpense || 0)}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 rounded-full bg-slate-900/80 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-amber-400"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          ((planning.summary.totalAccumulated || 0) / Math.max(planning.summary.totalExpense || 0, 1)) * 100,
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         )}

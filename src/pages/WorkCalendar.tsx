@@ -10,6 +10,9 @@ interface PlannedExpense {
   name: string;
   workingDaysRemaining: number;
   requiredPerDay: number;
+  totalExpense?: number;
+  reservedToDate?: number;
+  progressPercentage?: number;
 }
 
 interface TodayExpense {
@@ -212,12 +215,30 @@ export default function WorkCalendar() {
               </div>
             )}
             {planning.expenses && planning.expenses.map((exp) => (
-              <div key={exp.id} className="flex items-center justify-between mt-3 pt-3 border-t border-amber-500/10">
-                <div>
-                  <p className="text-sm font-bold text-white">{exp.name}</p>
-                  <p className="text-[10px] text-slate-500">{exp.workingDaysRemaining} dias restantes</p>
+              <div key={exp.id} className="mt-3 pt-3 border-t border-amber-500/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-white">{exp.name}</p>
+                    <p className="text-[10px] text-slate-500">{exp.workingDaysRemaining} dias restantes</p>
+                  </div>
+                  <p className="text-sm font-bold text-amber-400">R$ {exp.requiredPerDay.toFixed(2).replace('.', ',')}/dia</p>
                 </div>
-                <p className="text-sm font-bold text-amber-400">R$ {exp.requiredPerDay.toFixed(2).replace('.', ',')}/dia</p>
+                {typeof exp.totalExpense === "number" && (
+                  <>
+                    <div className="flex items-center justify-between mt-2 text-[10px] font-bold text-slate-500">
+                      <span>Provisionado</span>
+                      <span>
+                        R$ {(exp.reservedToDate || 0).toFixed(2).replace('.', ',')} de R$ {exp.totalExpense.toFixed(2).replace('.', ',')}
+                      </span>
+                    </div>
+                    <div className="mt-2 h-2 rounded-full bg-slate-900/80 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-amber-400"
+                        style={{ width: `${Math.min(exp.progressPercentage || 0, 100)}%` }}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
