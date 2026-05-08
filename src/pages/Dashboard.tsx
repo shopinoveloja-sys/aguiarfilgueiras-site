@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
@@ -205,7 +205,7 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [planning, setPlanning] = useState<PlanningData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMêssage, setErrorMêssage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
   const [balanceNegative, setBalanceNegative] = useState(false);
@@ -244,7 +244,7 @@ export default function Dashboard() {
       } catch (e) {}
     } catch (error) {
       console.error("Failed to load dashboard data", error);
-      setErrorMessage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
+      setErrorMêssage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
     }
   };
 
@@ -293,10 +293,10 @@ export default function Dashboard() {
 
   const firstName = sessionUser?.name?.trim().split(/\s+/)[0] || "Motorista";
 
-  if (errorMessage) {
+  if (errorMêssage) {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center flex-col text-center p-4">
-        <div className="text-red-400 text-lg font-bold mb-4">{errorMessage}</div>
+        <div className="text-red-400 text-lg font-bold mb-4">{errorMêssage}</div>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
           Tentar novamente
         </button>
@@ -317,9 +317,9 @@ export default function Dashboard() {
   }
 
   const performanceLabel = {
-    below_average: { text: "Abaixo da Media", color: "text-red-400", bg: "bg-red-500/10" },
+    below_average: { text: "Abaixo da Média", color: "text-red-400", bg: "bg-red-500/10" },
     on_track: { text: "No Caminho", color: "text-blue-400", bg: "bg-blue-500/10" },
-    above_average: { text: "Acima da Media", color: "text-emerald-400", bg: "bg-emerald-500/10" }
+    above_average: { text: "Acima da Média", color: "text-emerald-400", bg: "bg-emerald-500/10" }
   }[data.performanceStatus || 'on_track'];
 
   const handleSaveBalance = async () => {
@@ -363,7 +363,7 @@ export default function Dashboard() {
   const categoryPeriodLabels: Record<CategoryPeriod, string> = {
     day: "Hoje",
     week: "Semana",
-    month: "Mes",
+    month: "Mês",
   };
 
   const weekDays = [
@@ -626,12 +626,12 @@ export default function Dashboard() {
     }
   };
 
-  const projectionMessage =
+  const projectionMêssage =
     data.projectedMonth >= data.bestGoalMonth && data.bestGoalMonth > 0
       ? "Ritmo para igualar ou superar seu melhor cenario."
       : data.projectedMonth >= data.averageGoalMonth && data.averageGoalMonth > 0
-        ? "Voce esta perto da media esperada para o mes."
-        : "Voce esta abaixo da media esperada para o mes.";
+        ? "Você está perto da média esperada para o mês."
+        : "Você está abaixo da média esperada para o mês.";
 
   const projectionChart = data.chartData.labels.map((label, index) => ({
     day: label,
@@ -684,7 +684,7 @@ export default function Dashboard() {
           <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
             <h3 className="text-lg font-bold text-white mb-2">Saldo Anterior</h3>
-            <p className="text-xs text-slate-400 mb-5">Informe quanto voce ja tinha de saldo antes de usar o app.</p>
+            <p className="text-xs text-slate-400 mb-5">Informe quanto você já tinha de saldo antes de usar o app.</p>
             {balanceNegative ? (
               <>
                 <div className="flex items-baseline justify-center gap-2 mb-2 py-4">
@@ -754,7 +754,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-bold text-white">
-                    {access.status === "EXPIRED" ? "Teste expirado" : `Teste gratis: ${access.daysRemaining} dia(s) restantes`}
+                    {access.status === "EXPIRED" ? "Teste expirado" : `Teste grátis: ${access.daysRemaining} dia(s) restantes`}
                   </p>
                   <p className="text-xs text-slate-400">Assinatura anual por R$ {access.annualPrice}.</p>
                 </div>
@@ -983,7 +983,7 @@ export default function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-slate-500">Nenhuma receita registrada neste periodo.</p>
+                <p className="text-xs text-slate-500">Nenhuma receita registrada neste período.</p>
               )}
             </div>
           </div>
@@ -992,7 +992,7 @@ export default function Dashboard() {
             <div className="flex items-start justify-between gap-3 mb-4">
               <div>
                 <p className="text-sm font-bold text-white">Despesas por Categoria</p>
-                <p className="text-xs text-slate-400">Peso de cada despesa no periodo</p>
+                <p className="text-xs text-slate-400">Peso de cada despesa no período</p>
               </div>
               <div className="flex items-center gap-3">
                 <CategoryPeriodFilter />
@@ -1018,7 +1018,7 @@ export default function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste periodo.</p>
+                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste período.</p>
               )}
             </div>
           </div>

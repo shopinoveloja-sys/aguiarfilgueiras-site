@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAgentIntro, sendAgentMessage } from "../lib/api";
 import { toast } from "sonner";
@@ -58,7 +58,7 @@ export default function AgentChat() {
       const data = await sendAgentMessage(message);
       setMessages((current) => [...current, { role: "assistant", content: data.answer }]);
     } catch {
-      toast.error("Nao consegui falar com o agente agora.");
+      toast.error("Não consegui falar com o agente agora.");
       setMessages((current) => [
         ...current,
         {
@@ -138,27 +138,22 @@ export default function AgentChat() {
         </section>
       </main>
 
-      <footer className="sticky bottom-0 border-t border-blue-500/10 bg-[#020617]/95 backdrop-blur p-4">
+      <footer className="border-t border-blue-500/10 bg-[#020617]/95 backdrop-blur p-4">
         <form
-          className="max-w-3xl mx-auto flex items-end gap-2"
+          className="max-w-3xl mx-auto flex gap-3"
           onSubmit={(event) => {
             event.preventDefault();
             ask(input);
           }}
         >
-          <textarea
+          <input
             value={input}
             onChange={(event) => setInput(event.target.value)}
-            placeholder="Pergunte sobre seus ganhos, despesas, KM ou metas..."
-            rows={1}
-            className="min-h-12 max-h-28 flex-1 resize-none rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
+            placeholder="Pergunte sobre seus ganhos, despesas, KM ou metas"
+            className="flex-1 rounded-xl bg-slate-900 border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
           />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="size-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center disabled:opacity-50 active:scale-95"
-          >
-            <span className="material-symbols-outlined">send</span>
+          <button type="submit" disabled={loading || !input.trim()} className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white disabled:opacity-50">
+            Enviar
           </button>
         </form>
       </footer>

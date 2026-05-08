@@ -40,7 +40,7 @@ export default function Login() {
 
     const initializeGoogle = () => {
       if (!googleClientId) {
-        console.warn("VITE_GOOGLE_CLIENT_ID nao configurada no ambiente.");
+        console.warn("VITE_GOOGLE_CLIENT_ID não configurada no ambiente.");
         return;
       }
 
@@ -56,11 +56,11 @@ export default function Login() {
               referralCode: referralCode || undefined,
             });
             saveSession(session);
-            toast.success("Autenticacao Google realizada com sucesso!");
+            toast.success("Autenticação Google realizada com sucesso!");
             navigate("/dashboard");
           } catch (error: any) {
             console.error(error);
-            const message = error.response?.data?.message || "Falha na autenticacao Google.";
+            const message = error.response?.data?.message || "Falha na autenticação Google.";
             toast.error(message);
           } finally {
             setLoading(false);
@@ -105,7 +105,7 @@ export default function Login() {
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
-      toast.error(mode === "login" ? "E-mail ou senha invalidos." : "Nao foi possivel criar sua conta.");
+      toast.error(mode === "login" ? "E-mail ou senha inválidos." : "Não foi possível criar sua conta.");
     } finally {
       setLoading(false);
     }
@@ -125,14 +125,14 @@ export default function Login() {
           <h1 className="text-3xl font-black tracking-tight bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
             Driver Cash
           </h1>
-          <p className="text-slate-400 text-sm mt-1 font-medium">Financas para quem acelera</p>
+          <p className="text-slate-400 text-sm mt-1 font-medium">Finanças para quem acelera</p>
         </div>
 
         <div className="bg-[#1e293b66] rounded-xl p-8 shadow-2xl ring-1 ring-blue-500/10">
           <header className="mb-8 text-center">
             <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
             <p className="text-slate-400 text-sm">
-              {mode === "login" ? "Acesse sua conta financeira" : "Crie sua conta e ganhe 15 dias gratis para testar"}
+              {mode === "login" ? "Acesse sua conta financeira" : "Crie sua conta e ganhe 15 dias grátis para testar"}
             </p>
           </header>
 
@@ -178,7 +178,7 @@ export default function Login() {
                   <input
                     className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
                     id="document"
-                    placeholder="Somente numeros"
+                    placeholder="Somente números"
                     type="text"
                     value={documentNumber}
                     onChange={(e) => setDocumentNumber(e.target.value)}
@@ -190,18 +190,18 @@ export default function Login() {
 
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block w-full text-center" htmlFor="referralCode">
-                Codigo de indicacao (Opcional)
+                Código de indicação (Opcional)
               </label>
               <input
                 className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
                 id="referralCode"
-                placeholder="CODIGO DE INDICACAO"
+                placeholder="CÓDIGO DE INDICAÇÃO"
                 type="text"
                 value={referralCode}
                 onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
               />
               {!referralCode && mode === "register" && (
-                <p className="text-[9px] text-blue-400 text-center animate-pulse">Com indicacao, voce ainda participa do programa de parceiros.</p>
+                <p className="text-[9px] text-blue-400 text-center animate-pulse">Com indicação, você ainda participa do programa de parceiros.</p>
               )}
             </div>
 
@@ -241,7 +241,7 @@ export default function Login() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Comecar teste gratis"}
+              {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Começar teste grátis"}
             </button>
           </form>
 
@@ -260,14 +260,14 @@ export default function Login() {
           ) : (
             <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-center">
               <p className="text-amber-500 text-xs font-medium">
-                Google Auth nao configurado. Adicione VITE_GOOGLE_CLIENT_ID no Coolify.
+                Google Auth não configurado. Adicione VITE_GOOGLE_CLIENT_ID no Coolify.
               </p>
             </div>
           )}
 
           <div className="mt-8 pt-6 border-t border-blue-500/10 text-center">
             <p className="text-sm text-slate-400">
-              {mode === "login" ? "Nao possui uma conta?" : "Ja possui uma conta?"}{" "}
+              {mode === "login" ? "Não possui uma conta?" : "Já possui uma conta?"}{" "}
               <button
                 type="button"
                 className="text-blue-500 font-bold hover:underline underline-offset-4"

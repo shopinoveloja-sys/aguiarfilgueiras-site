@@ -193,7 +193,7 @@ export default function Metrics() {
   const periodLabels: Record<Period, string> = {
     day: "Hoje",
     week: "Semana",
-    month: "Mes",
+    month: "Mês",
   };
 
   if (loading) {
@@ -212,8 +212,8 @@ export default function Metrics() {
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="text-center">
-            <h1 className="text-lg font-black">Metricas</h1>
-            <p className="text-xs text-slate-500 font-bold uppercase">Combustivel, KM e manutencao</p>
+            <h1 className="text-lg font-black">Métricas</h1>
+            <p className="text-xs text-slate-500 font-bold uppercase">Combustível, KM e manutenção</p>
           </div>
           <button onClick={() => navigate("/add")} className="size-10 rounded-full bg-blue-600 flex items-center justify-center">
             <span className="material-symbols-outlined">add</span>
@@ -243,7 +243,7 @@ export default function Metrics() {
             <p className="text-2xl font-black text-blue-400">{money(stats.incomePerHour)}</p>
           </div>
           <div className="rounded-xl bg-slate-900 border border-amber-500/20 p-4">
-            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Combustivel por KM</p>
+            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Combustível por KM</p>
             <p className="text-2xl font-black text-amber-400">{money(stats.fuelPerKm)}</p>
           </div>
           <div className="rounded-xl bg-slate-900 border border-red-500/20 p-4">
@@ -264,7 +264,7 @@ export default function Metrics() {
             {[
               ["Receitas", money(stats.income), "text-emerald-300"],
               ["Despesas", money(stats.expense), "text-red-300"],
-              ["Combustivel", money(stats.fuel), "text-amber-300"],
+              ["Combustível", money(stats.fuel), "text-amber-300"],
               ["Manutencao", money(stats.maintenanceCost), "text-slate-300"],
               ["Horas estimadas", `${stats.estimatedHours.toFixed(1).replace(".", ",")} h`, "text-blue-300"],
             ].map(([label, value, color]) => (
@@ -279,8 +279,8 @@ export default function Metrics() {
         <section className="rounded-xl bg-slate-900 border border-amber-500/20 p-4">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="text-sm font-bold">Consumo de combustivel</h2>
-              <p className="text-xs text-slate-500">{`KM rodado, consumo em ${fuelUnit} e media por periodo`}</p>
+              <h2 className="text-sm font-bold">Consumo de combustível</h2>
+              <p className="text-xs text-slate-500">{`KM rodado, consumo em ${fuelUnit} e média por período`}</p>
             </div>
             <button onClick={() => navigate("/vehicle")} className="size-10 rounded-full bg-amber-500/10 text-amber-300 flex items-center justify-center">
               <span className="material-symbols-outlined">tune</span>
@@ -289,7 +289,7 @@ export default function Metrics() {
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
-              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Media Real</p>
+              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Média Real</p>
               <p className="text-xl font-black text-amber-300">{stats.consumptionKmPerLiter.toFixed(1).replace(".", ",")} {`km/${fuelUnit}`}</p>
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
@@ -297,7 +297,7 @@ export default function Metrics() {
               <p className="text-xl font-black text-blue-300">{stats.liters.toFixed(1).replace(".", ",")} {fuelUnit}</p>
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
-              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">{`Preco/${fuelUnit}`}</p>
+              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">{`Preço/${fuelUnit}`}</p>
               <p className="text-xl font-black text-slate-200">{money(stats.fuelPrice)}</p>
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
@@ -310,7 +310,7 @@ export default function Metrics() {
             {([
               ["Hoje", fuelAverages.day],
               ["Semana", fuelAverages.week],
-              ["Mes", fuelAverages.month],
+              ["Mês", fuelAverages.month],
             ] as const).map(([label, item]) => (
               <div key={label} className="flex items-center justify-between border-b border-slate-800 pb-2 last:border-0 last:pb-0">
                 <div>
@@ -329,13 +329,13 @@ export default function Metrics() {
         <section className="rounded-xl bg-slate-900 border border-slate-800 p-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-bold">Manutencoes</h2>
+              <h2 className="text-sm font-bold">Manutenções</h2>
               <p className="text-xs text-slate-500">Alertas cadastrados por quilometragem</p>
             </div>
             <span className="material-symbols-outlined text-slate-400">build</span>
           </div>
           {maintenance.length === 0 ? (
-            <p className="text-sm text-slate-500 py-4 text-center">Nenhuma manutencao cadastrada.</p>
+            <p className="text-sm text-slate-500 py-4 text-center">Nenhuma manutenção cadastrada.</p>
           ) : (
             <div className="space-y-3">
               {maintenance.slice(0, 6).map((item) => (
@@ -361,7 +361,7 @@ export default function Metrics() {
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/rides"); }}>
           <span className="material-symbols-outlined">history</span>
-          <span className="text-[10px] font-bold uppercase">Historico</span>
+          <span className="text-[10px] font-bold uppercase">Histórico</span>
         </a>
         <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
           <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white ring-4 ring-[#020617] active:scale-95">
@@ -370,7 +370,7 @@ export default function Metrics() {
         </a>
         <a className="flex flex-col items-center gap-1 text-blue-400" href="#" onClick={(e) => { e.preventDefault(); navigate("/metrics"); }}>
           <span className="material-symbols-outlined">query_stats</span>
-          <span className="text-[10px] font-bold uppercase">Metricas</span>
+          <span className="text-[10px] font-bold uppercase">Métricas</span>
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/profile"); }}>
           <span className="material-symbols-outlined">person</span>

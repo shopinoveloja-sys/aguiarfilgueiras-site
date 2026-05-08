@@ -141,8 +141,8 @@ export default function Profile() {
               <span className="material-symbols-outlined text-blue-500">directions_car</span>
             </div>
             <div>
-              <h3 className="font-bold">Veiculo</h3>
-              <p className="text-slate-400 text-xs mt-1">{vehicle?.model || "Nao configurado"}</p>
+              <h3 className="font-bold">Veículo</h3>
+              <p className="text-slate-400 text-xs mt-1">{vehicle?.model || "Não configurado"}</p>
             </div>
           </button>
 
@@ -152,7 +152,7 @@ export default function Profile() {
             </div>
             <div>
               <h3 className="font-bold">Ganhos</h3>
-              <p className="text-slate-400 text-xs mt-1">Configurar metricas</p>
+              <p className="text-slate-400 text-xs mt-1">Configurar métricas</p>
             </div>
           </button>
 
@@ -184,7 +184,7 @@ export default function Profile() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-bold text-white">Indique e Ganhe</p>
-                <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no nivel 2.</p>
+                <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no nível 2.</p>
               </div>
               <span className="material-symbols-outlined text-emerald-400">group_add</span>
             </div>
@@ -194,7 +194,7 @@ export default function Profile() {
             ) : (
               <>
                 <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3">
-                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo</p>
+                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu código</p>
                   <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
                   <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
                 </div>

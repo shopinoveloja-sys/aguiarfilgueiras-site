@@ -36,7 +36,7 @@ export default function VehicleSettings() {
 
   const handleSave = () => {
     localStorage.setItem(vehicleStorageKey, JSON.stringify(vehicle));
-    toast.success("Configuracoes do veiculo salvas!");
+    toast.success("Configurações do veículo salvas!");
   };
 
   return (
@@ -45,19 +45,19 @@ export default function VehicleSettings() {
         <button onClick={() => navigate("/profile")} className="flex items-center justify-center p-2 rounded-full hover:bg-white/5">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
-        <h1 className="text-lg font-bold">Configuracao do Veiculo</h1>
+        <h1 className="text-lg font-bold">Configuração do Veículo</h1>
         <div className="w-10" />
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         <section className="space-y-1">
-          <h2 className="text-2xl font-bold">Detalhes do Veiculo</h2>
-          <p className="text-sm text-slate-400">Mantenha os dados atualizados para calculos precisos.</p>
+          <h2 className="text-2xl font-bold">Detalhes do Veículo</h2>
+          <p className="text-sm text-slate-400">Mantenha os dados atualizados para cálculos precisos.</p>
         </section>
 
         <div className="bg-[#1e293b66] rounded-xl border border-blue-500/10 p-5 space-y-5">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">Modelo do Veiculo</label>
+            <label className="block text-sm font-medium text-slate-300">Modelo do Veículo</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">directions_car</span>
               <input
@@ -71,7 +71,7 @@ export default function VehicleSettings() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">{`Consumo Medio (km/${fuelUnit})`}</label>
+            <label className="block text-sm font-medium text-slate-300">{`Consumo Médio (km/${fuelUnit})`}</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">ev_station</span>
               <input
@@ -86,7 +86,7 @@ export default function VehicleSettings() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">{`Preco da Unidade (${fuelUnit})`}</label>
+            <label className="block text-sm font-medium text-slate-300">{`Preço da Unidade (${fuelUnit})`}</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">payments</span>
               <input
@@ -101,7 +101,7 @@ export default function VehicleSettings() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">Tipo de Combustivel</label>
+            <label className="block text-sm font-medium text-slate-300">Tipo de Combustível</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">local_gas_station</span>
               <select
@@ -110,10 +110,10 @@ export default function VehicleSettings() {
                 onChange={(e) => setVehicle({ ...vehicle, fuelType: e.target.value })}
               >
                 <option value="gasolina">Gasolina</option>
-                <option value="alcool">Alcool / Etanol</option>
+                <option value="alcool">Álcool / Etanol</option>
                 <option value="gnv">GNV</option>
                 <option value="diesel">Diesel</option>
-                <option value="eletrico">Eletrico</option>
+                <option value="eletrico">Elétrico</option>
               </select>
               <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
             </div>
@@ -123,7 +123,7 @@ export default function VehicleSettings() {
         <div className="flex items-start gap-3 bg-blue-500/5 p-4 rounded-xl border border-blue-500/20">
           <span className="material-symbols-outlined text-blue-400 mt-0.5">info</span>
           <p className="text-sm leading-relaxed text-slate-300">
-            Os valores acima alimentam os calculos de consumo real, custo por km e quantidade abastecida automatica em cada periodo.
+            Os valores acima alimentam os cálculos de consumo real, custo por km e quantidade abastecida automatica em cada período.
           </p>
         </div>
 

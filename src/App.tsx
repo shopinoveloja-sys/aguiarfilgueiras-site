@@ -33,9 +33,9 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center p-4 text-center">
         <div className="max-w-sm">
-          <h1 className="text-xl font-bold text-white mb-2">Nao foi possivel abrir esta tela</h1>
+          <h1 className="text-xl font-bold text-white mb-2">Não foi possível abrir esta tela</h1>
           <p className="text-sm text-slate-400 mb-5">
-            Atualize a pagina. Se continuar, entre novamente para renovar sua sessao.
+            Atualize a página. Se continuar, entre novamente para renovar sua sessão.
           </p>
           <div className="flex gap-3 justify-center">
             <button
