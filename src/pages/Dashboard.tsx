@@ -908,14 +908,16 @@ export default function Dashboard() {
 
         <section className="mb-6">
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Metas Hoje</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="bg-gradient-to-br from-slate-800/90 to-transparent border border-slate-700 rounded-xl p-4">
+              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Receita do Dia</p>
+              <p className="text-2xl font-black text-white">{formatMoney(data.todayIncome)}</p>
+            </div>
             <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
-              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Receita do dia</p>
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Media</p>
               <p className="text-2xl font-black text-blue-400">{formatMoney(data.dailyGoalTodayAverage)}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
-              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Receita do dia</p>
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Recorde</p>
               <p className="text-2xl font-black text-emerald-400">{formatMoney(data.dailyGoalTodayBest)}</p>
             </div>
