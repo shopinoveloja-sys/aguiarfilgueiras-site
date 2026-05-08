@@ -273,11 +273,11 @@ export default function Dashboard() {
       const session = await redeemReferralCode(redeemCode.trim().toUpperCase());
       localStorage.setItem("drivercash_access", JSON.stringify(session.access));
       setAccess(session.access as AccessData);
-      toast.success("Código resgatado! Você ganhou 15 dias de teste.");
+      toast.success("CÃƒÂ³digo resgatado! VocÃƒÂª ganhou 15 dias de teste.");
       // Reload to refresh all limits
       window.location.reload();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Erro ao resgatar código.");
+      toast.error(error.response?.data?.message || "Erro ao resgatar cÃƒÂ³digo.");
     } finally {
       setRedeeming(false);
     }
@@ -308,7 +308,7 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center flex-col text-center p-4">
         <div className="text-slate-300 text-lg font-bold mb-2">Painel sem dados no momento</div>
-        <div className="text-slate-500 text-sm mb-4 max-w-sm">A página carregou, mas ainda não recebeu os dados do dashboard. Tente recarregar.</div>
+        <div className="text-slate-500 text-sm mb-4 max-w-sm">A pÃƒÂ¡gina carregou, mas ainda nÃƒÂ£o recebeu os dados do dashboard. Tente recarregar.</div>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
           Recarregar
         </button>
@@ -317,9 +317,9 @@ export default function Dashboard() {
   }
 
   const performanceLabel = {
-    below_average: { text: "Abaixo da Média", color: "text-red-400", bg: "bg-red-500/10" },
+    below_average: { text: "Abaixo da Media", color: "text-red-400", bg: "bg-red-500/10" },
     on_track: { text: "No Caminho", color: "text-blue-400", bg: "bg-blue-500/10" },
-    above_average: { text: "Acima da Média", color: "text-emerald-400", bg: "bg-emerald-500/10" }
+    above_average: { text: "Acima da Media", color: "text-emerald-400", bg: "bg-emerald-500/10" }
   }[data.performanceStatus || 'on_track'];
 
   const handleSaveBalance = async () => {
@@ -333,7 +333,7 @@ export default function Dashboard() {
         value: Math.abs(finalValue),
         category: "SALDO_ANTERIOR",
         source: "MANUAL",
-        description: "Saldo anterior ao começar a usar o app",
+        description: "Saldo anterior ao comeÃƒÂ§ar a usar o app",
         date: new Date().toISOString()
       });
       setShowBalanceModal(false);
@@ -742,7 +742,7 @@ export default function Dashboard() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-white">Agente DriverCash</p>
-              <p className="text-xs text-slate-400">Converse com seus dados e receba insights práticos.</p>
+              <p className="text-xs text-slate-400">Converse com seus dados e receba insights prÃƒÂ¡ticos.</p>
             </div>
             <span className="material-symbols-outlined text-slate-500">chevron_right</span>
           </button>
@@ -768,12 +768,12 @@ export default function Dashboard() {
 
               {access.status === "EXPIRED" || access.daysRemaining <= 0 ? (
                 <div className="pt-4 border-t border-white/5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Tem um código de indicação?</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Tem um cÃƒÂ³digo de indicaÃƒÂ§ÃƒÂ£o?</p>
                   <div className="flex gap-2">
                     <input
                       value={redeemCode}
                       onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
-                      placeholder="CÓDIGO"
+                      placeholder="CÃƒâ€œDIGO"
                       className="flex-1 bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 transition-all uppercase"
                     />
                     <button
@@ -785,7 +785,7 @@ export default function Dashboard() {
                     </button>
                   </div>
                   <p className="text-[9px] text-slate-500 mt-2">
-                    Peça o código a quem te indicou para ganhar 15 dias extras de teste.
+                    PeÃƒÂ§a o cÃƒÂ³digo a quem te indicou para ganhar 15 dias extras de teste.
                   </p>
                 </div>
               ) : null}
@@ -797,7 +797,7 @@ export default function Dashboard() {
           <section className="mb-6">
             <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu código de indicação</p>
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu cÃƒÂ³digo de indicaÃƒÂ§ÃƒÂ£o</p>
                 <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
               </div>
               <button onClick={() => navigate("/profile")} className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 text-[10px] font-bold uppercase">
@@ -853,7 +853,7 @@ export default function Dashboard() {
           </div>
 
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 mb-4 relative overflow-hidden">
-            <p className="text-slate-400 text-xs uppercase font-bold mb-2">Ganhos do Mês</p>
+            <p className="text-slate-400 text-xs uppercase font-bold mb-2">Ganhos do MÃƒÂªs</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-extrabold text-blue-400">{formatMoney(data.totalIncomeMonth)}</span>
               <span className="text-sm font-medium text-blue-400 flex items-center">
@@ -862,7 +862,7 @@ export default function Dashboard() {
             </div>
             <div className="mt-4 pt-4 border-t border-blue-500/20 grid grid-cols-2 gap-4">
               <div>
-                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mês</p>
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do MÃƒÂªs</p>
                 <p className={`text-xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                   {formatMoney(data.netProfitMonth)}
                 </p>
@@ -910,10 +910,12 @@ export default function Dashboard() {
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Metas Hoje</h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
-              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Média</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Receita do dia</p>
+              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Media</p>
               <p className="text-2xl font-black text-blue-400">{formatMoney(data.dailyGoalTodayAverage)}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
+              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Receita do dia</p>
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Recorde</p>
               <p className="text-2xl font-black text-emerald-400">{formatMoney(data.dailyGoalTodayBest)}</p>
             </div>
@@ -929,9 +931,9 @@ export default function Dashboard() {
                   <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={{ stroke: "#1e293b" }} />
                   <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} width={54} tickFormatter={(value) => `R$ ${value}`} />
                   <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: 8 }} />
-                  <Line type="monotone" dataKey="media" name="Média" stroke="#60a5fa" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="media" name="Media" stroke="#60a5fa" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="projecao" name="Projeção" stroke="#f59e0b" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="projecao" name="ProjeÃƒÂ§ÃƒÂ£o" stroke="#f59e0b" strokeWidth={3} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -1253,7 +1255,7 @@ export default function Dashboard() {
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/rides"); }}>
           <span className="material-symbols-outlined">history</span>
-          <span className="text-[10px] font-bold uppercase">Histórico</span>
+          <span className="text-[10px] font-bold uppercase">HistÃƒÂ³rico</span>
         </a>
         <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
           <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white ring-4 ring-[#020617] active:scale-95">
