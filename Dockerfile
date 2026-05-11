@@ -6,7 +6,9 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN npm run build
+ARG VITE_MP_PUBLIC_KEY
+ARG MP_PUBLIC_KEY
+RUN export VITE_MP_PUBLIC_KEY="${VITE_MP_PUBLIC_KEY:-$MP_PUBLIC_KEY}" && npm run build
 
 FROM nginx:1.27-alpine
 
