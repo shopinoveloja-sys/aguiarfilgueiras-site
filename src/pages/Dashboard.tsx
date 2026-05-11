@@ -91,12 +91,17 @@ interface AccessData {
 interface ReferralData {
   eligible: boolean;
   reason?: string;
-  referralCode: string;
+  referralCode: string | null;
   referralUrl: string | null;
+  totalReferrals: number;
+  convertedReferrals: number;
+  secondLevelConversions: number;
   confirmedCount: number;
   pendingAmount: number;
   requestedAmount: number;
   paidAmount: number;
+  minWithdrawalAmount: number;
+  canRequestWithdrawal: boolean;
 }
 
 interface SessionUser {
@@ -812,7 +817,7 @@ export default function Dashboard() {
                     </button>
                   </div>
                   <p className="text-[9px] text-slate-500 mt-2">
-                      Pe\u00e7a o c\u00f3digo a quem te indicou para ganhar 15 dias extras de teste.
+                      Use o c\u00f3digo de quem te indicou para liberar 15 dias gr\u00e1tis.
                   </p>
                 </div>
               ) : null}
@@ -821,15 +826,63 @@ export default function Dashboard() {
         )}
 
         {referrals?.eligible && referrals.referralCode && (
-          <section className="mb-6">
+          <section className="mb-6 space-y-3">
             <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 flex items-center justify-between gap-3">
               <div>
-                    <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu c\u00f3digo de indica\u00e7\u00e3o</p>
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu c\u00f3digo de indica\u00e7\u00e3o</p>
                 <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
+                <p className="text-[10px] text-slate-500 mt-1">Quem usar seu c\u00f3digo ganha 15 dias gr\u00e1tis.</p>
               </div>
               <button onClick={() => navigate("/profile")} className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 text-[10px] font-bold uppercase">
                 Ajustes
               </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Indica\u00e7\u00f5es feitas</p>
+                <p className="text-2xl font-black text-white">{referrals.totalReferrals}</p>
+              </div>
+              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Assinaturas geradas</p>
+                <p className="text-2xl font-black text-emerald-300">{referrals.convertedReferrals}</p>
+              </div>
+              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">2\u00ba n\u00edvel</p>
+                <p className="text-2xl font-black text-blue-300">{referrals.secondLevelConversions}</p>
+              </div>
+              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Saldo dispon\u00edvel</p>
+                <p className="text-2xl font-black text-amber-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
+              </div>
+            </div>
+
+            <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-bold text-white">Painel de indica\u00e7\u00e3o</p>
+                  <p className="text-xs text-slate-400">
+                    Voc\u00ea recebe R$ 10 no 1\u00ba n\u00edvel e R$ 5 no 2\u00ba n\u00edvel quando houver assinatura anual.
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-bold uppercase text-slate-500">Saque m\u00ednimo</p>
+                  <p className="text-sm font-black text-white">{formatMoneyPrecise(referrals.minWithdrawalAmount)}</p>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase text-slate-500">Solicita\u00e7\u00e3o de saque</p>
+                  <p className="text-xs text-slate-400">
+                    {referrals.canRequestWithdrawal
+                      ? "Seu saldo j\u00e1 est\u00e1 liberado para saque."
+                      : `O saque s\u00f3 libera acima de ${formatMoneyPrecise(referrals.minWithdrawalAmount)}.`}
+                  </p>
+                </div>
+                <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-lg ${referrals.canRequestWithdrawal ? "bg-emerald-500/10 text-emerald-300" : "bg-slate-800 text-slate-400"}`}>
+                  {referrals.canRequestWithdrawal ? "Liberado" : "Aguardando"}
+                </span>
+              </div>
             </div>
           </section>
         )}
