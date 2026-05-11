@@ -60,6 +60,16 @@ export const processTransparentPayment = async (data: Record<string, unknown>) =
   return response.data;
 };
 
+export const confirmGooglePlayPurchase = async (data: {
+  productId: string;
+  purchaseToken: string;
+  transactionId?: string;
+  transactionDate?: string | number;
+}) => {
+  const response = await api.post('/access/billing/google-play', data);
+  return response.data;
+};
+
 export const getReferralSummary = async () => {
   const response = await api.get('/access/referrals');
   return response.data;

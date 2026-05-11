@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
-import { MercadoPagoPaymentModal } from "../components/MercadoPagoPaymentModal";
+import { confirmGooglePlayPurchase, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
 import { toast } from "sonner";
 
 interface DashboardData {
@@ -208,7 +207,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [errorMêssage, setErrorMêssage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
   const [balanceNegative, setBalanceNegative] = useState(false);
   const [editCategory, setEditCategory] = useState<CategorySummary | null>(null);
@@ -267,6 +265,33 @@ export default function Dashboard() {
       loadDashboard();
     }
   }, [categoryPeriod]);
+
+  useEffect(() => {
+    const handlePlayPurchaseMessage = async (event: MessageEvent) => {
+      const rawData = typeof event.data === "string" ? safeParse<Record<string, any>>(event.data) : event.data;
+      if (!rawData || rawData.type !== "DRIVERCASH_PLAY_PURCHASE") return;
+
+      try {
+        const session = await confirmGooglePlayPurchase({
+          productId: rawData.productId,
+          purchaseToken: rawData.purchaseToken,
+          transactionId: rawData.transactionId,
+          transactionDate: rawData.transactionDate,
+        });
+        localStorage.setItem("drivercash_access", JSON.stringify(session.access));
+        setAccess(session.access as AccessData);
+        toast.success("Assinatura confirmada pelo Google Play.");
+        (window as any).ReactNativeWebView?.postMessage(JSON.stringify({ type: "DRIVERCASH_PLAY_PURCHASE_CONFIRMED" }));
+        await loadDashboard();
+      } catch (error: any) {
+        const message = error.response?.data?.message || "Nao foi possivel confirmar a assinatura do Google Play.";
+        toast.error(message);
+      }
+    };
+
+    window.addEventListener("message", handlePlayPurchaseMessage);
+    return () => window.removeEventListener("message", handlePlayPurchaseMessage);
+  }, []);
 
   const handleRedeemCode = async () => {
     if (!redeemCode.trim()) return;
@@ -619,22 +644,13 @@ export default function Dashboard() {
     }
   };
 
-  const handleSubscribe = () => setShowPaymentModal(true);
-
-  const handlePaymentResult = (result: { status: string; statusDetail?: string }) => {
-    if (result.status === "APPROVED") {
-      toast.success("Pagamento aprovado. Assinatura ativada!");
-      setShowPaymentModal(false);
-      window.location.reload();
+  const handleSubscribe = () => {
+    const nativeBridge = (window as any).ReactNativeWebView;
+    if (nativeBridge) {
+      nativeBridge.postMessage(JSON.stringify({ type: "DRIVERCASH_SUBSCRIBE" }));
       return;
     }
-    if (result.status === "PENDING") {
-      toast.info("Pagamento recebido e aguardando confirmacao.");
-      setShowPaymentModal(false);
-      loadDashboard();
-      return;
-    }
-    toast.error("Pagamento nao aprovado. Tente novamente.");
+    toast.info("A assinatura do DriverCash sera feita pelo aplicativo Android.");
   };
 
   const projectionMêssage =
@@ -689,13 +705,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
-      <MercadoPagoPaymentModal
-        open={showPaymentModal}
-        amount={access?.annualPrice || 90}
-        onClose={() => setShowPaymentModal(false)}
-        onSuccess={handlePaymentResult}
-      />
-
       {/* Saldo Anterior Modal */}
       {showBalanceModal && (
         <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => setShowBalanceModal(false)}>
