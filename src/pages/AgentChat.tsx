@@ -9,10 +9,11 @@ type ChatMessage = {
 };
 
 const quickPrompts = [
-  "Me mostre um insight do meu mês",
-  "Onde estou gastando mais?",
-  "Como melhorar meu lucro por KM?",
-  "Como usar melhor a reserva diária?",
+  "Qual foi minha media e meu recorde de sexta?",
+  "Como esta minha situacao financeira hoje?",
+  "Onde estou gastando mais no periodo?",
+  "Como esta meu lucro por KM?",
+  "Como esta minha reserva diaria?",
 ];
 
 export default function AgentChat() {
@@ -95,7 +96,7 @@ export default function AgentChat() {
             <div>
               <p className="text-sm font-bold">Escopo protegido</p>
               <p className="text-xs text-slate-400 mt-1">
-                O agente conversa apenas sobre dados do DriverCash, uso da plataforma, receitas, despesas, KM, combustível, manutenção e metas.
+                O agente conversa apenas sobre dados do DriverCash, uso da plataforma, receitas, despesas, KM, combustivel, manutencao e metas. Voce pode perguntar sobre media, recorde, dias especificos e situacao financeira.
               </p>
             </div>
           </div>
