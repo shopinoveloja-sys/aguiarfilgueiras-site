@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { getDashboardData, getReferralSummary, requestReferralWithdrawal } from "../lib/api";
 import { toast } from "sonner";
@@ -8,10 +8,15 @@ interface ReferralData {
   reason?: string;
   referralCode: string | null;
   referralUrl: string | null;
+  totalReferrals: number;
+  convertedReferrals: number;
+  secondLevelConversions: number;
   confirmedCount: number;
   pendingAmount: number;
   requestedAmount: number;
   paidAmount: number;
+  minWithdrawalAmount: number;
+  canRequestWithdrawal: boolean;
 }
 
 interface DashboardData {
@@ -141,8 +146,8 @@ export default function Profile() {
               <span className="material-symbols-outlined text-blue-500">directions_car</span>
             </div>
             <div>
-              <h3 className="font-bold">Veículo</h3>
-              <p className="text-slate-400 text-xs mt-1">{vehicle?.model || "Não configurado"}</p>
+              <h3 className="font-bold">VeÃ­culo</h3>
+              <p className="text-slate-400 text-xs mt-1">{vehicle?.model || "NÃ£o configurado"}</p>
             </div>
           </button>
 
@@ -152,7 +157,7 @@ export default function Profile() {
             </div>
             <div>
               <h3 className="font-bold">Ganhos</h3>
-              <p className="text-slate-400 text-xs mt-1">Configurar métricas</p>
+              <p className="text-slate-400 text-xs mt-1">Configurar mÃ©tricas</p>
             </div>
           </button>
 
@@ -184,7 +189,7 @@ export default function Profile() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-bold text-white">Indique e Ganhe</p>
-                <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no nível 2.</p>
+                <p className="text-xs text-slate-400">R$ 10 por assinatura direta e R$ 5 no 2o nivel.</p>
               </div>
               <span className="material-symbols-outlined text-emerald-400">group_add</span>
             </div>
@@ -194,36 +199,81 @@ export default function Profile() {
             ) : (
               <>
                 <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3">
-                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu código</p>
+                  <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo</p>
                   <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
                   <p className="text-[11px] text-slate-500 break-all mt-1">{referrals.referralUrl}</p>
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="bg-[#0f172a] rounded-xl p-2 text-center">
-                    <p className="text-[8px] uppercase font-bold text-slate-500">Saldo</p>
-                    <p className="text-sm font-black text-emerald-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#0f172a] rounded-xl p-3">
+                    <p className="text-[10px] uppercase font-bold text-slate-500">Indicacoes feitas</p>
+                    <p className="text-2xl font-black text-white">{referrals.totalReferrals}</p>
                   </div>
-                  <div className="bg-[#0f172a] rounded-xl p-2 text-center">
-                    <p className="text-[8px] uppercase font-bold text-slate-500">Saques</p>
-                    <p className="text-sm font-black text-amber-300">{formatMoneyPrecise(referrals.requestedAmount)}</p>
+                  <div className="bg-[#0f172a] rounded-xl p-3">
+                    <p className="text-[10px] uppercase font-bold text-slate-500">Assinaturas geradas</p>
+                    <p className="text-2xl font-black text-emerald-300">{referrals.convertedReferrals}</p>
                   </div>
-                  <div className="bg-[#0f172a] rounded-xl p-2 text-center">
-                    <p className="text-[8px] uppercase font-bold text-slate-500">Pago</p>
-                    <p className="text-sm font-black text-blue-300">{formatMoneyPrecise(referrals.paidAmount)}</p>
+                  <div className="bg-[#0f172a] rounded-xl p-3">
+                    <p className="text-[10px] uppercase font-bold text-slate-500">2o nivel</p>
+                    <p className="text-2xl font-black text-blue-300">{referrals.secondLevelConversions}</p>
+                  </div>
+                  <div className="bg-[#0f172a] rounded-xl p-3">
+                    <p className="text-[10px] uppercase font-bold text-slate-500">Saldo disponivel</p>
+                    <p className="text-2xl font-black text-amber-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
                   </div>
                 </div>
-                {referrals.pendingAmount > 0 && (
-                  <div className="grid gap-2">
-                    <input value={pixKey} onChange={(e) => setPixKey(e.target.value)} placeholder="Chave Pix" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
-                    <input value={requestedFor} onChange={(e) => setRequestedFor(e.target.value)} placeholder="Data desejada para saque (opcional)" className="bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-sm text-white" />
-                    <button onClick={handleWithdrawal} className="w-full py-3 rounded-xl bg-emerald-500 text-white text-xs font-bold active:scale-95">Solicitar saque</button>
+
+                <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-white">Painel do Parceiro</p>
+                      <p className="text-xs text-slate-400">
+                        Voce recebe R$ 10 no 1o nivel e R$ 5 no 2o nivel quando houver assinatura anual.
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase font-bold text-slate-500">Saque minimo</p>
+                      <p className="text-sm font-black text-white">{formatMoneyPrecise(referrals.minWithdrawalAmount)}</p>
+                    </div>
                   </div>
-                )}
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-slate-950/50 rounded-xl p-3 text-center">
+                      <p className="text-[9px] uppercase font-bold text-slate-500">Saques</p>
+                      <p className="text-sm font-black text-amber-300">{formatMoneyPrecise(referrals.requestedAmount)}</p>
+                    </div>
+                    <div className="bg-slate-950/50 rounded-xl p-3 text-center">
+                      <p className="text-[9px] uppercase font-bold text-slate-500">Pago</p>
+                      <p className="text-sm font-black text-blue-300">{formatMoneyPrecise(referrals.paidAmount)}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-slate-500">Solicitacao de saque</p>
+                      <p className="text-xs text-slate-400">
+                        {referrals.canRequestWithdrawal
+                          ? "Seu saldo ja esta liberado para saque."
+                          : `O saque so libera acima de ${formatMoneyPrecise(referrals.minWithdrawalAmount)}.`}
+                      </p>
+                    </div>
+                    <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-lg ${referrals.canRequestWithdrawal ? "bg-emerald-500/10 text-emerald-300" : "bg-slate-800 text-slate-400"}`}>
+                      {referrals.canRequestWithdrawal ? "Liberado" : "Aguardando"}
+                    </span>
+                  </div>
+
+                  {referrals.canRequestWithdrawal && (
+                    <div className="grid gap-2">
+                      <input value={pixKey} onChange={(e) => setPixKey(e.target.value)} placeholder="Chave Pix" className="bg-slate-950/50 border border-slate-700 rounded-xl p-3 text-sm text-white" />
+                      <input value={requestedFor} onChange={(e) => setRequestedFor(e.target.value)} placeholder="Data desejada para saque (opcional)" className="bg-slate-950/50 border border-slate-700 rounded-xl p-3 text-sm text-white" />
+                      <button onClick={handleWithdrawal} className="w-full py-3 rounded-xl bg-emerald-500 text-white text-xs font-bold active:scale-95">Solicitar saque</button>
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </section>
         )}
-
         <section className="bg-[#1e293b66] rounded-xl p-6 border border-blue-500/10 space-y-4">
           <h4 className="text-[10px] font-bold tracking-wider uppercase text-blue-500">Performance Rapida</h4>
           <div className="grid grid-cols-3 gap-4">

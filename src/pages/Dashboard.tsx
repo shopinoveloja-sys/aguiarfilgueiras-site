@@ -825,68 +825,6 @@ export default function Dashboard() {
           </section>
         )}
 
-        {referrals?.eligible && referrals.referralCode && (
-          <section className="mb-6 space-y-3">
-            <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo de indicacao</p>
-                <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
-                <p className="text-[10px] text-slate-500 mt-1">Quem usar seu codigo ganha 15 dias gratis.</p>
-              </div>
-              <button onClick={() => navigate("/profile")} className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 text-[10px] font-bold uppercase">
-                Ajustes
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Indicacoes feitas</p>
-                <p className="text-2xl font-black text-white">{referrals.totalReferrals}</p>
-              </div>
-              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Assinaturas geradas</p>
-                <p className="text-2xl font-black text-emerald-300">{referrals.convertedReferrals}</p>
-              </div>
-              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">2o nivel</p>
-                <p className="text-2xl font-black text-blue-300">{referrals.secondLevelConversions}</p>
-              </div>
-              <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Saldo disponivel</p>
-                <p className="text-2xl font-black text-amber-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
-              </div>
-            </div>
-
-            <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-bold text-white">Painel de indicacao</p>
-                  <p className="text-xs text-slate-400">
-                    Voce recebe R$ 10 no 1o nivel e R$ 5 no 2o nivel quando houver assinatura anual.
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-bold uppercase text-slate-500">Saque minimo</p>
-                  <p className="text-sm font-black text-white">{formatMoneyPrecise(referrals.minWithdrawalAmount)}</p>
-                </div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-[10px] font-bold uppercase text-slate-500">Solicitacao de saque</p>
-                  <p className="text-xs text-slate-400">
-                    {referrals.canRequestWithdrawal
-                      ? "Seu saldo ja esta liberado para saque."
-                      : `O saque so libera acima de ${formatMoneyPrecise(referrals.minWithdrawalAmount)}.`}
-                  </p>
-                </div>
-                <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-lg ${referrals.canRequestWithdrawal ? "bg-emerald-500/10 text-emerald-300" : "bg-slate-800 text-slate-400"}`}>
-                  {referrals.canRequestWithdrawal ? "Liberado" : "Aguardando"}
-                </span>
-              </div>
-            </div>
-          </section>
-        )}
-
         {(dueTodayExpenses.length > 0 || paidTodayExpenses.length > 0) && (
           <section className="mb-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Vencem Hoje</h2>
