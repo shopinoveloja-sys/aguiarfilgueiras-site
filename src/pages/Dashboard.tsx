@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { confirmGooglePlayPurchase, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
@@ -210,7 +210,7 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [planning, setPlanning] = useState<PlanningData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [errorMêssage, setErrorMêssage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
   const [balanceNegative, setBalanceNegative] = useState(false);
@@ -249,7 +249,7 @@ export default function Dashboard() {
       } catch (e) {}
     } catch (error) {
       console.error("Failed to load dashboard data", error);
-      setErrorMêssage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
+      setErrorMessage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
     }
   };
 
@@ -305,11 +305,11 @@ export default function Dashboard() {
       const session = await redeemReferralCode(redeemCode.trim().toUpperCase());
       localStorage.setItem("drivercash_access", JSON.stringify(session.access));
       setAccess(session.access as AccessData);
-      toast.success("C\u00f3digo resgatado! Voc\u00ea ganhou 15 dias de teste.");
+      toast.success("Codigo resgatado! Voce ganhou 15 dias de teste.");
       // Reload to refresh all limits
       window.location.reload();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Erro ao resgatar c\u00f3digo.");
+      toast.error(error.response?.data?.message || "Erro ao resgatar codigo.");
     } finally {
       setRedeeming(false);
     }
@@ -325,10 +325,10 @@ export default function Dashboard() {
 
   const firstName = sessionUser?.name?.trim().split(/\s+/)[0] || "Motorista";
 
-  if (errorMêssage) {
+  if (errorMessage) {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center flex-col text-center p-4">
-        <div className="text-red-400 text-lg font-bold mb-4">{errorMêssage}</div>
+        <div className="text-red-400 text-lg font-bold mb-4">{errorMessage}</div>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
           Tentar novamente
         </button>
@@ -340,7 +340,7 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center flex-col text-center p-4">
         <div className="text-slate-300 text-lg font-bold mb-2">Painel sem dados no momento</div>
-        <div className="text-slate-500 text-sm mb-4 max-w-sm">A p\u00e1gina carregou, mas ainda n\u00e3o recebeu os dados do dashboard. Tente recarregar.</div>
+        <div className="text-slate-500 text-sm mb-4 max-w-sm">A pagina carregou, mas ainda nao recebeu os dados do dashboard. Tente recarregar.</div>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
           Recarregar
         </button>
@@ -349,9 +349,9 @@ export default function Dashboard() {
   }
 
   const performanceLabel = {
-    below_average: { text: "Abaixo da Média", color: "text-red-400", bg: "bg-red-500/10" },
+    below_average: { text: "Abaixo da Media", color: "text-red-400", bg: "bg-red-500/10" },
     on_track: { text: "No Caminho", color: "text-blue-400", bg: "bg-blue-500/10" },
-    above_average: { text: "Acima da Média", color: "text-emerald-400", bg: "bg-emerald-500/10" }
+    above_average: { text: "Acima da Media", color: "text-emerald-400", bg: "bg-emerald-500/10" }
   }[data.performanceStatus || 'on_track'];
 
   const handleSaveBalance = async () => {
@@ -365,7 +365,7 @@ export default function Dashboard() {
         value: Math.abs(finalValue),
         category: "SALDO_ANTERIOR",
         source: "MANUAL",
-        description: "Saldo anterior ao come\u00e7ar a usar o app",
+        description: "Saldo anterior ao comecar a usar o app",
         date: new Date().toISOString()
       });
       setShowBalanceModal(false);
@@ -395,7 +395,7 @@ export default function Dashboard() {
   const categoryPeriodLabels: Record<CategoryPeriod, string> = {
     day: "Hoje",
     week: "Semana",
-    month: "Mês",
+    month: "Mes",
   };
 
   const weekDays = [
@@ -658,12 +658,12 @@ export default function Dashboard() {
     toast.info("A assinatura do DriverCash sera feita pelo aplicativo Android.");
   };
 
-  const projectionMêssage =
+  const projectionMessage =
     data.projectedMonth >= data.bestGoalMonth && data.bestGoalMonth > 0
       ? "Ritmo para igualar ou superar seu melhor cenario."
       : data.projectedMonth >= data.averageGoalMonth && data.averageGoalMonth > 0
-        ? "Você está perto da média esperada para o mês."
-        : "Você está abaixo da média esperada para o mês.";
+        ? "Voce esta perto da media esperada para o mes."
+        : "Voce esta abaixo da media esperada para o mes.";
 
   const projectionChart = data.chartData.labels.map((label, index) => ({
     day: label,
@@ -716,7 +716,7 @@ export default function Dashboard() {
           <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
             <h3 className="text-lg font-bold text-white mb-2">Saldo Anterior</h3>
-            <p className="text-xs text-slate-400 mb-5">Informe quanto você já tinha de saldo antes de usar o app.</p>
+            <p className="text-xs text-slate-400 mb-5">Informe quanto voce ja tinha de saldo antes de usar o app.</p>
             {balanceNegative ? (
               <>
                 <div className="flex items-baseline justify-center gap-2 mb-2 py-4">
@@ -774,7 +774,7 @@ export default function Dashboard() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-white">Agente DriverCash</p>
-                <p className="text-xs text-slate-400">Converse com seus dados e receba insights pr\u00e1ticos.</p>
+                <p className="text-xs text-slate-400">Converse com seus dados e receba insights praticos.</p>
             </div>
             <span className="material-symbols-outlined text-slate-500">chevron_right</span>
           </button>
@@ -786,7 +786,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-bold text-white">
-                    {access.status === "EXPIRED" ? "Teste expirado" : `Teste grátis: ${access.daysRemaining} dia(s) restantes`}
+                    {access.status === "EXPIRED" ? "Teste expirado" : `Teste gratis: ${access.daysRemaining} dia(s) restantes`}
                   </p>
                   <p className="text-xs text-slate-400">Assinatura anual por R$ {access.annualPrice}.</p>
                 </div>
@@ -800,12 +800,12 @@ export default function Dashboard() {
 
               {access.status === "EXPIRED" || access.daysRemaining <= 0 ? (
                 <div className="pt-4 border-t border-white/5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Tem um c\u00f3digo de indica\u00e7\u00e3o?</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Tem um codigo de indicacao?</p>
                   <div className="flex gap-2">
                     <input
                       value={redeemCode}
                       onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
-                      placeholder="C\u00d3DIGO"
+                      placeholder="CODIGO"
                       className="flex-1 bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 transition-all uppercase"
                     />
                     <button
@@ -817,7 +817,7 @@ export default function Dashboard() {
                     </button>
                   </div>
                   <p className="text-[9px] text-slate-500 mt-2">
-                      Use o c\u00f3digo de quem te indicou para liberar 15 dias gr\u00e1tis.
+                      Use o codigo de quem te indicou para liberar 15 dias gratis.
                   </p>
                 </div>
               ) : null}
@@ -829,9 +829,9 @@ export default function Dashboard() {
           <section className="mb-6 space-y-3">
             <div className="bg-[#0f172a] border border-emerald-500/10 rounded-xl p-3 flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu c\u00f3digo de indica\u00e7\u00e3o</p>
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Seu codigo de indicacao</p>
                 <p className="text-xl font-black text-emerald-300">{referrals.referralCode}</p>
-                <p className="text-[10px] text-slate-500 mt-1">Quem usar seu c\u00f3digo ganha 15 dias gr\u00e1tis.</p>
+                <p className="text-[10px] text-slate-500 mt-1">Quem usar seu codigo ganha 15 dias gratis.</p>
               </div>
               <button onClick={() => navigate("/profile")} className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 text-[10px] font-bold uppercase">
                 Ajustes
@@ -840,7 +840,7 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Indica\u00e7\u00f5es feitas</p>
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Indicacoes feitas</p>
                 <p className="text-2xl font-black text-white">{referrals.totalReferrals}</p>
               </div>
               <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
@@ -848,11 +848,11 @@ export default function Dashboard() {
                 <p className="text-2xl font-black text-emerald-300">{referrals.convertedReferrals}</p>
               </div>
               <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">2\u00ba n\u00edvel</p>
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">2o nivel</p>
                 <p className="text-2xl font-black text-blue-300">{referrals.secondLevelConversions}</p>
               </div>
               <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-3">
-                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Saldo dispon\u00edvel</p>
+                <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Saldo disponivel</p>
                 <p className="text-2xl font-black text-amber-300">{formatMoneyPrecise(referrals.pendingAmount)}</p>
               </div>
             </div>
@@ -860,23 +860,23 @@ export default function Dashboard() {
             <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-bold text-white">Painel de indica\u00e7\u00e3o</p>
+                  <p className="text-sm font-bold text-white">Painel de indicacao</p>
                   <p className="text-xs text-slate-400">
-                    Voc\u00ea recebe R$ 10 no 1\u00ba n\u00edvel e R$ 5 no 2\u00ba n\u00edvel quando houver assinatura anual.
+                    Voce recebe R$ 10 no 1o nivel e R$ 5 no 2o nivel quando houver assinatura anual.
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-bold uppercase text-slate-500">Saque m\u00ednimo</p>
+                  <p className="text-[10px] font-bold uppercase text-slate-500">Saque minimo</p>
                   <p className="text-sm font-black text-white">{formatMoneyPrecise(referrals.minWithdrawalAmount)}</p>
                 </div>
               </div>
               <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase text-slate-500">Solicita\u00e7\u00e3o de saque</p>
+                  <p className="text-[10px] font-bold uppercase text-slate-500">Solicitacao de saque</p>
                   <p className="text-xs text-slate-400">
                     {referrals.canRequestWithdrawal
-                      ? "Seu saldo j\u00e1 est\u00e1 liberado para saque."
-                      : `O saque s\u00f3 libera acima de ${formatMoneyPrecise(referrals.minWithdrawalAmount)}.`}
+                      ? "Seu saldo ja esta liberado para saque."
+                      : `O saque so libera acima de ${formatMoneyPrecise(referrals.minWithdrawalAmount)}.`}
                   </p>
                 </div>
                 <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-lg ${referrals.canRequestWithdrawal ? "bg-emerald-500/10 text-emerald-300" : "bg-slate-800 text-slate-400"}`}>
@@ -933,7 +933,7 @@ export default function Dashboard() {
           </div>
 
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 mb-4 relative overflow-hidden">
-            <p className="text-slate-400 text-xs uppercase font-bold mb-2">Ganhos do M\u00eas</p>
+            <p className="text-slate-400 text-xs uppercase font-bold mb-2">Ganhos do Mes</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-extrabold text-blue-400">{formatMoney(data.totalIncomeMonth)}</span>
               <span className="text-sm font-medium text-blue-400 flex items-center">
@@ -942,7 +942,7 @@ export default function Dashboard() {
             </div>
             <div className="mt-4 pt-4 border-t border-blue-500/20 grid grid-cols-2 gap-4">
               <div>
-                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do M\u00eas</p>
+                <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mes</p>
                 <p className={`text-xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                   {formatMoney(data.netProfitMonth)}
                 </p>
@@ -994,7 +994,7 @@ export default function Dashboard() {
               <p className="text-2xl font-black text-white">{formatMoney(data.todayIncome)}</p>
             </div>
             <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
-              <p className="text-xs text-slate-400 font-bold uppercase mb-1">M\u00e9dia</p>
+              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Media</p>
               <p className="text-2xl font-black text-blue-400">{formatMoney(data.dailyGoalTodayAverage)}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
@@ -1013,9 +1013,9 @@ export default function Dashboard() {
                   <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={{ stroke: "#1e293b" }} />
                   <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} width={54} tickFormatter={(value) => `R$ ${value}`} />
                   <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: 8 }} />
-                  <Line type="monotone" dataKey="media" name="Média" stroke="#60a5fa" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="media" name="Media" stroke="#60a5fa" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="projecao" name="Projeção" stroke="#f59e0b" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -1063,7 +1063,7 @@ export default function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-slate-500">Nenhuma receita registrada neste período.</p>
+                <p className="text-xs text-slate-500">Nenhuma receita registrada neste periodo.</p>
               )}
             </div>
           </div>
@@ -1072,7 +1072,7 @@ export default function Dashboard() {
             <div className="flex items-start justify-between gap-3 mb-4">
               <div>
                 <p className="text-sm font-bold text-white">Despesas por Categoria</p>
-                <p className="text-xs text-slate-400">Peso de cada despesa no período</p>
+                <p className="text-xs text-slate-400">Peso de cada despesa no periodo</p>
               </div>
               <div className="flex items-center gap-3">
                 <CategoryPeriodFilter />
@@ -1098,7 +1098,7 @@ export default function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste período.</p>
+                <p className="text-xs text-slate-500">Nenhuma despesa registrada neste periodo.</p>
               )}
             </div>
           </div>
@@ -1337,7 +1337,7 @@ export default function Dashboard() {
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/rides"); }}>
           <span className="material-symbols-outlined">history</span>
-          <span className="text-[10px] font-bold uppercase">Histórico</span>
+          <span className="text-[10px] font-bold uppercase">Historico</span>
         </a>
         <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
           <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white ring-4 ring-[#020617] active:scale-95">
@@ -1346,7 +1346,7 @@ export default function Dashboard() {
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/metrics"); }}>
           <span className="material-symbols-outlined">query_stats</span>
-          <span className="text-[10px] font-bold uppercase">Métricas</span>
+          <span className="text-[10px] font-bold uppercase">Metricas</span>
         </a>
         <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/profile"); }}>
           <span className="material-symbols-outlined">settings</span>
@@ -1356,4 +1356,6 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
 
