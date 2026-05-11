@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { createAnnualCheckout, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
+import { getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
+import { MercadoPagoPaymentModal } from "../components/MercadoPagoPaymentModal";
 import { toast } from "sonner";
 
 interface DashboardData {
@@ -207,6 +208,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [errorMêssage, setErrorMêssage] = useState("");
   const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [previousBalance, setPreviousBalance] = useState("");
   const [balanceNegative, setBalanceNegative] = useState(false);
   const [editCategory, setEditCategory] = useState<CategorySummary | null>(null);
@@ -617,13 +619,22 @@ export default function Dashboard() {
     }
   };
 
-  const handleSubscribe = async () => {
-    try {
-      const checkout = await createAnnualCheckout();
-      window.location.href = checkout.mercadoPagoCheckoutUrl;
-    } catch (e) {
-      toast.error("Erro ao iniciar checkout.");
+  const handleSubscribe = () => setShowPaymentModal(true);
+
+  const handlePaymentResult = (result: { status: string; statusDetail?: string }) => {
+    if (result.status === "APPROVED") {
+      toast.success("Pagamento aprovado. Assinatura ativada!");
+      setShowPaymentModal(false);
+      window.location.reload();
+      return;
     }
+    if (result.status === "PENDING") {
+      toast.info("Pagamento recebido e aguardando confirmacao.");
+      setShowPaymentModal(false);
+      loadDashboard();
+      return;
+    }
+    toast.error("Pagamento nao aprovado. Tente novamente.");
   };
 
   const projectionMêssage =
@@ -678,6 +689,13 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
+      <MercadoPagoPaymentModal
+        open={showPaymentModal}
+        amount={access?.annualPrice || 90}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={handlePaymentResult}
+      />
+
       {/* Saldo Anterior Modal */}
       {showBalanceModal && (
         <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => setShowBalanceModal(false)}>

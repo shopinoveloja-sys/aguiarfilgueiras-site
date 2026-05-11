@@ -55,6 +55,11 @@ export const createAnnualCheckout = async () => {
   return response.data;
 };
 
+export const processTransparentPayment = async (data: Record<string, unknown>) => {
+  const response = await api.post('/access/billing/transparent-payment', data);
+  return response.data;
+};
+
 export const getReferralSummary = async () => {
   const response = await api.get('/access/referrals');
   return response.data;
