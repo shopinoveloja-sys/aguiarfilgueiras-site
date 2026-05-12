@@ -11,6 +11,7 @@ import KineticOverlay from "./pages/KineticOverlay";
 import AdminDashboard from "./pages/AdminDashboard";
 import Onboarding from "./pages/Onboarding";
 import QuickAdd from "./pages/QuickAdd";
+import Privacy from "./pages/Privacy";
 import WorkCalendar from "./pages/WorkCalendar";
 import Metrics from "./pages/Metrics";
 import AgentChat from "./pages/AgentChat";
@@ -81,6 +82,8 @@ function App() {
           <Route path="/metrics" element={<Metrics />} />
           <Route path="/agent" element={<AgentChat />} />
           <Route path="/map" element={<Metrics />} />
+          <Route path="/privacidade" element={<Privacy />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
