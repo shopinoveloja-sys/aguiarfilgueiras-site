@@ -788,7 +788,7 @@ export default function Dashboard() {
                   <p className="text-sm font-bold text-white">
                     {access.status === "EXPIRED" ? "Teste expirado" : `Teste gratis: ${access.daysRemaining} dia(s) restantes`}
                   </p>
-                  <p className="text-xs text-slate-400">Assinatura anual por R$ {access.annualPrice}.</p>
+                  <p className="text-xs text-slate-400">Assinatura anual por {formatMoneyPrecise(access.annualPrice)}.</p>
                 </div>
                 <button
                   onClick={handleSubscribe}
