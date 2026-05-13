@@ -24,7 +24,8 @@
 <header class="site-header">
   <div class="container">
     <a href="<?php echo home_url(); ?>" class="site-logo">
-      <img src="<?php echo get_template_directory_uri(); ?>/assets/logo-original.png" alt="Aguiar Filgueiras Advocacia" class="logo-img">
+      Aguiar Filgueiras
+      <small>Advocacia</small>
     </a>
 
     <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
