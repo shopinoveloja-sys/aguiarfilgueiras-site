@@ -5,6 +5,10 @@ import { googleLogin, login, register, saveSession } from "../lib/api";
 
 declare global {
   interface Window {
+    __DRIVERCASH_PLAY_APP__?: boolean;
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void;
+    };
     google?: {
       accounts: {
         id: {
@@ -28,6 +32,28 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const isPlayApp = Boolean(window.__DRIVERCASH_PLAY_APP__ && window.ReactNativeWebView);
+
+  const handleGoogleCredential = async (credential: string) => {
+    setLoading(true);
+    try {
+      const session = await googleLogin({
+        credential,
+        phone: phone || undefined,
+        document: documentNumber || undefined,
+        referralCode: referralCode || undefined,
+      });
+      saveSession(session);
+      toast.success("Autenticação Google realizada com sucesso!");
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.error(error);
+      const message = error.response?.data?.message || "Falha na autenticação Google.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (localStorage.getItem("drivercash_token")) {
@@ -36,6 +62,28 @@ export default function Login() {
   }, [navigate]);
 
   useEffect(() => {
+    const handleNativeMessage = async (event: MessageEvent) => {
+      if (!event.data || typeof event.data !== "string") return;
+
+      try {
+        const payload = JSON.parse(event.data);
+        if (payload.type === "DRIVERCASH_GOOGLE_CREDENTIAL" && payload.credential) {
+          await handleGoogleCredential(payload.credential);
+        }
+        if (payload.type === "DRIVERCASH_GOOGLE_LOGIN_ERROR") {
+          toast.error("Falha na autenticação Google no app.");
+        }
+      } catch {
+        // ignore unrelated messages
+      }
+    };
+
+    window.addEventListener("message", handleNativeMessage);
+    return () => window.removeEventListener("message", handleNativeMessage);
+  }, [documentNumber, navigate, phone, referralCode]);
+
+  useEffect(() => {
+    if (isPlayApp) return;
     if (!googleButtonRef.current) return;
 
     const initializeGoogle = () => {
@@ -46,26 +94,7 @@ export default function Login() {
 
       window.google?.accounts.id.initialize({
         client_id: googleClientId,
-        callback: async (response) => {
-          setLoading(true);
-          try {
-            const session = await googleLogin({
-              credential: response.credential,
-              phone: phone || undefined,
-              document: documentNumber || undefined,
-              referralCode: referralCode || undefined,
-            });
-            saveSession(session);
-            toast.success("Autenticação Google realizada com sucesso!");
-            navigate("/dashboard");
-          } catch (error: any) {
-            console.error(error);
-            const message = error.response?.data?.message || "Falha na autenticação Google.";
-            toast.error(message);
-          } finally {
-            setLoading(false);
-          }
-        },
+        callback: async (response) => handleGoogleCredential(response.credential),
       });
 
       window.google?.accounts.id.renderButton(googleButtonRef.current, {
@@ -88,7 +117,7 @@ export default function Login() {
       script.onload = initializeGoogle;
       window.document.body.appendChild(script);
     }
-  }, [documentNumber, googleClientId, mode, navigate, phone, referralCode]);
+  }, [googleClientId, isPlayApp, mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,6 +138,15 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePlayGoogleLogin = () => {
+    if (!window.ReactNativeWebView) {
+      toast.error("Login Google indisponível neste dispositivo.");
+      return;
+    }
+
+    window.ReactNativeWebView.postMessage(JSON.stringify({ type: "DRIVERCASH_GOOGLE_LOGIN" }));
   };
 
   return (
@@ -245,7 +283,26 @@ export default function Login() {
             </button>
           </form>
 
-          {googleClientId ? (
+          {isPlayApp ? (
+            <div className="mt-4 space-y-4">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-blue-500/10"></span>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-[#1e293b] px-2 text-slate-500">Ou continue com</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handlePlayGoogleLogin}
+                disabled={loading}
+                className="w-full rounded-xl border border-white/10 bg-white py-3 px-4 text-sm font-bold text-slate-900 transition-all active:scale-[0.98] disabled:opacity-60"
+              >
+                Continuar com Google
+              </button>
+            </div>
+          ) : googleClientId ? (
             <div className="mt-4 space-y-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
