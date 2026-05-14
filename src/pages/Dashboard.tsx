@@ -115,6 +115,12 @@ interface SessionUser {
 }
 
 const toInputDate = (value?: string | null) => (value ? value.split("T")[0] : "");
+const formatDate = (value?: string | null) => {
+  if (!value) return "--/--/----";
+  const [year, month, day] = value.split("T")[0].split("-");
+  if (!year || !month || !day) return value;
+  return `${day}/${month}/${year}`;
+};
 
 const emptyChartData: DashboardData["chartData"] = {
   labels: [],
