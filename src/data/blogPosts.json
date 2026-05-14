@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "slug": "reforma-codigo-penal-militar",
+    "date": "28 Fev 2026",
+    "category": "Direito Penal Militar",
+    "title": "Reforma do Codigo Penal Militar: o que muda para os militares da ativa",
+    "excerpt": "As recentes propostas de alteracao do CPM trazem impactos significativos na tipificacao de crimes militares e nos procedimentos processuais.",
+    "carlosComment": "Em mais de 35 anos acompanhando a Justica Militar, vejo esta reforma como um momento decisivo. Os militares precisam de orientacao juridica especializada para entender como essas mudancas afetam diretamente suas carreiras e direitos.",
+    "content": [
+      "As mudancas no Codigo Penal Militar devem ser acompanhadas com atencao por militares da ativa, reservistas e seus familiares. Alteracoes em tipos penais, procedimentos e entendimentos administrativos podem impactar diretamente a forma como condutas sao apuradas e defendidas.",
+      "Na pratica, o ponto central e compreender que uma ocorrencia disciplinar ou penal militar raramente deve ser tratada como um simples procedimento interno. Cada documento, justificativa e prazo pode influenciar o resultado final.",
+      "A orientacao tecnica desde o inicio ajuda a organizar os fatos, preservar provas, evitar manifestacoes precipitadas e construir uma defesa coerente com a legislacao militar aplicavel.",
+      "Antes de apresentar resposta em sindicancia, IPM, conselho ou processo correlato, o militar deve buscar avaliacao individual do caso, especialmente quando houver risco para carreira, promocao, remuneracao ou permanencia na Forca."
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "pensao-militar-direitos-dependentes",
+    "date": "15 Fev 2026",
+    "category": "Direito Previdenciario Militar",
+    "title": "Pensao militar: direitos dos dependentes apos a reforma previdenciaria",
+    "excerpt": "Entenda como a reforma da previdencia alterou os criterios de concessao de pensao para dependentes de militares das Forcas Armadas.",
+    "carlosComment": "Na minha experiencia a frente de secoes de inativos e pensionistas, posso afirmar que muitos militares e familiares desconhecem direitos importantes. A orientacao preventiva pode evitar anos de litigio desnecessario.",
+    "content": [
+      "A pensao militar envolve regras proprias e exige analise cuidadosa da situacao funcional, da composicao familiar, da data dos fatos e das normas vigentes no momento aplicavel.",
+      "Dependentes muitas vezes deixam de buscar informacoes por acreditarem que o direito e automatico ou, ao contrario, por receberem uma negativa inicial sem compreender os fundamentos do ato administrativo.",
+      "A documentacao correta e a leitura precisa do enquadramento legal fazem diferenca. Certidoes, vinculos, historico funcional e comunicacoes administrativas precisam ser organizados antes de qualquer requerimento ou recurso.",
+      "Quando ha indeferimento, demora excessiva ou divergencia de interpretacao, pode ser necessario atuar administrativamente ou judicialmente para proteger o direito dos dependentes."
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "transgressoes-disciplinares-ampla-defesa",
+    "date": "02 Fev 2026",
+    "category": "Direito Disciplinar Militar",
+    "title": "Transgressoes disciplinares: como garantir o direito a ampla defesa",
+    "excerpt": "Os procedimentos administrativos disciplinares exigem respeito estrito ao contraditorio. Saiba como proteger seus direitos.",
+    "carlosComment": "O Direito Disciplinar Militar e uma das areas mais sensiveis. Um processo mal conduzido pode encerrar prematuramente uma carreira promissora. A defesa tecnica desde o inicio e fundamental.",
+    "content": [
+      "Transgressoes disciplinares devem ser tratadas com seriedade desde a primeira comunicacao. Mesmo procedimentos aparentemente simples podem gerar efeitos relevantes na carreira militar.",
+      "O direito ao contraditorio e a ampla defesa inclui ciencia adequada dos fatos imputados, oportunidade real de manifestacao, producao de elementos favoraveis e decisao motivada pela autoridade competente.",
+      "Um erro comum e responder de forma emocional ou incompleta antes de compreender exatamente quais fatos estao sendo apurados e quais normas foram supostamente violadas.",
+      "A defesa tecnica busca organizar a narrativa, apontar nulidades quando existirem, demonstrar proporcionalidade e proteger o militar contra sancoes indevidas ou excessivas."
+    ]
+  }
+]
