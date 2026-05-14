@@ -30,6 +30,7 @@ export interface FuelLog {
   unitPrice: number;
   totalPrice: number;
   quantity: number;
+  odometerKm?: number | null;
   createdAt: string;
 }
 
@@ -197,6 +198,7 @@ export function loadFuelLogs(): FuelLog[] {
       unitPrice: Number(item.unitPrice) || 0,
       totalPrice: Number(item.totalPrice) || 0,
       quantity: Number(item.quantity) || 0,
+      odometerKm: item.odometerKm ?? null,
       createdAt: item.createdAt || new Date().toISOString(),
     }))
     .sort((a, b) => (a.date < b.date ? 1 : -1));

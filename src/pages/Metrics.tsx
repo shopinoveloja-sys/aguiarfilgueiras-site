@@ -25,6 +25,7 @@ type Period = "day" | "week" | "month";
 interface Transaction {
   id: string;
   type: "INCOME" | "EXPENSE";
+  source?: string;
   category: string;
   value: number | string;
   date: string;
@@ -64,8 +65,8 @@ const normalizeText = (value: string) =>
 
 const dateKeyFromValue = (value?: string) => (value ? value.slice(0, 10) : "");
 
-const getPeriodRange = (period: Period) => {
-  const now = new Date();
+const getPeriodRange = (period: Period, referenceDate: string) => {
+  const now = new Date(`${referenceDate}T12:00:00`);
   const start = new Date(now);
   const end = new Date(now);
 
@@ -87,8 +88,8 @@ const getPeriodRange = (period: Period) => {
   return { start: todayKey(start), end: todayKey(end) };
 };
 
-const isDateInRange = (date: string, period: Period) => {
-  const range = getPeriodRange(period);
+const isDateInRange = (date: string, period: Period, referenceDate: string) => {
+  const range = getPeriodRange(period, referenceDate);
   return date >= range.start && date <= range.end;
 };
 
@@ -112,6 +113,7 @@ export default function Metrics() {
   const [maintenancePlans, setMaintenancePlansState] = useState<MaintenancePlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingLog, setSavingLog] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(todayKey());
   const [logDraft, setLogDraft] = useState({
     date: todayKey(),
     startTime: "",
@@ -148,15 +150,15 @@ export default function Metrics() {
 
   useEffect(() => {
     if (!activeVehicle) return;
-    const existing = operationLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === todayKey());
+    const existing = operationLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === selectedDate);
     setLogDraft({
-      date: existing?.date || todayKey(),
+      date: existing?.date || selectedDate,
       startTime: existing?.startTime || "",
       endTime: existing?.endTime || "",
       kmStart: existing?.kmStart?.toString() || "",
       kmEnd: existing?.kmEnd?.toString() || "",
     });
-  }, [activeVehicle, operationLogs]);
+  }, [activeVehicle, operationLogs, selectedDate]);
 
   const mergedOperationLogs = useMemo(() => {
     const existingDates = new Set(operationLogs.map((item) => `${item.vehicleId}:${item.date}`));
@@ -201,9 +203,11 @@ export default function Metrics() {
   }, [activeVehicle, maintenancePlans]);
 
   const stats = useMemo(() => {
-    const periodTransactions = transactions.filter((item) => isDateInRange(dateKeyFromValue(item.date || item.createdAt), period));
-    const periodFuelLogs = fuelLogs.filter((item) => isDateInRange(item.date, period));
-    const periodLogs = completeLogs.filter((item) => isDateInRange(item.date, period));
+    const periodTransactions = transactions
+      .filter((item) => !(item.type === "EXPENSE" && (item as any).source === "APP"))
+      .filter((item) => isDateInRange(dateKeyFromValue(item.date || item.createdAt), period, selectedDate));
+    const periodFuelLogs = fuelLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
+    const periodLogs = completeLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
     const income = periodTransactions
       .filter((item) => item.type === "INCOME")
       .reduce((sum, item) => sum + toNumber(item.value), 0);
@@ -236,7 +240,7 @@ export default function Metrics() {
       profitPerKm,
       consumptionAverage,
     };
-  }, [completeLogs, fuelLogs, period, transactions]);
+  }, [completeLogs, fuelLogs, period, selectedDate, transactions]);
 
   const saveLocalOperationLogs = (nextLogs: OperationLog[]) => {
     setOperationLogs(nextLogs);
@@ -265,7 +269,7 @@ export default function Metrics() {
     const nextLog: OperationLog = {
       id: existing?.id || generateLocalId("op"),
       vehicleId: activeVehicle.id,
-      date: logDraft.date,
+      date: selectedDate,
       startTime: logDraft.startTime,
       endTime: logDraft.endTime,
       kmStart: parsedStart,
@@ -420,14 +424,14 @@ export default function Metrics() {
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Data</label>
               <input
                 type="date"
-                value={logDraft.date}
-                onChange={(e) => setLogDraft((prev) => ({ ...prev, date: e.target.value }))}
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
                 className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
               />
             </div>
             <div className="rounded-lg bg-[#0f172a] border border-slate-800 px-3 py-3 flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">KM atual</span>
-              <span className="text-sm font-black text-blue-300">{currentKm.toLocaleString("pt-BR")} km</span>
+              <span className="text-sm font-black text-blue-300">{stats.kmTotal.toLocaleString("pt-BR")} km no periodo</span>
             </div>
             <div>
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Horario de inicio</label>
@@ -479,9 +483,10 @@ export default function Metrics() {
 
         <section className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-slate-900 border border-emerald-500/20 p-4">
-            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Ganho por KM</p>
-            <p className="text-2xl font-black text-emerald-400">{money(stats.incomePerKm)}</p>
-          </div>
+              <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Ganho por KM</p>
+              <p className="text-2xl font-black text-emerald-400">{money(stats.incomePerKm)}</p>
+              <p className="mt-1 text-[10px] text-slate-500">{stats.kmTotal.toLocaleString("pt-BR")} km percorridos</p>
+            </div>
           <div className="rounded-xl bg-slate-900 border border-blue-500/20 p-4">
             <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Ganho por Hora</p>
             <p className="text-2xl font-black text-blue-400">{money(stats.incomePerHour)}</p>
@@ -545,7 +550,10 @@ export default function Metrics() {
               <div key={item.id} className="flex items-center justify-between rounded-lg bg-slate-950/50 border border-slate-800 px-3 py-2">
                 <div>
                   <p className="text-xs font-bold text-slate-200">{item.date}</p>
-                  <p className="text-[10px] text-slate-500">{item.fuelType.toUpperCase()} - {item.unitPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/un</p>
+                  <p className="text-[10px] text-slate-500">
+                    {item.fuelType.toUpperCase()} - {item.unitPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/un
+                    {item.odometerKm ? ` - KM ${item.odometerKm.toLocaleString("pt-BR")}` : ""}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-black text-amber-300">{money(item.totalPrice)}</p>

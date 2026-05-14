@@ -27,6 +27,7 @@ export default function QuickAdd() {
   const [dueDayOfWeek, setDueDayOfWeek] = useState(new Date().getDay().toString());
   const [fuelType, setFuelType] = useState<FuelType>("gasolina");
   const [fuelUnitPrice, setFuelUnitPrice] = useState("");
+  const [fuelOdometerKm, setFuelOdometerKm] = useState("");
   const [loading, setLoading] = useState(false);
   const vehicles = useMemo(() => loadVehicles(), []);
   const activeVehicle = useMemo(() => getActiveVehicle(vehicles), [vehicles]);
@@ -153,6 +154,7 @@ export default function QuickAdd() {
             unitPrice: parsedFuelUnitPrice,
             totalPrice: finalValue,
             quantity,
+            odometerKm: fuelOdometerKm ? Number(fuelOdometerKm) : null,
             createdAt: new Date().toISOString(),
           },
           ...loadFuelLogs(),
@@ -294,6 +296,17 @@ export default function QuickAdd() {
                   className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
                 />
               </div>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">KM no abastecimento</label>
+              <input
+                type="number"
+                min="0"
+                value={fuelOdometerKm}
+                onChange={(e) => setFuelOdometerKm(e.target.value)}
+                placeholder="Ex: 257320"
+                className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
+              />
             </div>
             {currentFuelUnitPrice > 0 && currentAmountValue > 0 && (
               <div className="rounded-lg bg-[#0f172a] border border-slate-800 px-3 py-2 text-xs text-slate-400">
