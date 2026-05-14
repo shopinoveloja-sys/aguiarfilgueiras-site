@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Menu, X } from "lucide-react";
+import logoAf from "@/assets/aguiar-filgueiras-logo.jpeg";
 
 const navItems = [
-  { label: "Início", href: "#inicio" },
-  { label: "O Escritório", href: "#escritorio" },
-  { label: "Áreas de Atuação", href: "#areas" },
-  { label: "Fundador", href: "#fundador" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contato", href: "#contato" },
+  { label: "Inicio", href: "/#inicio" },
+  { label: "O Escritorio", href: "/#escritorio" },
+  { label: "Areas de Atuacao", href: "/#areas" },
+  { label: "Fundador", href: "/#fundador" },
+  { label: "Blog", href: "/#blog" },
+  { label: "Contato", href: "/#contato" },
 ];
 
 const Header = () => {
@@ -16,7 +17,6 @@ const Header = () => {
 
   return (
     <>
-      {/* Top bar */}
       <div className="bg-primary py-2">
         <div className="container mx-auto flex items-center justify-center gap-4 text-sm text-gold-light">
           <span>Atendimento virtual para todo Brasil</span>
@@ -30,22 +30,27 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Main nav */}
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-md"
       >
-        <div className="container mx-auto flex items-center justify-between px-6 py-4">
-          <a href="#inicio" className="font-heading text-2xl font-bold tracking-wide text-primary">
-            Aguiar Filgueiras
-            <span className="block text-xs font-body font-normal tracking-[0.3em] uppercase text-muted-foreground">
-              Advocacia
+        <div className="container mx-auto flex items-center justify-between px-6 py-3">
+          <a href="/#inicio" className="flex items-center gap-3" aria-label="Aguiar Filgueiras Advocacia">
+            <img
+              src={logoAf}
+              alt="Aguiar Filgueiras Advocacia"
+              className="h-12 w-auto rounded-sm object-contain shadow-sm"
+            />
+            <span className="hidden font-heading text-xl font-bold tracking-wide text-primary sm:block">
+              Aguiar Filgueiras
+              <span className="block text-xs font-body font-normal uppercase tracking-[0.24em] text-muted-foreground">
+                Advocacia
+              </span>
             </span>
           </a>
 
-          {/* Desktop nav */}
           <nav aria-label="Menu principal" className="hidden items-center gap-8 md:flex">
             {navItems.map((item) => (
               <a
@@ -58,16 +63,16 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Mobile toggle */}
           <button
+            type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-primary"
+            className="text-primary md:hidden"
+            aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
-        {/* Mobile menu */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.nav
