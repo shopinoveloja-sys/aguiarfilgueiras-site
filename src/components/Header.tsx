@@ -41,7 +41,7 @@ const Header = () => {
             <img
               src={logoAf}
               alt="Aguiar Filgueiras Advocacia"
-              className="h-12 w-auto rounded-sm object-contain shadow-sm"
+              className="h-12 w-12 rounded-full object-cover shadow-sm ring-1 ring-border"
             />
             <span className="hidden font-heading text-xl font-bold tracking-wide text-primary sm:block">
               Aguiar Filgueiras
