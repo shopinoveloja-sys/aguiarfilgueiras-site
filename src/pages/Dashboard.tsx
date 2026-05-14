@@ -359,6 +359,16 @@ export default function Dashboard() {
   const activeVehicle = getActiveVehicle(loadVehicles());
   const todayOperationLog = getOperationLogForDate(todayKey(), activeVehicle?.id);
   const metricsReminderVisible = !todayOperationLog || !isOperationLogComplete(todayOperationLog);
+  const metricsReminderDate = todayOperationLog?.date || todayKey();
+  const metricsReminderMissing = [
+    !todayOperationLog?.startTime ? "horario de inicio" : null,
+    !todayOperationLog?.endTime ? "horario de termino" : null,
+    todayOperationLog?.kmStart == null ? "KM inicial" : null,
+    todayOperationLog?.kmEnd == null ? "KM final" : null,
+  ].filter(Boolean) as string[];
+  const metricsReminderMessage = metricsReminderMissing.length > 0
+    ? `Dia ${formatDate(metricsReminderDate)}: falta ${metricsReminderMissing.join(", ")}.`
+    : `Dia ${formatDate(metricsReminderDate)}: complete horario e KM da jornada.`;
   const dueMaintenance = activeVehicle ? getDueMaintenance(activeVehicle.id, getLatestVehicleKm(activeVehicle.id)) : [];
 
   const handleSaveBalance = async () => {
@@ -800,7 +810,7 @@ export default function Dashboard() {
                   <span className="material-symbols-outlined text-amber-300">warning</span>
                   <div>
                     <p className="text-sm font-bold text-amber-200">Pendencia nas metricas do dia</p>
-                    <p className="text-xs text-amber-100/70">Registre horario e KM da jornada para melhorar os calculos de ganho por KM, por hora e consumo.</p>
+                    <p className="text-xs text-amber-100/70">{metricsReminderMessage}</p>
                   </div>
                 </div>
               </button>
