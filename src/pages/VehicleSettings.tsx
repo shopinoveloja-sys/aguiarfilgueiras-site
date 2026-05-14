@@ -1,43 +1,95 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  FuelType,
+  VehicleProfile,
+  generateLocalId,
+  getActiveVehicle,
+  loadVehicles,
+  saveVehicles,
+} from "../lib/fleet";
 
-const vehicleStorageKey = "drivercash_vehicle";
-
-const defaultVehicle = {
-  model: "Toyota Corolla",
-  consumption: "12.5",
-  fuelPrice: "5.89",
-  fuelType: "gasolina",
-};
-
-const fuelUnitMap: Record<string, string> = {
+const fuelUnitMap: Record<FuelType, string> = {
   gasolina: "L",
-  alcool: "L",
   etanol: "L",
-  gnv: "m³",
+  gnv: "m3",
   diesel: "L",
   eletrico: "kWh",
 };
 
-const loadVehicle = () => {
-  try {
-    const saved = localStorage.getItem(vehicleStorageKey);
-    return saved ? { ...defaultVehicle, ...JSON.parse(saved) } : defaultVehicle;
-  } catch {
-    return defaultVehicle;
-  }
-};
-
 export default function VehicleSettings() {
   const navigate = useNavigate();
-  const [vehicle, setVehicle] = useState(loadVehicle);
-  const fuelUnit = fuelUnitMap[vehicle.fuelType] || "L";
+  const [vehicles, setVehicles] = useState<VehicleProfile[]>(() => loadVehicles());
+  const activeVehicle = useMemo(() => getActiveVehicle(vehicles), [vehicles]);
+  const [draft, setDraft] = useState<VehicleProfile>(activeVehicle);
 
-  const handleSave = () => {
-    localStorage.setItem(vehicleStorageKey, JSON.stringify(vehicle));
-    toast.success("Configurações do veículo salvas!");
+  const syncVehicles = (nextVehicles: VehicleProfile[], successMessage?: string) => {
+    const normalized = nextVehicles.length > 0 ? nextVehicles : vehicles;
+    setVehicles(normalized);
+    saveVehicles(normalized);
+    setDraft(getActiveVehicle(normalized));
+    if (successMessage) toast.success(successMessage);
   };
+
+  const selectVehicle = (vehicleId: string) => {
+    const nextVehicles = vehicles.map((vehicle) => ({
+      ...vehicle,
+      active: vehicle.id === vehicleId,
+    }));
+    const selected = nextVehicles.find((vehicle) => vehicle.id === vehicleId);
+    setVehicles(nextVehicles);
+    saveVehicles(nextVehicles);
+    setDraft(selected || nextVehicles[0]);
+  };
+
+  const saveCurrentVehicle = () => {
+    const trimmedLabel = draft.label.trim();
+    if (!trimmedLabel) {
+      toast.error("Informe o nome do veiculo.");
+      return;
+    }
+
+    if (draft.averageConsumption <= 0) {
+      toast.error("Informe um consumo medio valido.");
+      return;
+    }
+
+    syncVehicles(
+      vehicles.map((vehicle) => (vehicle.id === draft.id ? { ...draft, label: trimmedLabel } : vehicle)),
+      "Veiculo salvo com sucesso!",
+    );
+  };
+
+  const addVehicle = () => {
+    const nextVehicle: VehicleProfile = {
+      id: generateLocalId("vehicle"),
+      label: `Veiculo ${vehicles.length + 1}`,
+      averageConsumption: 12.5,
+      fuelType: "gasolina",
+      active: true,
+      createdAt: new Date().toISOString(),
+    };
+
+    syncVehicles(
+      vehicles.map((vehicle) => ({ ...vehicle, active: false })).concat(nextVehicle),
+      "Novo veiculo criado.",
+    );
+  };
+
+  const removeVehicle = (vehicleId: string) => {
+    if (vehicles.length === 1) {
+      toast.error("Voce precisa manter pelo menos um veiculo.");
+      return;
+    }
+    const nextVehicles = vehicles.filter((vehicle) => vehicle.id !== vehicleId);
+    if (!nextVehicles.some((vehicle) => vehicle.active)) {
+      nextVehicles[0].active = true;
+    }
+    syncVehicles(nextVehicles, "Veiculo removido.");
+  };
+
+  const fuelUnit = fuelUnitMap[draft.fuelType] || "L";
 
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-24">
@@ -45,113 +97,106 @@ export default function VehicleSettings() {
         <button onClick={() => navigate("/profile")} className="flex items-center justify-center p-2 rounded-full hover:bg-white/5">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
-        <h1 className="text-lg font-bold">Configuração do Veículo</h1>
-        <div className="w-10" />
+        <h1 className="text-lg font-bold">Veiculos</h1>
+        <button onClick={addVehicle} className="size-10 rounded-full bg-blue-500/10 text-blue-300 flex items-center justify-center">
+          <span className="material-symbols-outlined">add</span>
+        </button>
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         <section className="space-y-1">
-          <h2 className="text-2xl font-bold">Detalhes do Veículo</h2>
-          <p className="text-sm text-slate-400">Mantenha os dados atualizados para cálculos precisos.</p>
+          <h2 className="text-2xl font-bold">Detalhes do Veiculo</h2>
+          <p className="text-sm text-slate-400">Cadastre mais de um veiculo e escolha qual esta em uso para alimentar as metricas.</p>
+        </section>
+
+        <section className="space-y-3">
+          {vehicles.map((vehicle) => (
+            <div
+              key={vehicle.id}
+              className={`rounded-xl border p-4 ${vehicle.active ? "border-blue-500/30 bg-blue-500/10" : "border-slate-800 bg-slate-900"}`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <button className="text-left flex-1" onClick={() => selectVehicle(vehicle.id)}>
+                  <p className="text-sm font-bold">{vehicle.label}</p>
+                  <p className="text-xs text-slate-400">
+                    {vehicle.averageConsumption.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} km/{fuelUnitMap[vehicle.fuelType]}
+                  </p>
+                </button>
+                <div className="flex items-center gap-2">
+                  {vehicle.active ? (
+                    <span className="text-[10px] font-bold uppercase px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-300">Em uso</span>
+                  ) : (
+                    <button
+                      onClick={() => selectVehicle(vehicle.id)}
+                      className="text-[10px] font-bold uppercase px-2 py-1 rounded-full bg-slate-800 text-slate-300"
+                    >
+                      Usar
+                    </button>
+                  )}
+                  <button onClick={() => removeVehicle(vehicle.id)} className="text-slate-500 hover:text-red-300">
+                    <span className="material-symbols-outlined text-base">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </section>
 
         <div className="bg-[#1e293b66] rounded-xl border border-blue-500/10 p-5 space-y-5">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">Modelo do Veículo</label>
+            <label className="block text-sm font-medium text-slate-300">Nome do Veiculo</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">directions_car</span>
               <input
                 className="w-full pl-10 pr-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white placeholder-slate-500 transition-all"
                 placeholder="Ex: Toyota Corolla"
                 type="text"
-                value={vehicle.model}
-                onChange={(e) => setVehicle({ ...vehicle, model: e.target.value })}
+                value={draft.label}
+                onChange={(e) => setDraft({ ...draft, label: e.target.value })}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">{`Consumo Médio (km/${fuelUnit})`}</label>
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">ev_station</span>
-              <input
-                className="w-full pl-10 pr-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white placeholder-slate-500 transition-all"
-                placeholder={fuelUnit === "kWh" ? "Ex: 6.2" : fuelUnit === "m³" ? "Ex: 15.5" : "Ex: 12.5"}
-                type="number"
-                step="0.1"
-                value={vehicle.consumption}
-                onChange={(e) => setVehicle({ ...vehicle, consumption: e.target.value })}
-              />
-            </div>
+            <label className="block text-sm font-medium text-slate-300">{`Consumo medio (km/${fuelUnit})`}</label>
+            <input
+              className="w-full px-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white placeholder-slate-500 transition-all"
+              placeholder="Ex: 12.5"
+              type="number"
+              step="0.1"
+              min="0"
+              value={draft.averageConsumption}
+              onChange={(e) => setDraft({ ...draft, averageConsumption: Number(e.target.value) || 0 })}
+            />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">{`Preço da Unidade (${fuelUnit})`}</label>
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">payments</span>
-              <input
-                className="w-full pl-10 pr-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white placeholder-slate-500 transition-all"
-                placeholder={fuelUnit === "kWh" ? "Ex: 0.89" : fuelUnit === "m³" ? "Ex: 3.79" : "Ex: 5.89"}
-                type="number"
-                step="0.01"
-                value={vehicle.fuelPrice}
-                onChange={(e) => setVehicle({ ...vehicle, fuelPrice: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300">Tipo de Combustível</label>
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">local_gas_station</span>
-              <select
-                className="w-full pl-10 pr-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white transition-all"
-                value={vehicle.fuelType}
-                onChange={(e) => setVehicle({ ...vehicle, fuelType: e.target.value })}
-              >
-                <option value="gasolina">Gasolina</option>
-                <option value="alcool">Álcool / Etanol</option>
-                <option value="gnv">GNV</option>
-                <option value="diesel">Diesel</option>
-                <option value="eletrico">Elétrico</option>
-              </select>
-              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
-            </div>
+            <label className="block text-sm font-medium text-slate-300">Combustivel principal</label>
+            <select
+              className="w-full px-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white transition-all"
+              value={draft.fuelType}
+              onChange={(e) => setDraft({ ...draft, fuelType: e.target.value as FuelType })}
+            >
+              <option value="gasolina">Gasolina</option>
+              <option value="etanol">Etanol</option>
+              <option value="gnv">GNV</option>
+              <option value="diesel">Diesel</option>
+              <option value="eletrico">Eletrico</option>
+            </select>
           </div>
         </div>
 
         <div className="flex items-start gap-3 bg-blue-500/5 p-4 rounded-xl border border-blue-500/20">
           <span className="material-symbols-outlined text-blue-400 mt-0.5">info</span>
           <p className="text-sm leading-relaxed text-slate-300">
-            Os valores acima alimentam os cálculos de consumo real, custo por km e quantidade abastecida automatica em cada período.
+            O veiculo marcado como em uso alimenta as metricas operacionais, combustivel e manutencoes do painel.
           </p>
         </div>
 
-        <button onClick={handleSave} className="w-full bg-gradient-to-br from-blue-800 to-blue-500 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]">
-          Salvar Configuracoes
+        <button onClick={saveCurrentVehicle} className="w-full bg-gradient-to-br from-blue-800 to-blue-500 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]">
+          Salvar configuracoes
         </button>
       </main>
-
-      <nav className="sticky bottom-0 bg-[#020617] border-t border-blue-500/10 pb-8 pt-3 px-6">
-        <div className="flex items-center justify-between max-w-md mx-auto">
-          <a className="flex flex-col items-center gap-1 group" href="#" onClick={(e) => { e.preventDefault(); navigate("/dashboard"); }}>
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-400">dashboard</span>
-            <span className="text-[10px] font-medium text-slate-400 group-hover:text-blue-400">Dashboard</span>
-          </a>
-          <a className="flex flex-col items-center gap-1 group" href="#" onClick={(e) => { e.preventDefault(); navigate("/rides"); }}>
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-400">route</span>
-            <span className="text-[10px] font-medium text-slate-400 group-hover:text-blue-400">Viagens</span>
-          </a>
-          <a className="flex flex-col items-center gap-1 group" href="#">
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-400">insights</span>
-            <span className="text-[10px] font-medium text-slate-400 group-hover:text-blue-400">Insights</span>
-          </a>
-          <a className="flex flex-col items-center gap-1 group" href="#" onClick={(e) => { e.preventDefault(); navigate("/profile"); }}>
-            <span className="material-symbols-outlined text-blue-400" style={{ fontVariationSettings: "'FILL' 1" }}>settings</span>
-            <span className="text-[10px] font-medium text-blue-400">Ajustes</span>
-          </a>
-        </div>
-      </nav>
     </div>
   );
 }

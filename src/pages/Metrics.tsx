@@ -1,6 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getKmHistory, getMaintenanceAlerts, getTransactions } from "../lib/api";
+import { toast } from "sonner";
+import { createKmDaily, getKmHistory, getTransactions, updateKmDaily } from "../lib/api";
+import {
+  MaintenancePlan,
+  OperationLog,
+  VehicleProfile,
+  generateLocalId,
+  getActiveVehicle,
+  getDueMaintenance,
+  getLatestVehicleKm,
+  isOperationLogComplete,
+  loadFuelLogs,
+  loadMaintenancePlans,
+  loadOperationLogs,
+  loadVehicles,
+  saveMaintenancePlans,
+  saveOperationLogs,
+  todayKey,
+} from "../lib/fleet";
 
 type Period = "day" | "week" | "month";
 
@@ -22,50 +40,29 @@ interface KmDaily {
   kmTotal: number;
 }
 
-interface MaintenanceAlert {
-  id: string;
-  name: string;
-  kmInterval: number;
-  lastKm: number;
-  nextKm: number;
-  enabled: boolean;
-}
-
-interface VehicleConfig {
-  model: string;
-  consumption: string;
-  fuelPrice: string;
-  fuelType: string;
-}
-
-const defaultVehicle: VehicleConfig = {
-  model: "",
-  consumption: "12.5",
-  fuelPrice: "5.89",
-  fuelType: "gasolina",
-};
-
-const fuelUnitMap: Record<string, string> = {
-  gasolina: "L",
-  alcool: "L",
-  etanol: "L",
-  gnv: "m³",
-  diesel: "L",
-  eletrico: "kWh",
-};
+const maintenanceTemplates = [
+  "Troca de oleo",
+  "Filtro de oleo",
+  "Filtro de ar",
+  "Pastilha de freio",
+  "Pneu",
+  "Alinhamento e balanceamento",
+  "Correia",
+  "Outra",
+];
 
 const toNumber = (value: unknown) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-const normalizeText = (value: string) =>
-  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-
 const money = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const metricDate = (value: { createdAt?: string; date: string }) => value.createdAt || value.date;
+const normalizeText = (value: string) =>
+  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+
+const dateKeyFromValue = (value?: string) => (value ? value.slice(0, 10) : "");
 
 const getPeriodRange = (period: Period) => {
   const now = new Date();
@@ -73,57 +70,73 @@ const getPeriodRange = (period: Period) => {
   const end = new Date(now);
 
   if (period === "day") {
-    start.setHours(0, 0, 0, 0);
-    end.setHours(23, 59, 59, 999);
-    return { start, end };
+    return { start: todayKey(now), end: todayKey(now) };
   }
 
   if (period === "week") {
     const day = start.getDay();
     const daysFromMonday = day === 0 ? 6 : day - 1;
     start.setDate(start.getDate() - daysFromMonday);
-    start.setHours(0, 0, 0, 0);
     end.setTime(start.getTime());
     end.setDate(start.getDate() + 6);
-    end.setHours(23, 59, 59, 999);
-    return { start, end };
+    return { start: todayKey(start), end: todayKey(end) };
   }
 
   start.setDate(1);
-  start.setHours(0, 0, 0, 0);
   end.setMonth(start.getMonth() + 1, 0);
-  end.setHours(23, 59, 59, 999);
-  return { start, end };
+  return { start: todayKey(start), end: todayKey(end) };
+};
+
+const isDateInRange = (date: string, period: Period) => {
+  const range = getPeriodRange(period);
+  return date >= range.start && date <= range.end;
+};
+
+const getHoursBetween = (startTime: string, endTime: string) => {
+  if (!startTime || !endTime) return 0;
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+  if ([startHour, startMinute, endHour, endMinute].some((value) => Number.isNaN(value))) return 0;
+  const start = startHour * 60 + startMinute;
+  const end = endHour * 60 + endMinute;
+  return end > start ? (end - start) / 60 : 0;
 };
 
 export default function Metrics() {
   const navigate = useNavigate();
   const [period, setPeriod] = useState<Period>("month");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [kmHistory, setKmHistory] = useState<KmDaily[]>([]);
-  const [maintenance, setMaintenance] = useState<MaintenanceAlert[]>([]);
-  const [vehicle, setVehicle] = useState<VehicleConfig>(defaultVehicle);
+  const [legacyKmHistory, setLegacyKmHistory] = useState<KmDaily[]>([]);
+  const [vehicles, setVehicles] = useState<VehicleProfile[]>([]);
+  const [operationLogs, setOperationLogs] = useState<OperationLog[]>([]);
+  const [maintenancePlans, setMaintenancePlansState] = useState<MaintenancePlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [savingLog, setSavingLog] = useState(false);
+  const [logDraft, setLogDraft] = useState({
+    date: todayKey(),
+    startTime: "",
+    endTime: "",
+    kmStart: "",
+    kmEnd: "",
+  });
+  const [maintenanceTemplate, setMaintenanceTemplate] = useState("Troca de oleo");
+  const [maintenanceCustomName, setMaintenanceCustomName] = useState("");
+  const [maintenanceDueKm, setMaintenanceDueKm] = useState("");
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        try {
-          const savedVehicle = localStorage.getItem("drivercash_vehicle");
-          if (savedVehicle) {
-            setVehicle({ ...defaultVehicle, ...JSON.parse(savedVehicle) });
-          }
-        } catch {}
+        const localVehicles = loadVehicles();
+        const localLogs = loadOperationLogs();
+        const localMaintenance = loadMaintenancePlans();
+        setVehicles(localVehicles);
+        setOperationLogs(localLogs);
+        setMaintenancePlansState(localMaintenance);
 
-        const [txs, kms, alerts] = await Promise.all([
-          getTransactions(),
-          getKmHistory(),
-          getMaintenanceAlerts(),
-        ]);
+        const [txs, kms] = await Promise.all([getTransactions(), getKmHistory()]);
         setTransactions(Array.isArray(txs) ? txs : []);
-        setKmHistory(Array.isArray(kms) ? kms : []);
-        setMaintenance(Array.isArray(alerts) ? alerts : []);
+        setLegacyKmHistory(Array.isArray(kms) ? kms : []);
       } finally {
         setLoading(false);
       }
@@ -131,69 +144,227 @@ export default function Metrics() {
     load();
   }, []);
 
-  const calculatePeriodStats = (targetPeriod: Period) => {
-    const { start, end } = getPeriodRange(targetPeriod);
-    const inRange = (date: string) => {
-      const parsed = new Date(date);
-      return parsed >= start && parsed <= end;
-    };
+  const activeVehicle = useMemo(() => getActiveVehicle(vehicles), [vehicles]);
 
-    const periodTransactions = transactions.filter((item) => inRange(metricDate(item)));
-    const periodKm = kmHistory.filter((item) => inRange(metricDate(item)));
+  useEffect(() => {
+    if (!activeVehicle) return;
+    const existing = operationLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === todayKey());
+    setLogDraft({
+      date: existing?.date || todayKey(),
+      startTime: existing?.startTime || "",
+      endTime: existing?.endTime || "",
+      kmStart: existing?.kmStart?.toString() || "",
+      kmEnd: existing?.kmEnd?.toString() || "",
+    });
+  }, [activeVehicle, operationLogs]);
+
+  const mergedOperationLogs = useMemo(() => {
+    const existingDates = new Set(operationLogs.map((item) => `${item.vehicleId}:${item.date}`));
+    const fallbackLogs: OperationLog[] = activeVehicle
+      ? legacyKmHistory
+          .filter((item) => !existingDates.has(`${activeVehicle.id}:${dateKeyFromValue(item.date)}`))
+          .map((item) => ({
+            id: `legacy-${item.id}`,
+            date: dateKeyFromValue(item.date),
+            vehicleId: activeVehicle.id,
+            startTime: "",
+            endTime: "",
+            kmStart: item.kmStart,
+            kmEnd: item.kmEnd,
+            syncedKmId: item.id,
+            createdAt: item.createdAt || item.date,
+            updatedAt: item.createdAt || item.date,
+          }))
+      : [];
+
+    return [...operationLogs, ...fallbackLogs].sort((a, b) => (a.date < b.date ? 1 : -1));
+  }, [activeVehicle, legacyKmHistory, operationLogs]);
+
+  const activeVehicleLogs = useMemo(
+    () => mergedOperationLogs.filter((item) => item.vehicleId === activeVehicle?.id),
+    [activeVehicle, mergedOperationLogs],
+  );
+
+  const completeLogs = useMemo(
+    () => activeVehicleLogs.filter((item) => isOperationLogComplete(item)),
+    [activeVehicleLogs],
+  );
+
+  const fuelLogs = useMemo(
+    () => loadFuelLogs().filter((item) => item.vehicleId === activeVehicle?.id),
+    [activeVehicle],
+  );
+
+  const dueMaintenance = useMemo(() => {
+    const currentKm = getLatestVehicleKm(activeVehicle?.id || "");
+    return activeVehicle ? getDueMaintenance(activeVehicle.id, currentKm) : [];
+  }, [activeVehicle, maintenancePlans]);
+
+  const stats = useMemo(() => {
+    const periodTransactions = transactions.filter((item) => isDateInRange(dateKeyFromValue(item.date || item.createdAt), period));
+    const periodFuelLogs = fuelLogs.filter((item) => isDateInRange(item.date, period));
+    const periodLogs = completeLogs.filter((item) => isDateInRange(item.date, period));
     const income = periodTransactions
       .filter((item) => item.type === "INCOME")
       .reduce((sum, item) => sum + toNumber(item.value), 0);
     const expense = periodTransactions
       .filter((item) => item.type === "EXPENSE")
       .reduce((sum, item) => sum + toNumber(item.value), 0);
-    const fuel = periodTransactions
-      .filter((item) => item.type === "EXPENSE" && normalizeText(item.category).includes("COMBUSTIVEL"))
-      .reduce((sum, item) => sum + toNumber(item.value), 0);
     const maintenanceCost = periodTransactions
       .filter((item) => item.type === "EXPENSE" && normalizeText(item.category).includes("MANUTENCAO"))
       .reduce((sum, item) => sum + toNumber(item.value), 0);
-    const kmTotal = periodKm.reduce((sum, item) => sum + toNumber(item.kmTotal), 0);
-    const estimatedHours = kmTotal > 0 ? kmTotal / 30 : 0;
-    const fuelPrice = toNumber(vehicle.fuelPrice);
-    const liters = fuelPrice > 0 ? fuel / fuelPrice : 0;
-    const consumptionKmPerLiter = liters > 0 ? kmTotal / liters : 0;
-    const expectedConsumption = toNumber(vehicle.consumption);
-    const expectedLiters = expectedConsumption > 0 ? kmTotal / expectedConsumption : 0;
-    const expectedFuelCost = expectedLiters * fuelPrice;
-
+    const kmTotal = periodLogs.reduce((sum, item) => sum + (item.kmEnd! - item.kmStart!), 0);
+    const hoursTotal = periodLogs.reduce((sum, item) => sum + getHoursBetween(item.startTime, item.endTime), 0);
+    const fuelTotal = periodFuelLogs.reduce((sum, item) => sum + item.totalPrice, 0);
+    const fuelQuantity = periodFuelLogs.reduce((sum, item) => sum + item.quantity, 0);
+    const incomePerKm = kmTotal > 0 ? income / kmTotal : 0;
+    const incomePerHour = hoursTotal > 0 ? income / hoursTotal : 0;
+    const fuelPerKm = kmTotal > 0 ? fuelTotal / kmTotal : 0;
+    const profitPerKm = kmTotal > 0 ? (income - expense) / kmTotal : 0;
+    const consumptionAverage = fuelQuantity > 0 ? kmTotal / fuelQuantity : 0;
     return {
       income,
       expense,
-      fuel,
-      fuelPrice,
-      liters,
-      consumptionKmPerLiter,
-      expectedConsumption,
-      expectedLiters,
-      expectedFuelCost,
+      fuelTotal,
+      fuelQuantity,
       maintenanceCost,
-      profit: income - expense,
       kmTotal,
-      incomePerKm: kmTotal > 0 ? income / kmTotal : 0,
-      profitPerKm: kmTotal > 0 ? (income - expense) / kmTotal : 0,
-      fuelPerKm: kmTotal > 0 ? fuel / kmTotal : 0,
-      incomePerHour: estimatedHours > 0 ? income / estimatedHours : 0,
-      estimatedHours,
+      hoursTotal,
+      incomePerKm,
+      incomePerHour,
+      fuelPerKm,
+      profitPerKm,
+      consumptionAverage,
     };
+  }, [completeLogs, fuelLogs, period, transactions]);
+
+  const saveLocalOperationLogs = (nextLogs: OperationLog[]) => {
+    setOperationLogs(nextLogs);
+    saveOperationLogs(nextLogs);
   };
 
-  const stats = useMemo(() => calculatePeriodStats(period), [transactions, kmHistory, vehicle, period]);
-  const fuelAverages = useMemo(() => ({
-    day: calculatePeriodStats("day"),
-    week: calculatePeriodStats("week"),
-    month: calculatePeriodStats("month"),
-  }), [transactions, kmHistory, vehicle]);
-  const fuelUnit = fuelUnitMap[vehicle.fuelType] || "L";
+  const saveMaintenancePlansLocal = (nextPlans: MaintenancePlan[]) => {
+    setMaintenancePlansState(nextPlans);
+    saveMaintenancePlans(nextPlans);
+  };
 
-  const periodLabels: Record<Period, string> = {
-    day: "Hoje",
-    week: "Semana",
-    month: "Mês",
+  const handleSaveLog = async () => {
+    if (!activeVehicle) {
+      toast.error("Cadastre um veiculo antes de registrar a jornada.");
+      return;
+    }
+
+    const parsedStart = logDraft.kmStart ? Number(logDraft.kmStart) : null;
+    const parsedEnd = logDraft.kmEnd ? Number(logDraft.kmEnd) : null;
+    if (parsedStart !== null && parsedEnd !== null && parsedEnd < parsedStart) {
+      toast.error("O KM final nao pode ser menor que o inicial.");
+      return;
+    }
+
+    const existing = operationLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === logDraft.date);
+    const nextLog: OperationLog = {
+      id: existing?.id || generateLocalId("op"),
+      vehicleId: activeVehicle.id,
+      date: logDraft.date,
+      startTime: logDraft.startTime,
+      endTime: logDraft.endTime,
+      kmStart: parsedStart,
+      kmEnd: parsedEnd,
+      syncedKmId: existing?.syncedKmId || null,
+      createdAt: existing?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const nextLogs = existing
+      ? operationLogs.map((item) => (item.id === existing.id ? nextLog : item))
+      : [nextLog, ...operationLogs];
+    saveLocalOperationLogs(nextLogs);
+
+    if (!isOperationLogComplete(nextLog)) {
+      toast.success("Jornada salva. Voce pode completar os dados no fim do dia.");
+      return;
+    }
+
+    setSavingLog(true);
+    try {
+      const legacyMatch = legacyKmHistory.find((item) => dateKeyFromValue(item.date) === nextLog.date);
+      if (nextLog.syncedKmId || legacyMatch?.id) {
+        const kmId = nextLog.syncedKmId || legacyMatch?.id;
+        await updateKmDaily(kmId!, {
+          date: nextLog.date,
+          kmStart: nextLog.kmStart!,
+          kmEnd: nextLog.kmEnd!,
+        });
+        const syncedLogs = nextLogs.map((item) => (item.id === nextLog.id ? { ...item, syncedKmId: kmId } : item));
+        saveLocalOperationLogs(syncedLogs);
+      } else {
+        const response = await createKmDaily({
+          date: nextLog.date,
+          kmStart: nextLog.kmStart!,
+          kmEnd: nextLog.kmEnd!,
+        });
+        const syncedId = response?.kmDaily?.id || null;
+        if (syncedId) {
+          const syncedLogs = nextLogs.map((item) => (item.id === nextLog.id ? { ...item, syncedKmId: syncedId } : item));
+          saveLocalOperationLogs(syncedLogs);
+        }
+      }
+      toast.success("Jornada e KM atualizados com sucesso.");
+    } catch (error) {
+      console.error(error);
+      toast.error("A jornada foi salva localmente, mas falhou ao sincronizar o KM.");
+    } finally {
+      setSavingLog(false);
+    }
+  };
+
+  const handleSaveMaintenance = () => {
+    if (!activeVehicle) {
+      toast.error("Cadastre um veiculo antes de criar manutencoes.");
+      return;
+    }
+    const dueKm = Number(maintenanceDueKm);
+    const name = maintenanceTemplate === "Outra" ? maintenanceCustomName.trim() : maintenanceTemplate;
+    if (!name) {
+      toast.error("Informe o nome da manutencao.");
+      return;
+    }
+    if (!Number.isFinite(dueKm) || dueKm <= 0) {
+      toast.error("Informe o KM da manutencao.");
+      return;
+    }
+    const nextPlans = [
+      {
+        id: generateLocalId("maintenance"),
+        vehicleId: activeVehicle.id,
+        name,
+        dueKm,
+        notes: maintenanceTemplate === "Outra" ? maintenanceCustomName.trim() : "",
+        enabled: true,
+        createdAt: new Date().toISOString(),
+        lastDismissedAtKm: null,
+      },
+      ...maintenancePlans,
+    ];
+    saveMaintenancePlansLocal(nextPlans);
+    setMaintenanceDueKm("");
+    setMaintenanceCustomName("");
+    setMaintenanceTemplate("Troca de oleo");
+    toast.success("Manutencao cadastrada.");
+  };
+
+  const dismissMaintenance = (plan: MaintenancePlan) => {
+    const currentKm = getLatestVehicleKm(activeVehicle?.id || "");
+    const nextPlans = maintenancePlans.map((item) =>
+      item.id === plan.id ? { ...item, lastDismissedAtKm: currentKm } : item,
+    );
+    saveMaintenancePlansLocal(nextPlans);
+    toast.success("Alerta de manutencao marcado como tratado.");
+  };
+
+  const removeMaintenance = (planId: string) => {
+    saveMaintenancePlansLocal(maintenancePlans.filter((item) => item.id !== planId));
+    toast.success("Manutencao removida.");
   };
 
   if (loading) {
@@ -204,6 +375,9 @@ export default function Metrics() {
     );
   }
 
+  const activeLabel = activeVehicle?.label || "Sem veiculo";
+  const currentKm = getLatestVehicleKm(activeVehicle?.id || "");
+
   return (
     <div className="min-h-screen bg-[#020617] text-white pb-28">
       <header className="sticky top-0 z-20 bg-[#020617]/95 backdrop-blur border-b border-blue-500/10 p-4">
@@ -212,11 +386,11 @@ export default function Metrics() {
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="text-center">
-            <h1 className="text-lg font-black">Métricas</h1>
-            <p className="text-xs text-slate-500 font-bold uppercase">Combustível, KM e manutenção</p>
+            <h1 className="text-lg font-black">Metricas</h1>
+            <p className="text-xs text-slate-500 font-bold uppercase">Combustivel, KM e manutencao</p>
           </div>
-          <button onClick={() => navigate("/add")} className="size-10 rounded-full bg-blue-600 flex items-center justify-center">
-            <span className="material-symbols-outlined">add</span>
+          <button onClick={() => navigate("/vehicle")} className="size-10 rounded-full bg-blue-600 flex items-center justify-center">
+            <span className="material-symbols-outlined">directions_car</span>
           </button>
         </div>
         <div className="mt-4 grid grid-cols-3 gap-2 rounded-xl bg-slate-900 border border-slate-800 p-1">
@@ -226,13 +400,83 @@ export default function Metrics() {
               onClick={() => setPeriod(item)}
               className={`h-10 rounded-lg text-xs font-bold uppercase ${period === item ? "bg-blue-500 text-white" : "text-slate-400"}`}
             >
-              {periodLabels[item]}
+              {item === "day" ? "Hoje" : item === "week" ? "Semana" : "Mes"}
             </button>
           ))}
         </div>
       </header>
 
       <main className="p-4 space-y-4 max-w-4xl mx-auto">
+        <section className="rounded-xl bg-slate-900 border border-blue-500/20 p-4">
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div>
+              <h2 className="text-sm font-bold">Jornada operacional</h2>
+              <p className="text-xs text-slate-500">{activeLabel} em uso - lance inicio, fim, horario e KM.</p>
+            </div>
+            <button onClick={() => navigate("/vehicle")} className="text-xs font-bold text-blue-300">Trocar veiculo</button>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Data</label>
+              <input
+                type="date"
+                value={logDraft.date}
+                onChange={(e) => setLogDraft((prev) => ({ ...prev, date: e.target.value }))}
+                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              />
+            </div>
+            <div className="rounded-lg bg-[#0f172a] border border-slate-800 px-3 py-3 flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">KM atual</span>
+              <span className="text-sm font-black text-blue-300">{currentKm.toLocaleString("pt-BR")} km</span>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Horario de inicio</label>
+              <input
+                type="time"
+                value={logDraft.startTime}
+                onChange={(e) => setLogDraft((prev) => ({ ...prev, startTime: e.target.value }))}
+                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Horario de termino</label>
+              <input
+                type="time"
+                value={logDraft.endTime}
+                onChange={(e) => setLogDraft((prev) => ({ ...prev, endTime: e.target.value }))}
+                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">KM inicial</label>
+              <input
+                type="number"
+                min="0"
+                value={logDraft.kmStart}
+                onChange={(e) => setLogDraft((prev) => ({ ...prev, kmStart: e.target.value }))}
+                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">KM final</label>
+              <input
+                type="number"
+                min="0"
+                value={logDraft.kmEnd}
+                onChange={(e) => setLogDraft((prev) => ({ ...prev, kmEnd: e.target.value }))}
+                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleSaveLog}
+            disabled={savingLog}
+            className="mt-4 w-full rounded-xl bg-blue-600 py-3 font-bold text-white disabled:opacity-60"
+          >
+            {savingLog ? "Salvando..." : "Salvar jornada"}
+          </button>
+        </section>
+
         <section className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-slate-900 border border-emerald-500/20 p-4">
             <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Ganho por KM</p>
@@ -243,7 +487,7 @@ export default function Metrics() {
             <p className="text-2xl font-black text-blue-400">{money(stats.incomePerHour)}</p>
           </div>
           <div className="rounded-xl bg-slate-900 border border-amber-500/20 p-4">
-            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Combustível por KM</p>
+            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Combustivel por KM</p>
             <p className="text-2xl font-black text-amber-400">{money(stats.fuelPerKm)}</p>
           </div>
           <div className="rounded-xl bg-slate-900 border border-red-500/20 p-4">
@@ -256,7 +500,7 @@ export default function Metrics() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-sm font-bold">Resumo operacional</h2>
-              <p className="text-xs text-slate-500">{stats.kmTotal.toLocaleString("pt-BR")} km registrados</p>
+              <p className="text-xs text-slate-500">{stats.kmTotal.toLocaleString("pt-BR")} km registrados no periodo</p>
             </div>
             <span className="material-symbols-outlined text-blue-400">speed</span>
           </div>
@@ -264,9 +508,9 @@ export default function Metrics() {
             {[
               ["Receitas", money(stats.income), "text-emerald-300"],
               ["Despesas", money(stats.expense), "text-red-300"],
-              ["Combustível", money(stats.fuel), "text-amber-300"],
+              ["Combustivel", money(stats.fuelTotal), "text-amber-300"],
               ["Manutencao", money(stats.maintenanceCost), "text-slate-300"],
-              ["Horas estimadas", `${stats.estimatedHours.toFixed(1).replace(".", ",")} h`, "text-blue-300"],
+              ["Horas registradas", `${stats.hoursTotal.toFixed(1).replace(".", ",")} h`, "text-blue-300"],
             ].map(([label, value, color]) => (
               <div key={label} className="flex items-center justify-between border-b border-slate-800 pb-2 last:border-0 last:pb-0">
                 <span className="text-xs font-bold uppercase text-slate-500">{label}</span>
@@ -279,104 +523,127 @@ export default function Metrics() {
         <section className="rounded-xl bg-slate-900 border border-amber-500/20 p-4">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="text-sm font-bold">Consumo de combustível</h2>
-              <p className="text-xs text-slate-500">{`KM rodado, consumo em ${fuelUnit} e média por período`}</p>
+              <h2 className="text-sm font-bold">Consumo de combustivel</h2>
+              <p className="text-xs text-slate-500">Leva em conta tipo usado, valor da unidade e total abastecido.</p>
             </div>
-            <button onClick={() => navigate("/vehicle")} className="size-10 rounded-full bg-amber-500/10 text-amber-300 flex items-center justify-center">
-              <span className="material-symbols-outlined">tune</span>
+            <button onClick={() => navigate("/add")} className="size-10 rounded-full bg-amber-500/10 text-amber-300 flex items-center justify-center">
+              <span className="material-symbols-outlined">local_gas_station</span>
             </button>
           </div>
-
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
-              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Média Real</p>
-              <p className="text-xl font-black text-amber-300">{stats.consumptionKmPerLiter.toFixed(1).replace(".", ",")} {`km/${fuelUnit}`}</p>
+              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Media real</p>
+              <p className="text-xl font-black text-amber-300">{stats.consumptionAverage.toFixed(1).replace(".", ",")} km/L</p>
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
               <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Quantidade</p>
-              <p className="text-xl font-black text-blue-300">{stats.liters.toFixed(1).replace(".", ",")} {fuelUnit}</p>
-            </div>
-            <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
-              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">{`Preço/${fuelUnit}`}</p>
-              <p className="text-xl font-black text-slate-200">{money(stats.fuelPrice)}</p>
-            </div>
-            <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
-              <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Referencia</p>
-              <p className="text-xl font-black text-emerald-300">{stats.expectedConsumption.toFixed(1).replace(".", ",")} {`km/${fuelUnit}`}</p>
+              <p className="text-xl font-black text-blue-300">{stats.fuelQuantity.toFixed(1).replace(".", ",")} L</p>
             </div>
           </div>
-
-          <div className="space-y-3">
-            {([
-              ["Hoje", fuelAverages.day],
-              ["Semana", fuelAverages.week],
-              ["Mês", fuelAverages.month],
-            ] as const).map(([label, item]) => (
-              <div key={label} className="flex items-center justify-between border-b border-slate-800 pb-2 last:border-0 last:pb-0">
+          <div className="space-y-2">
+            {fuelLogs.slice(0, 5).map((item) => (
+              <div key={item.id} className="flex items-center justify-between rounded-lg bg-slate-950/50 border border-slate-800 px-3 py-2">
                 <div>
-                  <p className="text-xs font-bold text-slate-300">{label}</p>
-                  <p className="text-[10px] text-slate-500">{item.kmTotal.toLocaleString("pt-BR")} km - {item.liters.toFixed(1).replace(".", ",")} {fuelUnit}</p>
+                  <p className="text-xs font-bold text-slate-200">{item.date}</p>
+                  <p className="text-[10px] text-slate-500">{item.fuelType.toUpperCase()} - {item.unitPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/un</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-black text-amber-300">{item.consumptionKmPerLiter.toFixed(1).replace(".", ",")} {`km/${fuelUnit}`}</p>
-                  <p className="text-[10px] text-slate-500">{money(item.fuel)}</p>
+                  <p className="text-sm font-black text-amber-300">{money(item.totalPrice)}</p>
+                  <p className="text-[10px] text-slate-500">{item.quantity.toFixed(2).replace(".", ",")} unidades</p>
                 </div>
               </div>
             ))}
+            {fuelLogs.length === 0 && <p className="text-sm text-slate-500 py-2">Nenhum abastecimento detalhado ainda.</p>}
           </div>
         </section>
 
         <section className="rounded-xl bg-slate-900 border border-slate-800 p-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-bold">Manutenções</h2>
-              <p className="text-xs text-slate-500">Alertas cadastrados por quilometragem</p>
+              <h2 className="text-sm font-bold">Manutencoes</h2>
+              <p className="text-xs text-slate-500">Avise no painel principal quando o KM bater com a manutencao planejada.</p>
             </div>
             <span className="material-symbols-outlined text-slate-400">build</span>
           </div>
-          {maintenance.length === 0 ? (
-            <p className="text-sm text-slate-500 py-4 text-center">Nenhuma manutenção cadastrada.</p>
-          ) : (
-            <div className="space-y-3">
-              {maintenance.slice(0, 6).map((item) => (
-                <div key={item.id} className="rounded-lg bg-slate-950/60 border border-slate-800 p-3">
-                  <div className="flex items-center justify-between gap-3">
+          <div className="grid gap-3 md:grid-cols-[1.1fr_0.9fr] mb-4">
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Tipo</label>
+              <select
+                value={maintenanceTemplate}
+                onChange={(e) => setMaintenanceTemplate(e.target.value)}
+                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              >
+                {maintenanceTemplates.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">KM da manutencao</label>
+              <input
+                type="number"
+                min="0"
+                value={maintenanceDueKm}
+                onChange={(e) => setMaintenanceDueKm(e.target.value)}
+                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              />
+            </div>
+          </div>
+          {maintenanceTemplate === "Outra" && (
+            <input
+              type="text"
+              value={maintenanceCustomName}
+              onChange={(e) => setMaintenanceCustomName(e.target.value)}
+              placeholder="Descreva a manutencao"
+              className="w-full mb-4 bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+            />
+          )}
+          <button onClick={handleSaveMaintenance} className="mb-4 w-full rounded-xl bg-slate-800 py-3 font-bold text-white">
+            Salvar manutencao
+          </button>
+
+          {dueMaintenance.length > 0 && (
+            <div className="space-y-2 mb-4">
+              {dueMaintenance.map((item) => (
+                <div key={item.id} className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold">{item.name}</p>
-                      <p className="text-[10px] text-slate-500">{item.kmInterval.toLocaleString("pt-BR")} km de intervalo</p>
+                      <p className="text-sm font-bold text-red-300">{item.name}</p>
+                      <p className="text-xs text-red-400/80">Venceu em {item.dueKm.toLocaleString("pt-BR")} km</p>
                     </div>
-                    <p className="text-sm font-black text-blue-300">{item.nextKm.toLocaleString("pt-BR")} km</p>
+                    <button onClick={() => dismissMaintenance(item)} className="text-[10px] font-bold rounded-lg bg-emerald-500 px-3 py-1.5 text-white">
+                      FEITO
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           )}
+
+          {maintenancePlans.length === 0 ? (
+            <p className="text-sm text-slate-500 py-4 text-center">Nenhuma manutencao cadastrada.</p>
+          ) : (
+            <div className="space-y-3">
+              {maintenancePlans
+                .filter((item) => item.vehicleId === activeVehicle?.id)
+                .sort((a, b) => a.dueKm - b.dueKm)
+                .map((item) => (
+                  <div key={item.id} className="rounded-lg bg-slate-950/60 border border-slate-800 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-bold">{item.name}</p>
+                        <p className="text-[10px] text-slate-500">{item.dueKm.toLocaleString("pt-BR")} km</p>
+                      </div>
+                      <button onClick={() => removeMaintenance(item.id)} className="text-slate-500 hover:text-red-300">
+                        <span className="material-symbols-outlined text-base">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
         </section>
       </main>
-
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#1e293b66] backdrop-blur-md border-t border-blue-500/10 px-6 py-3 pb-8 flex items-center justify-around">
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/dashboard"); }}>
-          <span className="material-symbols-outlined">analytics</span>
-          <span className="text-[10px] font-bold uppercase">Hoje</span>
-        </a>
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/rides"); }}>
-          <span className="material-symbols-outlined">history</span>
-          <span className="text-[10px] font-bold uppercase">Histórico</span>
-        </a>
-        <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
-          <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white ring-4 ring-[#020617] active:scale-95">
-            <span className="material-symbols-outlined text-4xl">add</span>
-          </button>
-        </a>
-        <a className="flex flex-col items-center gap-1 text-blue-400" href="#" onClick={(e) => { e.preventDefault(); navigate("/metrics"); }}>
-          <span className="material-symbols-outlined">query_stats</span>
-          <span className="text-[10px] font-bold uppercase">Métricas</span>
-        </a>
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/profile"); }}>
-          <span className="material-symbols-outlined">person</span>
-          <span className="text-[10px] font-bold uppercase">Perfil</span>
-        </a>
-      </nav>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { confirmGooglePlayPurchase, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
+import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
 import { toast } from "sonner";
 
 interface DashboardData {
@@ -348,16 +349,25 @@ export default function Dashboard() {
     );
   }
 
-  const performanceLabel = {
-    below_average: { text: "Abaixo da Media", color: "text-red-400", bg: "bg-red-500/10" },
-    on_track: { text: "No Caminho", color: "text-blue-400", bg: "bg-blue-500/10" },
-    above_average: { text: "Acima da Media", color: "text-emerald-400", bg: "bg-emerald-500/10" }
-  }[data.performanceStatus || 'on_track'];
+  const projectedVsGoalPercentage = data.averageGoalMonth > 0
+    ? ((data.projectedMonth - data.averageGoalMonth) / data.averageGoalMonth) * 100
+    : 0;
+  const projectedVsGoalLabel = `${projectedVsGoalPercentage >= 0 ? "+" : ""}${projectedVsGoalPercentage.toFixed(0)}% ${projectedVsGoalPercentage >= 0 ? "acima" : "abaixo"} da meta`;
+  const projectedVsGoalColor = projectedVsGoalPercentage >= 0
+    ? "text-emerald-400 bg-emerald-500/10"
+    : "text-red-400 bg-red-500/10";
+  const activeVehicle = getActiveVehicle(loadVehicles());
+  const todayOperationLog = getOperationLogForDate(todayKey(), activeVehicle?.id);
+  const metricsReminderVisible = !todayOperationLog || !isOperationLogComplete(todayOperationLog);
+  const dueMaintenance = activeVehicle ? getDueMaintenance(activeVehicle.id, getLatestVehicleKm(activeVehicle.id)) : [];
 
   const handleSaveBalance = async () => {
-    const val = parseInt(previousBalance, 10) / 100;
+    const val = Number(previousBalance || "0") / 100;
     const finalValue = balanceNegative ? -val : val;
-    if (finalValue === 0) return;
+    if (!Number.isFinite(finalValue) || finalValue === 0) {
+      toast.error("Informe um saldo valido.");
+      return;
+    }
     try {
       const { createTransaction } = await import("../lib/api");
       await createTransaction({
@@ -365,7 +375,6 @@ export default function Dashboard() {
         value: Math.abs(finalValue),
         category: "SALDO_ANTERIOR",
         source: "MANUAL",
-        description: "Saldo anterior ao comecar a usar o app",
         date: new Date().toISOString()
       });
       setShowBalanceModal(false);
@@ -667,7 +676,7 @@ export default function Dashboard() {
 
   const projectionChart = data.chartData.labels.map((label, index) => ({
     day: label,
-    media: data.chartData.averageLine[index],
+    meta: data.chartData.averageLine[index],
     recorde: data.chartData.bestLine[index],
     projecao: data.chartData.projectionLine[index],
   }));
@@ -780,6 +789,41 @@ export default function Dashboard() {
           </button>
         </section>
 
+        {(metricsReminderVisible || dueMaintenance.length > 0) && (
+          <section className="mb-6 space-y-3">
+            {metricsReminderVisible && (
+              <button
+                onClick={() => navigate("/metrics")}
+                className="w-full rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-left active:scale-[0.99]"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-amber-300">warning</span>
+                  <div>
+                    <p className="text-sm font-bold text-amber-200">Pendencia nas metricas do dia</p>
+                    <p className="text-xs text-amber-100/70">Registre horario e KM da jornada para melhorar os calculos de ganho por KM, por hora e consumo.</p>
+                  </div>
+                </div>
+              </button>
+            )}
+            {dueMaintenance.length > 0 && (
+              <button
+                onClick={() => navigate("/metrics")}
+                className="w-full rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-left active:scale-[0.99]"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-red-300">build</span>
+                  <div>
+                    <p className="text-sm font-bold text-red-200">Manutencao pendente</p>
+                    <p className="text-xs text-red-100/70">
+                      {dueMaintenance[0].name} venceu em {dueMaintenance[0].dueKm.toLocaleString("pt-BR")} km para o veiculo em uso.
+                    </p>
+                  </div>
+                </div>
+              </button>
+            )}
+          </section>
+        )}
+
         {access && access.status !== "ACTIVE" && (
           <section className="mb-6 space-y-4">
             <div className={`border rounded-xl p-4 flex flex-col gap-4 ${access.status === "EXPIRED" ? "bg-red-500/10 border-red-500/20" : "bg-emerald-500/10 border-emerald-500/20"}`}>
@@ -865,8 +909,8 @@ export default function Dashboard() {
         <section className="mb-6">
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="text-xl font-bold">Resumo Mensal</h2>
-            <span className={`text-xs font-semibold px-2 py-1 rounded ${performanceLabel.bg} ${performanceLabel.color} uppercase tracking-wider`}>
-              {performanceLabel.text}
+            <span className={`text-xs font-semibold px-2 py-1 rounded ${projectedVsGoalColor} uppercase tracking-wider`}>
+              {projectedVsGoalLabel}
             </span>
           </div>
 
@@ -899,18 +943,6 @@ export default function Dashboard() {
             <span className="material-symbols-outlined text-slate-500 text-lg">account_balance_wallet</span>
             <span className="text-xs text-slate-500">Saldo anterior: <b className="text-slate-300">Ajustar aqui</b></span>
           </button>
-
-          <div className="bg-[#1e293b66] rounded-xl p-4 mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-slate-400">Meta: {formatMoney(data.averageGoalMonth)}</span>
-              <span className="text-sm font-bold text-blue-400">
-                {data.averageGoalMonth > 0 ? Math.round((data.totalIncomeMonth / data.averageGoalMonth) * 100) : 0}%
-              </span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-2.5">
-              <div className="bg-blue-400 h-2.5 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)] transition-all" style={{ width: `${Math.min(data.averageGoalMonth > 0 ? (data.totalIncomeMonth / data.averageGoalMonth) * 100 : 0, 100)}%` }} />
-            </div>
-          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#1e293b66] border border-blue-500/10 rounded-xl p-4">
@@ -951,7 +983,7 @@ export default function Dashboard() {
                   <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={{ stroke: "#1e293b" }} />
                   <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} width={54} tickFormatter={(value) => `R$ ${value}`} />
                   <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: 8 }} />
-                  <Line type="monotone" dataKey="media" name="Media" stroke="#60a5fa" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="meta" name="Meta" stroke="#60a5fa" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
                 </LineChart>

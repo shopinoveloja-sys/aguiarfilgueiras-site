@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createTransaction, createRecurringExpense, createKmDaily } from "../lib/api";
+import { createTransaction, createRecurringExpense } from "../lib/api";
+import { FuelType, getActiveVehicle, loadVehicles, saveFuelLogs, loadFuelLogs, generateLocalId } from "../lib/fleet";
 import { toast } from "sonner";
 
 type RecurrenceType = "SPECIFIC_DATE" | "WEEKLY" | "MONTHLY";
@@ -24,9 +25,11 @@ export default function QuickAdd() {
   const [selectedDate, setSelectedDate] = useState(todayInputValue());
   const [dueDay, setDueDay] = useState("5");
   const [dueDayOfWeek, setDueDayOfWeek] = useState(new Date().getDay().toString());
-  const [kmStart, setKmStart] = useState("");
-  const [kmEnd, setKmEnd] = useState("");
+  const [fuelType, setFuelType] = useState<FuelType>("gasolina");
+  const [fuelUnitPrice, setFuelUnitPrice] = useState("");
   const [loading, setLoading] = useState(false);
+  const vehicles = useMemo(() => loadVehicles(), []);
+  const activeVehicle = useMemo(() => getActiveVehicle(vehicles), [vehicles]);
 
   const apps = [
     { id: "UBER", name: "Uber", icon: "directions_car", color: "bg-black text-white" },
@@ -60,6 +63,9 @@ export default function QuickAdd() {
   ];
 
   const currentCategories = type === "INCOME" ? apps : expenses;
+  const isFuelExpense = type === "EXPENSE" && category === "COMBUSTIVEL";
+  const currentAmountValue = parseInt(amount || "0", 10) / 100;
+  const currentFuelUnitPrice = Number((fuelUnitPrice || "0").replace(",", "."));
 
   const handleKeypad = (num: string) => {
     if (amount.length > 8) return;
@@ -86,24 +92,23 @@ export default function QuickAdd() {
   };
 
   const handleSave = async () => {
-    const shouldSaveKm = recurrenceType === "SPECIFIC_DATE" && kmStart && kmEnd;
     const hasAmount = Boolean(amount) && parseInt(amount, 10) > 0;
-    const parsedKmStart = parseInt(kmStart, 10);
-    const parsedKmEnd = parseInt(kmEnd, 10);
+    const finalValue = currentAmountValue;
+    const parsedFuelUnitPrice = currentFuelUnitPrice;
+    const isFuelPayloadValid = !isFuelExpense || (parsedFuelUnitPrice > 0 && finalValue > 0 && !!activeVehicle);
 
-    if (!hasAmount && !shouldSaveKm) {
-      toast.error("Informe um valor ou o KM do dia.");
+    if (!hasAmount) {
+      toast.error("Informe um valor valido.");
       return;
     }
 
-    if (shouldSaveKm && (Number.isNaN(parsedKmStart) || Number.isNaN(parsedKmEnd) || parsedKmEnd < parsedKmStart)) {
-      toast.error("Confira o KM inicial e final do dia.");
+    if (!isFuelPayloadValid) {
+      toast.error("Informe o tipo de combustivel e o valor da unidade.");
       return;
     }
 
     setLoading(true);
     try {
-      const finalValue = parseInt(amount, 10) / 100;
       const recurrencePayload = getRecurrencePayload();
       const transactionDate =
         recurrenceType === "SPECIFIC_DATE"
@@ -137,15 +142,25 @@ export default function QuickAdd() {
         });
       }
 
-      if (shouldSaveKm) {
-        await createKmDaily({
-          date: selectedDate,
-          kmStart: parsedKmStart,
-          kmEnd: parsedKmEnd,
-        });
+      if (isFuelExpense && activeVehicle) {
+        const quantity = finalValue / parsedFuelUnitPrice;
+        const nextFuelLogs = [
+          {
+            id: generateLocalId("fuel"),
+            date: selectedDate,
+            vehicleId: activeVehicle.id,
+            fuelType,
+            unitPrice: parsedFuelUnitPrice,
+            totalPrice: finalValue,
+            quantity,
+            createdAt: new Date().toISOString(),
+          },
+          ...loadFuelLogs(),
+        ];
+        saveFuelLogs(nextFuelLogs);
       }
 
-      toast.success(hasAmount ? (type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!") : "KM registrado com sucesso!");
+      toast.success(type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!");
       navigate("/dashboard");
     } catch (error) {
       toast.error("Erro ao salvar lancamento.");
@@ -243,30 +258,54 @@ export default function QuickAdd() {
                 className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
               />
             </div>
+          </div>
+        )}
 
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">KM do dia</p>
-              <div className="grid grid-cols-2 gap-2">
+        {isFuelExpense && (
+          <div className="bg-[#1e293b66] p-3 rounded-xl border border-amber-500/20 space-y-3">
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <span className="font-bold uppercase tracking-wider text-slate-500">Veiculo em uso</span>
+              <span className="font-bold text-amber-300">{activeVehicle?.label || "Nao definido"}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Combustivel</label>
+                <select
+                  value={fuelType}
+                  onChange={(e) => setFuelType(e.target.value as FuelType)}
+                  className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
+                >
+                  <option value="gasolina">Gasolina</option>
+                  <option value="etanol">Etanol</option>
+                  <option value="gnv">GNV</option>
+                  <option value="diesel">Diesel</option>
+                  <option value="eletrico">Eletrico</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Valor unidade</label>
                 <input
                   type="number"
-                  inputMode="numeric"
+                  step="0.01"
                   min="0"
-                  placeholder="Inicial"
-                  value={kmStart}
-                  onChange={(e) => setKmStart(e.target.value)}
-                  className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
-                />
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min="0"
-                  placeholder="Final"
-                  value={kmEnd}
-                  onChange={(e) => setKmEnd(e.target.value)}
+                  value={fuelUnitPrice}
+                  onChange={(e) => setFuelUnitPrice(e.target.value)}
+                  placeholder="Ex: 5.89"
                   className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
                 />
               </div>
             </div>
+            {currentFuelUnitPrice > 0 && currentAmountValue > 0 && (
+              <div className="rounded-lg bg-[#0f172a] border border-slate-800 px-3 py-2 text-xs text-slate-400">
+                Quantidade abastecida:{" "}
+                <span className="font-bold text-amber-300">
+                  {(currentAmountValue / currentFuelUnitPrice).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
+            )}
           </div>
         )}
 
