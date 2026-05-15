@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { confirmGooglePlayPurchase, getDashboardData, getRecurringExpenses, getReferralSummary, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
+import { confirmGooglePlayPurchase, createTransaction, getDashboardData, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
 import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
 import { toast } from "sonner";
 
@@ -385,14 +385,33 @@ export default function Dashboard() {
       return;
     }
     try {
-      const { createTransaction } = await import("../lib/api");
-      await createTransaction({
+      const monthStart = new Date();
+      monthStart.setDate(1);
+      monthStart.setHours(12, 0, 0, 0);
+
+      const transactions = await getTransactions();
+      const currentMonthSaldo = Array.isArray(transactions)
+        ? transactions.find((transaction: any) => {
+            if (transaction.category !== "SALDO_ANTERIOR") return false;
+            const transactionDate = new Date(transaction.date);
+            return transactionDate.getFullYear() === monthStart.getFullYear()
+              && transactionDate.getMonth() === monthStart.getMonth();
+          })
+        : null;
+
+      const payload = {
         type: finalValue > 0 ? "INCOME" : "EXPENSE",
         value: Math.abs(finalValue),
         category: "SALDO_ANTERIOR",
         source: "MANUAL",
-        date: new Date().toISOString()
-      });
+        date: monthStart.toISOString(),
+      };
+
+      if (currentMonthSaldo?.id) {
+        await updateTransaction(currentMonthSaldo.id, payload);
+      } else {
+        await createTransaction(payload);
+      }
       setShowBalanceModal(false);
       setPreviousBalance("");
       setBalanceNegative(false);
