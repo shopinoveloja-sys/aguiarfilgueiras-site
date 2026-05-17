@@ -25,6 +25,7 @@ export default function QuickAdd() {
   const [selectedDate, setSelectedDate] = useState(todayInputValue());
   const [dueDay, setDueDay] = useState("5");
   const [dueDayOfWeek, setDueDayOfWeek] = useState(new Date().getDay().toString());
+  const [recurrenceUntilMonth, setRecurrenceUntilMonth] = useState(() => todayInputValue().slice(0, 7));
   const [fuelType, setFuelType] = useState<FuelType>("gasolina");
   const [fuelUnitPrice, setFuelUnitPrice] = useState("");
   const [fuelOdometerKm, setFuelOdometerKm] = useState("");
@@ -80,12 +81,24 @@ export default function QuickAdd() {
   };
 
   const getRecurrencePayload = () => {
+    const recurrenceEndsAt =
+      recurrenceType !== "SPECIFIC_DATE" && recurrenceUntilMonth
+        ? (() => {
+            const [year, month] = recurrenceUntilMonth.split("-").map(Number);
+            return new Date(year, month, 0, 23, 59, 59, 999).toISOString();
+          })()
+        : undefined;
+
     if (recurrenceType === "MONTHLY") {
-      return { recurrenceType, dueDay: Math.min(Math.max(parseInt(dueDay, 10) || 1, 1), 31) };
+      return {
+        recurrenceType,
+        dueDay: Math.min(Math.max(parseInt(dueDay, 10) || 1, 1), 31),
+        recurrenceEndsAt,
+      };
     }
 
     if (recurrenceType === "WEEKLY") {
-      return { recurrenceType, dueDayOfWeek: parseInt(dueDayOfWeek, 10) || 0 };
+      return { recurrenceType, dueDayOfWeek: parseInt(dueDayOfWeek, 10) || 0, recurrenceEndsAt };
     }
 
     const dueDate = new Date(`${selectedDate}T12:00:00`).toISOString();
@@ -105,6 +118,11 @@ export default function QuickAdd() {
 
     if (!isFuelPayloadValid) {
       toast.error("Informe o tipo de combustivel e o valor da unidade.");
+      return;
+    }
+
+    if (recurrenceType !== "SPECIFIC_DATE" && !recurrenceUntilMonth) {
+      toast.error("Informe ate qual mes e ano a recorrencia deve continuar.");
       return;
     }
 
@@ -358,6 +376,18 @@ export default function QuickAdd() {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {recurrenceType !== "SPECIFIC_DATE" && (
+          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Recorre ate</label>
+            <input
+              type="month"
+              value={recurrenceUntilMonth}
+              onChange={(e) => setRecurrenceUntilMonth(e.target.value)}
+              className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
+            />
           </div>
         )}
       </div>

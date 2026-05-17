@@ -54,6 +54,7 @@ interface EditableExpenseItem {
   dueDay?: number | null;
   dueDayOfWeek?: number | null;
   dueDate?: string | null;
+  recurrenceEndsAt?: string | null;
 }
 
 type CategoryPeriod = "day" | "week" | "month";
@@ -82,6 +83,7 @@ interface PlanningExpenseItem {
   reservedToDate?: number;
   progressPercentage?: number;
   payableAmount?: number;
+  recurrenceEndsAt?: string | null;
 }
 
 interface AccessData {
@@ -233,6 +235,7 @@ export default function Dashboard() {
   const [editRecurringDueDay, setEditRecurringDueDay] = useState("1");
   const [editRecurringDueDayOfWeek, setEditRecurringDueDayOfWeek] = useState("0");
   const [editRecurringDueDate, setEditRecurringDueDate] = useState("");
+  const [editRecurringEndsAt, setEditRecurringEndsAt] = useState("");
   const [editIncomeCategory, setEditIncomeCategory] = useState<CategorySummary | null>(null);
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [categoryPeriod, setCategoryPeriod] = useState<CategoryPeriod>("month");
@@ -249,6 +252,8 @@ export default function Dashboard() {
   const [redeeming, setRedeeming] = useState(false);
   const [payingExpenseId, setPayingExpenseId] = useState<string | null>(null);
   const [paidTodayExpenses, setPaidTodayExpenses] = useState<Array<{ id: string; name: string; amount: number }>>([]);
+  const visibleIncomeTotal = data?.incomeByCategory.reduce((sum, item) => sum + item.total, 0) || 0;
+  const visibleExpenseTotal = data?.expenseByCategory.reduce((sum, item) => sum + item.total, 0) || 0;
   
   const loadDashboard = async () => {
     try {
@@ -540,6 +545,7 @@ export default function Dashboard() {
           dueDay: expense.dueDay ?? null,
           dueDayOfWeek: expense.dueDayOfWeek ?? null,
           dueDate: toInputDate(expense.dueDate) || null,
+          recurrenceEndsAt: toInputDate(expense.recurrenceEndsAt) || null,
         }));
       setEditTransactions([
         ...txs.map((t: any) => ({
@@ -587,6 +593,7 @@ export default function Dashboard() {
       setEditRecurringDueDay(String(tx.dueDay ?? 1));
       setEditRecurringDueDayOfWeek(String(tx.dueDayOfWeek ?? 0));
       setEditRecurringDueDate(tx.dueDate || "");
+      setEditRecurringEndsAt(tx.recurrenceEndsAt ? tx.recurrenceEndsAt.slice(0, 7) : "");
     }
   };
 
@@ -611,6 +618,18 @@ export default function Dashboard() {
         if (editRecurringType === "SPECIFIC_DATE" && editRecurringDueDate) {
           payload.dueDate = new Date(`${editRecurringDueDate}T12:00:00`).toISOString();
         }
+        payload.recurrenceEndsAt =
+          editRecurringType !== "SPECIFIC_DATE" && editRecurringEndsAt
+            ? new Date(
+                Number(editRecurringEndsAt.split("-")[0]),
+                Number(editRecurringEndsAt.split("-")[1]),
+                0,
+                23,
+                59,
+                59,
+                999,
+              ).toISOString()
+            : null;
         await updateRecurringExpense(editingId, payload);
       } else {
         await updateTransaction(editingId, {
@@ -623,6 +642,7 @@ export default function Dashboard() {
       setEditValue("");
       setEditDate("");
       setEditRecurringDueDate("");
+      setEditRecurringEndsAt("");
       loadDashboard();
       toast.success("Valor atualizado!");
     } catch {
@@ -640,7 +660,7 @@ export default function Dashboard() {
         await deleteTransaction(id);
       }
       setEditTransactions((prev) => prev.filter((t) => t.id !== id));
-      if (editingId === id) { setEditingId(null); setEditValue(""); setEditDate(""); setEditRecurringDueDate(""); }
+      if (editingId === id) { setEditingId(null); setEditValue(""); setEditDate(""); setEditRecurringDueDate(""); setEditRecurringEndsAt(""); }
       loadDashboard();
       toast.success("Despesa removida!");
     } catch {
@@ -754,11 +774,12 @@ export default function Dashboard() {
 
   const recurringScheduleLabel = (tx: EditableExpenseItem, days: typeof weekDays) => {
     if (tx.kind !== "recurring") return `Lancado em ${tx.date}`;
+    const untilSuffix = tx.recurrenceEndsAt ? ` ate ${tx.recurrenceEndsAt.slice(5, 7)}/${tx.recurrenceEndsAt.slice(0, 4)}` : "";
     if (tx.recurrenceType === "WEEKLY" && typeof tx.dueDayOfWeek === "number") {
-      return `Semanal - ${days.find((day) => day.value === String(tx.dueDayOfWeek))?.label || "Dia"}`;
+      return `Semanal - ${days.find((day) => day.value === String(tx.dueDayOfWeek))?.label || "Dia"}${untilSuffix}`;
     }
     if (tx.recurrenceType === "MONTHLY" && tx.dueDay) {
-      return `Mensal - dia ${tx.dueDay}`;
+      return `Mensal - dia ${tx.dueDay}${untilSuffix}`;
     }
     if (tx.recurrenceType === "SPECIFIC_DATE" && tx.dueDate) {
       return `Data - ${tx.dueDate}`;
@@ -1032,8 +1053,28 @@ export default function Dashboard() {
                   <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={{ stroke: "#1e293b" }} />
                   <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} width={54} tickFormatter={(value) => `R$ ${value}`} />
                   <Tooltip
-                    contentStyle={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: 8 }}
-                    formatter={(value: number) => formatMoneyPrecise(Number(value))}
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload?.length) return null;
+                      const values = Object.fromEntries(payload.map((item) => [String(item.dataKey), Number(item.value || 0)]));
+                      const lines = [
+                        { key: "meta", label: "Meta", color: "#60a5fa" },
+                        { key: "recorde", label: "Recorde", color: "#34d399" },
+                        { key: "projecao", label: "Projecao", color: "#f59e0b" },
+                        { key: "despesas", label: "Despesa projetada", color: "#ef4444" },
+                      ];
+                      return (
+                        <div className="rounded-xl border border-slate-700 bg-slate-900/95 px-4 py-3 shadow-xl">
+                          <p className="mb-2 text-sm font-bold text-white">{label}</p>
+                          <div className="space-y-1.5">
+                            {lines.map((item) => (
+                              <p key={item.key} className="text-sm font-semibold" style={{ color: item.color }}>
+                                {item.label}: {formatMoneyPrecise(values[item.key] || 0)}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }}
                   />
                   <Area type="monotone" dataKey="meta" stroke="none" fill="#60a5fa" fillOpacity={0.05} />
                   <Area type="monotone" dataKey="projecao" stroke="none" fill="#f59e0b" fillOpacity={0.12} />
@@ -1054,6 +1095,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-bold text-white">Receita por Fonte</p>
                 <p className="text-xs text-slate-400">Toque em uma fonte para editar</p>
+                <p className="text-[11px] font-semibold text-emerald-300 mt-1">Subtotal no periodo: {formatMoneyPrecise(visibleIncomeTotal)}</p>
               </div>
               <div className="flex items-center gap-3">
                 <CategoryPeriodFilter />
@@ -1099,6 +1141,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-bold text-white">Despesas por Categoria</p>
                 <p className="text-xs text-slate-400">Peso de cada despesa no periodo</p>
+                <p className="text-[11px] font-semibold text-red-300 mt-1">Subtotal no periodo: {formatMoneyPrecise(visibleExpenseTotal)}</p>
               </div>
               <div className="flex items-center gap-3">
                 <CategoryPeriodFilter />
@@ -1212,6 +1255,14 @@ export default function Dashboard() {
                                     type="date"
                                     value={editRecurringDueDate}
                                     onChange={(e) => setEditRecurringDueDate(e.target.value)}
+                                    className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                                  />
+                                )}
+                                {editRecurringType !== "SPECIFIC_DATE" && (
+                                  <input
+                                    type="month"
+                                    value={editRecurringEndsAt}
+                                    onChange={(e) => setEditRecurringEndsAt(e.target.value)}
                                     className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
                                   />
                                 )}
@@ -1361,7 +1412,7 @@ export default function Dashboard() {
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
           <span className="text-[10px] font-bold uppercase">Hoje</span>
         </a>
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); toast.info("Em breve novidades para novas versoes."); }}>
+        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); toast.info("Estamos preparando uma novidade para versoes futuras."); }}>
           <span className="material-symbols-outlined">history</span>
           <span className="text-[10px] font-bold uppercase">Historico</span>
         </a>

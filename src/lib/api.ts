@@ -181,6 +181,7 @@ export const createRecurringExpense = async (data: {
   dueDay?: number;
   dueDayOfWeek?: number;
   dueDate?: string;
+  recurrenceEndsAt?: string;
 }) => {
   const response = await api.post('/planning/expenses', data);
   return response.data;
