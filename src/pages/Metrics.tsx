@@ -10,6 +10,7 @@ import {
   getActiveVehicle,
   getDueMaintenance,
   getLatestVehicleKm,
+  getPreviousVehicleKm,
   isOperationLogComplete,
   loadFuelLogs,
   loadMaintenancePlans,
@@ -151,11 +152,12 @@ export default function Metrics() {
   useEffect(() => {
     if (!activeVehicle) return;
     const existing = operationLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === selectedDate);
+    const fallbackKmStart = getPreviousVehicleKm(activeVehicle.id, selectedDate);
     setLogDraft({
       date: existing?.date || selectedDate,
       startTime: existing?.startTime || "",
       endTime: existing?.endTime || "",
-      kmStart: existing?.kmStart?.toString() || "",
+      kmStart: existing?.kmStart?.toString() || (fallbackKmStart != null ? String(fallbackKmStart) : ""),
       kmEnd: existing?.kmEnd?.toString() || "",
     });
   }, [activeVehicle, operationLogs, selectedDate]);

@@ -91,8 +91,11 @@ export const saveSession = (session: { token: string; user: unknown; access: unk
   localStorage.setItem('drivercash_access', JSON.stringify(session.access));
 };
 
-export const getDashboardData = async (period?: 'day' | 'week' | 'month') => {
-  const response = await api.get('/dashboard', { params: period ? { period } : undefined });
+export const getDashboardData = async (period?: 'day' | 'week' | 'month', referenceDate?: string) => {
+  const params: Record<string, string> = {};
+  if (period) params.period = period;
+  if (referenceDate) params.referenceDate = referenceDate;
+  const response = await api.get('/dashboard', { params: Object.keys(params).length > 0 ? params : undefined });
   return response.data;
 };
 

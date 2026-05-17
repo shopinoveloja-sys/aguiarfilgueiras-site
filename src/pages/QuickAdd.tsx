@@ -108,6 +108,11 @@ export default function QuickAdd() {
       return;
     }
 
+    if (isFuelExpense && (!fuelOdometerKm || Number(fuelOdometerKm) <= 0)) {
+      toast.error("Informe o KM do abastecimento.");
+      return;
+    }
+
     setLoading(true);
     try {
       const recurrencePayload = getRecurrencePayload();
@@ -306,6 +311,7 @@ export default function QuickAdd() {
                 onChange={(e) => setFuelOdometerKm(e.target.value)}
                 placeholder="Ex: 257320"
                 className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
+                required
               />
             </div>
             {currentFuelUnitPrice > 0 && currentAmountValue > 0 && (

@@ -242,6 +242,13 @@ export function getLatestVehicleKm(vehicleId: string) {
   return completeLogs[0]?.kmEnd ?? 0;
 }
 
+export function getPreviousVehicleKm(vehicleId: string, date: string) {
+  const completeLogs = loadOperationLogs()
+    .filter((item) => item.vehicleId === vehicleId && isOperationLogComplete(item) && item.date < date)
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
+  return completeLogs[0]?.kmEnd ?? null;
+}
+
 export function getDueMaintenance(vehicleId: string, currentKm: number) {
   return loadMaintenancePlans()
     .filter((item) => item.vehicleId === vehicleId && item.enabled && item.dueKm > 0)

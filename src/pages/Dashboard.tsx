@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { confirmGooglePlayPurchase, createTransaction, getDashboardData, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
 import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
 import { toast } from "sonner";
@@ -33,6 +33,7 @@ interface DashboardData {
     averageLine: number[];
     bestLine: number[];
     projectionLine: number[];
+    expenseProjectionLine: number[];
   };
 }
 
@@ -127,6 +128,7 @@ const emptyChartData: DashboardData["chartData"] = {
   averageLine: [],
   bestLine: [],
   projectionLine: [],
+  expenseProjectionLine: [],
 };
 
 const toNumber = (value: unknown) => {
@@ -175,6 +177,7 @@ function normalizeDashboardData(value: Partial<DashboardData> | null | undefined
       averageLine: Array.isArray(chart?.averageLine) ? chart.averageLine.map(toNumber) : emptyChartData.averageLine,
       bestLine: Array.isArray(chart?.bestLine) ? chart.bestLine.map(toNumber) : emptyChartData.bestLine,
       projectionLine: Array.isArray(chart?.projectionLine) ? chart.projectionLine.map(toNumber) : emptyChartData.projectionLine,
+      expenseProjectionLine: Array.isArray(chart?.expenseProjectionLine) ? chart.expenseProjectionLine.map(toNumber) : emptyChartData.expenseProjectionLine,
     },
   };
 }
@@ -233,6 +236,7 @@ export default function Dashboard() {
   const [editIncomeCategory, setEditIncomeCategory] = useState<CategorySummary | null>(null);
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [categoryPeriod, setCategoryPeriod] = useState<CategoryPeriod>("month");
+  const [categoryReferenceDate, setCategoryReferenceDate] = useState(todayKey());
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     return parseSessionUser(readStorage("drivercash_user"));
@@ -248,7 +252,7 @@ export default function Dashboard() {
   
   const loadDashboard = async () => {
     try {
-      const dashboard = await getDashboardData(categoryPeriod);
+      const dashboard = await getDashboardData(categoryPeriod, categoryReferenceDate);
       setData(normalizeDashboardData(dashboard));
       try {
         const planData = await getRecurringExpenses();
@@ -276,7 +280,7 @@ export default function Dashboard() {
     if (!loading) {
       loadDashboard();
     }
-  }, [categoryPeriod]);
+  }, [categoryPeriod, categoryReferenceDate]);
 
   useEffect(() => {
     const handlePlayPurchaseMessage = async (event: MessageEvent) => {
@@ -453,7 +457,7 @@ export default function Dashboard() {
   ];
 
   const getCategoryPeriodRange = () => {
-    const now = new Date();
+    const now = new Date(`${categoryReferenceDate}T12:00:00`);
     const start = new Date(now);
     const end = new Date(now);
 
@@ -468,35 +472,44 @@ export default function Dashboard() {
       const daysFromMonday = day === 0 ? 6 : day - 1;
       start.setDate(start.getDate() - daysFromMonday);
       start.setHours(0, 0, 0, 0);
-      end.setTime(start.getTime());
-      end.setDate(start.getDate() + 6);
       end.setHours(23, 59, 59, 999);
       return { start: start.toISOString(), end: end.toISOString() };
     }
 
     start.setDate(1);
     start.setHours(0, 0, 0, 0);
-    end.setMonth(start.getMonth() + 1, 0);
     end.setHours(23, 59, 59, 999);
     return { start: start.toISOString(), end: end.toISOString() };
   };
 
   const CategoryPeriodFilter = () => (
-    <div className="flex rounded-lg bg-slate-950/70 border border-slate-800 p-1">
-      {(["day", "week", "month"] as CategoryPeriod[]).map((period) => (
-        <button
-          key={period}
-          type="button"
-          onClick={() => setCategoryPeriod(period)}
-          className={`px-2.5 py-1.5 text-[10px] font-bold uppercase rounded-md transition-colors ${
-            categoryPeriod === period
-              ? "bg-blue-500 text-white shadow-sm"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
-          }`}
-        >
-          {categoryPeriodLabels[period]}
-        </button>
-      ))}
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <div className="flex rounded-lg bg-slate-950/70 border border-slate-800 p-1">
+        {(["day", "week", "month"] as CategoryPeriod[]).map((period) => (
+          <button
+            key={period}
+            type="button"
+            onClick={() => setCategoryPeriod(period)}
+            className={`px-2.5 py-1.5 text-[10px] font-bold uppercase rounded-md transition-colors ${
+              categoryPeriod === period
+                ? "bg-blue-500 text-white shadow-sm"
+                : "text-slate-400 hover:text-white hover:bg-slate-800"
+            }`}
+          >
+            {categoryPeriodLabels[period]}
+          </button>
+        ))}
+      </div>
+      <label className="flex items-center gap-2 rounded-lg bg-slate-950/70 border border-slate-800 px-3 py-2 text-[10px] font-bold uppercase text-slate-400">
+        <span className="material-symbols-outlined text-sm">event</span>
+        <span>Ate</span>
+        <input
+          type="date"
+          value={categoryReferenceDate}
+          onChange={(e) => setCategoryReferenceDate(e.target.value)}
+          className="bg-transparent text-[11px] font-semibold text-slate-200 outline-none"
+        />
+      </label>
     </div>
   );
 
@@ -714,6 +727,7 @@ export default function Dashboard() {
     meta: data.chartData.averageLine[index],
     recorde: data.chartData.bestLine[index],
     projecao: data.chartData.projectionLine[index],
+    despesas: data.chartData.expenseProjectionLine[index],
   }));
 
   const recurringExpenses = Array.isArray(planning?.expenses) ? (planning?.expenses as PlanningExpenseItem[]) : [];
@@ -1014,14 +1028,21 @@ export default function Dashboard() {
             <p className="text-sm font-bold text-white mb-4 text-center">Progresso Mensal</p>
             <div className="h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={projectionChart} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
+                <ComposedChart data={projectionChart} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
                   <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={{ stroke: "#1e293b" }} />
                   <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} width={54} tickFormatter={(value) => `R$ ${value}`} />
-                  <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: 8 }} />
+                  <Tooltip
+                    contentStyle={{ background: "#0f172a", border: "1px solid #1e293b", borderRadius: 8 }}
+                    formatter={(value: number) => formatMoneyPrecise(Number(value))}
+                  />
+                  <Area type="monotone" dataKey="meta" stroke="none" fill="#60a5fa" fillOpacity={0.05} />
+                  <Area type="monotone" dataKey="projecao" stroke="none" fill="#f59e0b" fillOpacity={0.12} />
+                  <Area type="monotone" dataKey="despesas" stroke="none" fill="#ef4444" fillOpacity={0.1} />
                   <Line type="monotone" dataKey="meta" name="Meta" stroke="#60a5fa" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
-                </LineChart>
+                  <Line type="monotone" dataKey="despesas" name="Despesa projetada" stroke="#ef4444" strokeWidth={2} dot={false} />
+                </ComposedChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -1340,7 +1361,7 @@ export default function Dashboard() {
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
           <span className="text-[10px] font-bold uppercase">Hoje</span>
         </a>
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/rides"); }}>
+        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); toast.info("Em breve novidades para novas versoes."); }}>
           <span className="material-symbols-outlined">history</span>
           <span className="text-[10px] font-bold uppercase">Historico</span>
         </a>
