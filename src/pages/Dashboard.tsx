@@ -755,6 +755,7 @@ export default function Dashboard() {
       : data.projectedMonth >= data.averageGoalMonth && data.averageGoalMonth > 0
         ? "Voce esta perto da media esperada para o mes."
         : "Voce esta abaixo da media esperada para o mes.";
+  const todayOperationalDisplay = Math.max(data.todayIncome - data.todayRewardIncome, 0);
 
   const projectionChart = data.chartData.labels.map((label, index) => ({
     day: label,
@@ -1034,10 +1035,12 @@ export default function Dashboard() {
             <div className="bg-gradient-to-br from-slate-800/90 to-transparent border border-slate-700 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Receita do Dia</p>
               <div className="flex flex-wrap items-end gap-2">
-                <p className="text-2xl font-black text-white">{formatMoney(data.todayIncome)}</p>
+                <p className="text-2xl font-black text-white">
+                  {formatMoney(data.todayRewardIncome > 0 ? todayOperationalDisplay : data.todayIncome)}
+                </p>
                 {data.todayRewardIncome > 0 ? (
                   <p className="text-xs font-semibold text-slate-300 pb-1">
-                    / com recompensa: {formatMoneyPrecise(data.todayRewardIncome)}
+                    / total com recompensa: {formatMoneyPrecise(data.todayIncome)}
                   </p>
                 ) : null}
               </div>
