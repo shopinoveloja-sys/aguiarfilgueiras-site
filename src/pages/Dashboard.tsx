@@ -34,6 +34,7 @@ interface DashboardData {
     bestLine: number[];
     projectionLine: number[];
     expenseProjectionLine: number[];
+    profitProjectionLine: number[];
   };
 }
 
@@ -131,6 +132,7 @@ const emptyChartData: DashboardData["chartData"] = {
   bestLine: [],
   projectionLine: [],
   expenseProjectionLine: [],
+  profitProjectionLine: [],
 };
 
 const toNumber = (value: unknown) => {
@@ -180,6 +182,7 @@ function normalizeDashboardData(value: Partial<DashboardData> | null | undefined
       bestLine: Array.isArray(chart?.bestLine) ? chart.bestLine.map(toNumber) : emptyChartData.bestLine,
       projectionLine: Array.isArray(chart?.projectionLine) ? chart.projectionLine.map(toNumber) : emptyChartData.projectionLine,
       expenseProjectionLine: Array.isArray(chart?.expenseProjectionLine) ? chart.expenseProjectionLine.map(toNumber) : emptyChartData.expenseProjectionLine,
+      profitProjectionLine: Array.isArray(chart?.profitProjectionLine) ? chart.profitProjectionLine.map(toNumber) : emptyChartData.profitProjectionLine,
     },
   };
 }
@@ -757,6 +760,7 @@ export default function Dashboard() {
     recorde: data.chartData.bestLine[index],
     projecao: data.chartData.projectionLine[index],
     despesas: data.chartData.expenseProjectionLine[index],
+    lucroProjetado: data.chartData.profitProjectionLine[index],
   }));
 
   const recurringExpenses = Array.isArray(planning?.expenses) ? (planning?.expenses as PlanningExpenseItem[]) : [];
@@ -1057,6 +1061,7 @@ export default function Dashboard() {
                         { key: "recorde", label: "Recorde", color: "#34d399" },
                         { key: "projecao", label: "Projecao", color: "#f59e0b" },
                         { key: "despesas", label: "Despesa projetada", color: "#ef4444" },
+                        { key: "lucroProjetado", label: "Lucro projetado", color: "#22c55e" },
                       ];
                       return (
                         <div className="rounded-xl border border-slate-700 bg-slate-900/95 px-4 py-3 shadow-xl">
@@ -1079,6 +1084,7 @@ export default function Dashboard() {
                   <Line type="monotone" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
                   <Line type="monotone" dataKey="despesas" name="Despesa projetada" stroke="#ef4444" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="lucroProjetado" name="Lucro projetado" stroke="#22c55e" strokeWidth={2} dot={false} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
