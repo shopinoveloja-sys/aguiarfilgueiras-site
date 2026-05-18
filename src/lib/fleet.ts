@@ -1,4 +1,5 @@
 export type FuelType = "gasolina" | "etanol" | "gnv" | "diesel" | "eletrico";
+export type RidePlatform = "UBER" | "99" | "INDRIVE" | "PARTICULAR" | "OUTRAS";
 
 export interface VehicleProfile {
   id: string;
@@ -45,11 +46,21 @@ export interface MaintenancePlan {
   createdAt: string;
 }
 
+export interface RideCountLog {
+  id: string;
+  date: string;
+  vehicleId: string;
+  counts: Record<RidePlatform, number>;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const VEHICLES_KEY = "drivercash_vehicles";
 const LEGACY_VEHICLE_KEY = "drivercash_vehicle";
 const OPERATION_LOGS_KEY = "drivercash_operation_logs";
 const FUEL_LOGS_KEY = "drivercash_fuel_logs";
 const MAINTENANCE_KEY = "drivercash_maintenance_plans";
+const RIDE_COUNT_LOGS_KEY = "drivercash_ride_count_logs";
 
 const defaultVehicle: VehicleProfile = {
   id: "vehicle-default",
@@ -206,6 +217,29 @@ export function loadFuelLogs(): FuelLog[] {
 
 export function saveFuelLogs(logs: FuelLog[]) {
   safeWrite(FUEL_LOGS_KEY, JSON.stringify(logs));
+}
+
+export function loadRideCountLogs(): RideCountLog[] {
+  return parseList<Partial<RideCountLog>>(safeRead(RIDE_COUNT_LOGS_KEY))
+    .map((item) => ({
+      id: item.id || generateLocalId("ride"),
+      date: item.date || todayKey(),
+      vehicleId: item.vehicleId || getActiveVehicle().id,
+      counts: {
+        UBER: Number(item.counts?.UBER) || 0,
+        "99": Number(item.counts?.["99"]) || 0,
+        INDRIVE: Number(item.counts?.INDRIVE) || 0,
+        PARTICULAR: Number(item.counts?.PARTICULAR) || 0,
+        OUTRAS: Number(item.counts?.OUTRAS) || 0,
+      },
+      createdAt: item.createdAt || new Date().toISOString(),
+      updatedAt: item.updatedAt || new Date().toISOString(),
+    }))
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
+export function saveRideCountLogs(logs: RideCountLog[]) {
+  safeWrite(RIDE_COUNT_LOGS_KEY, JSON.stringify(logs));
 }
 
 export function loadMaintenancePlans(): MaintenancePlan[] {

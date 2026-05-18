@@ -442,8 +442,17 @@ export default function Dashboard() {
   const formatMoneyPrecise = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  const formatCategory = (category: string) =>
-    category.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  const formatCategory = (category: string) => {
+    if (category.startsWith("RECOMPENSA_")) {
+      const platform = category
+        .replace("RECOMPENSA_", "")
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+      return `Recompensa ${platform}`;
+    }
+    return category.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   const categoryPeriodLabels: Record<CategoryPeriod, string> = {
     day: "Hoje",
@@ -846,19 +855,6 @@ export default function Dashboard() {
       </header>
 
       <main className="flex-1 overflow-y-auto p-4">
-        <section className="mb-6">
-          <button onClick={() => navigate("/agent")} className="w-full rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 flex items-center gap-3 text-left active:scale-[0.99]">
-            <div className="size-11 rounded-xl bg-blue-500/10 text-blue-300 flex items-center justify-center">
-              <span className="material-symbols-outlined">smart_toy</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-white">Agente DriverCash</p>
-                <p className="text-xs text-slate-400">Converse com seus dados e receba insights praticos.</p>
-            </div>
-            <span className="material-symbols-outlined text-slate-500">chevron_right</span>
-          </button>
-        </section>
-
         {(metricsReminderVisible || dueMaintenance.length > 0) && (
           <section className="mb-6 space-y-3">
             {metricsReminderVisible && (

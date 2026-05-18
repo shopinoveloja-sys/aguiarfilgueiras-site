@@ -172,16 +172,6 @@ export default function Profile() {
             <span className="material-symbols-outlined text-slate-500">chevron_right</span>
           </button>
 
-          <button onClick={() => navigate("/agent")} className="col-span-2 flex items-center p-5 rounded-xl bg-blue-500/5 border border-blue-500/20 hover:bg-blue-500/10 transition-colors text-left gap-4">
-            <div className="bg-blue-500/10 p-3 rounded-lg">
-              <span className="material-symbols-outlined text-blue-400">smart_toy</span>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-bold">Agente DriverCash</h3>
-              <p className="text-slate-400 text-xs mt-1">Converse com seus dados e receba insights protegidos</p>
-            </div>
-            <span className="material-symbols-outlined text-slate-500">chevron_right</span>
-          </button>
         </section>
 
         {referrals && (
@@ -313,9 +303,9 @@ export default function Profile() {
           <span className="material-symbols-outlined">analytics</span>
           <span className="text-[10px] font-bold uppercase tracking-tighter">Stats</span>
         </a>
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/agent"); }}>
-          <span className="material-symbols-outlined">memory</span>
-          <span className="text-[10px] font-bold uppercase tracking-tighter">Tech</span>
+        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/metrics"); }}>
+          <span className="material-symbols-outlined">speed</span>
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Metricas</span>
         </a>
         <a className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-800 to-blue-500 text-white rounded-xl px-3 py-1.5 shadow-lg" href="#" onClick={(e) => { e.preventDefault(); navigate("/profile"); }}>
           <span className="material-symbols-outlined">settings</span>

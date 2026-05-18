@@ -14,7 +14,6 @@ import QuickAdd from "./pages/QuickAdd";
 import Privacy from "./pages/Privacy";
 import WorkCalendar from "./pages/WorkCalendar";
 import Metrics from "./pages/Metrics";
-import AgentChat from "./pages/AgentChat";
 import "./index.css";
 
 class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -80,7 +79,7 @@ function App() {
           <Route path="/add" element={<QuickAdd />} />
           <Route path="/calendar" element={<WorkCalendar />} />
           <Route path="/metrics" element={<Metrics />} />
-          <Route path="/agent" element={<AgentChat />} />
+          <Route path="/agent" element={<Navigate to="/dashboard" replace />} />
           <Route path="/map" element={<Metrics />} />
           <Route path="/privacidade" element={<Privacy />} />
           <Route path="/privacy" element={<Privacy />} />

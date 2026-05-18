@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTransaction, createRecurringExpense } from "../lib/api";
 import { FuelType, getActiveVehicle, loadVehicles, saveFuelLogs, loadFuelLogs, generateLocalId } from "../lib/fleet";
@@ -26,6 +26,7 @@ export default function QuickAdd() {
   const [dueDay, setDueDay] = useState("5");
   const [dueDayOfWeek, setDueDayOfWeek] = useState(new Date().getDay().toString());
   const [recurrenceUntilMonth, setRecurrenceUntilMonth] = useState(() => todayInputValue().slice(0, 7));
+  const [rewardPlatform, setRewardPlatform] = useState<"UBER" | "99" | "INDRIVE" | "OUTRAS">("UBER");
   const [fuelType, setFuelType] = useState<FuelType>("gasolina");
   const [fuelUnitPrice, setFuelUnitPrice] = useState("");
   const [fuelOdometerKm, setFuelOdometerKm] = useState("");
@@ -38,6 +39,7 @@ export default function QuickAdd() {
     { id: "99", name: "99", icon: "local_taxi", color: "bg-[#FFD100] text-black" },
     { id: "INDRIVE", name: "InDrive", icon: "hail", color: "bg-[#bcfc01] text-black" },
     { id: "PARTICULAR", name: "Particular", icon: "person", color: "bg-blue-600 text-white" },
+    { id: "RECOMPENSAS", name: "Recompensas", icon: "featured_seasonal_and_gifts", color: "bg-amber-500 text-slate-950" },
     { id: "OUTRAS", name: "Outras", icon: "payments", color: "bg-emerald-600 text-white" },
   ];
 
@@ -66,8 +68,15 @@ export default function QuickAdd() {
 
   const currentCategories = type === "INCOME" ? apps : expenses;
   const isFuelExpense = type === "EXPENSE" && category === "COMBUSTIVEL";
+  const isRewardIncome = type === "INCOME" && category === "RECOMPENSAS";
   const currentAmountValue = parseInt(amount || "0", 10) / 100;
   const currentFuelUnitPrice = Number((fuelUnitPrice || "0").replace(",", "."));
+
+  useEffect(() => {
+    if (isRewardIncome && recurrenceType !== "SPECIFIC_DATE") {
+      setRecurrenceType("SPECIFIC_DATE");
+    }
+  }, [isRewardIncome, recurrenceType]);
 
   const handleKeypad = (num: string) => {
     if (amount.length > 8) return;
@@ -138,8 +147,9 @@ export default function QuickAdd() {
         recurrenceType === "SPECIFIC_DATE"
           ? recurrencePayload.dueDate
           : new Date().toISOString();
-      const transactionCategory =
-        description.trim() && ((type === "EXPENSE" && category === "OUTROS") || (type === "INCOME" && category === "OUTRAS"))
+      const transactionCategory = isRewardIncome
+        ? `RECOMPENSA_${rewardPlatform}`
+        : description.trim() && ((type === "EXPENSE" && category === "OUTROS") || (type === "INCOME" && category === "OUTRAS"))
           ? description.trim()
           : category;
 
@@ -252,27 +262,61 @@ export default function QuickAdd() {
           />
         )}
 
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Periodicidade</p>
-          <div className="grid grid-cols-3 gap-2">
-            {recurrenceOptions.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => setRecurrenceType(option.id)}
-                className={`h-12 rounded-xl border text-xs font-bold flex items-center justify-center gap-1 transition-all ${
-                  recurrenceType === option.id
-                    ? "bg-blue-500 text-white border-blue-400"
-                    : "bg-[#1e293b66] text-slate-400 border-blue-500/10"
-                }`}
-              >
-                <span className="material-symbols-outlined text-base">{option.icon}</span>
-                {option.label}
-              </button>
-            ))}
+        {isRewardIncome && (
+          <div className="bg-[#1e293b66] p-3 rounded-xl border border-amber-500/20 space-y-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Plataforma da recompensa</p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "UBER", label: "Uber" },
+                  { id: "99", label: "99" },
+                  { id: "INDRIVE", label: "InDrive" },
+                  { id: "OUTRAS", label: "Outras" },
+                ].map((platform) => (
+                  <button
+                    key={platform.id}
+                    type="button"
+                    onClick={() => setRewardPlatform(platform.id as typeof rewardPlatform)}
+                    className={`h-11 rounded-xl border text-xs font-bold transition-all ${
+                      rewardPlatform === platform.id
+                        ? "bg-amber-500 text-slate-950 border-amber-400"
+                        : "bg-[#0f172a] text-slate-300 border-blue-500/20"
+                    }`}
+                  >
+                    {platform.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-[11px] text-amber-100/70">
+              Recompensas entram no faturamento e na projeção, mas ficam fora das metas, recordes e métricas operacionais.
+            </p>
           </div>
-        </div>
+        )}
 
-        {recurrenceType === "SPECIFIC_DATE" && (
+        {!isRewardIncome && (
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Periodicidade</p>
+            <div className="grid grid-cols-3 gap-2">
+              {recurrenceOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setRecurrenceType(option.id)}
+                  className={`h-12 rounded-xl border text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                    recurrenceType === option.id
+                      ? "bg-blue-500 text-white border-blue-400"
+                      : "bg-[#1e293b66] text-slate-400 border-blue-500/10"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-base">{option.icon}</span>
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(recurrenceType === "SPECIFIC_DATE" || isRewardIncome) && (
           <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20 space-y-3">
             <div>
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Data do lancamento</label>

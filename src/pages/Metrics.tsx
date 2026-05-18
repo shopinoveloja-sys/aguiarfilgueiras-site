@@ -5,6 +5,8 @@ import { createKmDaily, getKmHistory, getTransactions, updateKmDaily } from "../
 import {
   MaintenancePlan,
   OperationLog,
+  RideCountLog,
+  RidePlatform,
   VehicleProfile,
   generateLocalId,
   getActiveVehicle,
@@ -15,9 +17,11 @@ import {
   loadFuelLogs,
   loadMaintenancePlans,
   loadOperationLogs,
+  loadRideCountLogs,
   loadVehicles,
   saveMaintenancePlans,
   saveOperationLogs,
+  saveRideCountLogs,
   todayKey,
 } from "../lib/fleet";
 
@@ -53,6 +57,14 @@ const maintenanceTemplates = [
   "Outra",
 ];
 
+const ridePlatforms: Array<{ id: RidePlatform; label: string; category?: string }> = [
+  { id: "UBER", label: "Uber", category: "UBER" },
+  { id: "99", label: "99", category: "99" },
+  { id: "INDRIVE", label: "InDrive", category: "INDRIVE" },
+  { id: "PARTICULAR", label: "Particular", category: "PARTICULAR" },
+  { id: "OUTRAS", label: "Outras", category: "OUTRAS" },
+];
+
 const toNumber = (value: unknown) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
@@ -65,6 +77,7 @@ const normalizeText = (value: string) =>
   value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 
 const dateKeyFromValue = (value?: string) => (value ? value.slice(0, 10) : "");
+const isRewardCategory = (category: string) => normalizeText(category).startsWith("RECOMPENSA_");
 
 const getPeriodRange = (period: Period, referenceDate: string) => {
   const now = new Date(`${referenceDate}T12:00:00`);
@@ -112,6 +125,7 @@ export default function Metrics() {
   const [vehicles, setVehicles] = useState<VehicleProfile[]>([]);
   const [operationLogs, setOperationLogs] = useState<OperationLog[]>([]);
   const [maintenancePlans, setMaintenancePlansState] = useState<MaintenancePlan[]>([]);
+  const [rideCountLogs, setRideCountLogs] = useState<RideCountLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingLog, setSavingLog] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayKey());
@@ -121,6 +135,13 @@ export default function Metrics() {
     endTime: "",
     kmStart: "",
     kmEnd: "",
+  });
+  const [rideDraft, setRideDraft] = useState<Record<RidePlatform, string>>({
+    UBER: "",
+    "99": "",
+    INDRIVE: "",
+    PARTICULAR: "",
+    OUTRAS: "",
   });
   const [maintenanceTemplate, setMaintenanceTemplate] = useState("Troca de oleo");
   const [maintenanceCustomName, setMaintenanceCustomName] = useState("");
@@ -133,9 +154,11 @@ export default function Metrics() {
         const localVehicles = loadVehicles();
         const localLogs = loadOperationLogs();
         const localMaintenance = loadMaintenancePlans();
+        const localRideCounts = loadRideCountLogs();
         setVehicles(localVehicles);
         setOperationLogs(localLogs);
         setMaintenancePlansState(localMaintenance);
+        setRideCountLogs(localRideCounts);
 
         const [txs, kms] = await Promise.all([getTransactions(), getKmHistory()]);
         setTransactions(Array.isArray(txs) ? txs : []);
@@ -152,6 +175,7 @@ export default function Metrics() {
   useEffect(() => {
     if (!activeVehicle) return;
     const existing = operationLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === selectedDate);
+    const existingRideCounts = rideCountLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === selectedDate);
     const fallbackKmStart = getPreviousVehicleKm(activeVehicle.id, selectedDate);
     setLogDraft({
       date: existing?.date || selectedDate,
@@ -160,7 +184,14 @@ export default function Metrics() {
       kmStart: existing?.kmStart?.toString() || (fallbackKmStart != null ? String(fallbackKmStart) : ""),
       kmEnd: existing?.kmEnd?.toString() || "",
     });
-  }, [activeVehicle, operationLogs, selectedDate]);
+    setRideDraft({
+      UBER: existingRideCounts?.counts.UBER ? String(existingRideCounts.counts.UBER) : "",
+      "99": existingRideCounts?.counts["99"] ? String(existingRideCounts.counts["99"]) : "",
+      INDRIVE: existingRideCounts?.counts.INDRIVE ? String(existingRideCounts.counts.INDRIVE) : "",
+      PARTICULAR: existingRideCounts?.counts.PARTICULAR ? String(existingRideCounts.counts.PARTICULAR) : "",
+      OUTRAS: existingRideCounts?.counts.OUTRAS ? String(existingRideCounts.counts.OUTRAS) : "",
+    });
+  }, [activeVehicle, operationLogs, rideCountLogs, selectedDate]);
 
   const mergedOperationLogs = useMemo(() => {
     const existingDates = new Set(operationLogs.map((item) => `${item.vehicleId}:${item.date}`));
@@ -198,6 +229,10 @@ export default function Metrics() {
     () => loadFuelLogs().filter((item) => item.vehicleId === activeVehicle?.id),
     [activeVehicle],
   );
+  const activeRideLogs = useMemo(
+    () => rideCountLogs.filter((item) => item.vehicleId === activeVehicle?.id),
+    [activeVehicle, rideCountLogs],
+  );
 
   const dueMaintenance = useMemo(() => {
     const currentKm = getLatestVehicleKm(activeVehicle?.id || "");
@@ -210,8 +245,12 @@ export default function Metrics() {
       .filter((item) => isDateInRange(dateKeyFromValue(item.date || item.createdAt), period, selectedDate));
     const periodFuelLogs = fuelLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
     const periodLogs = completeLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
+    const periodRideLogs = activeRideLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
     const income = periodTransactions
       .filter((item) => item.type === "INCOME")
+      .reduce((sum, item) => sum + toNumber(item.value), 0);
+    const operationalIncome = periodTransactions
+      .filter((item) => item.type === "INCOME" && !isRewardCategory(item.category))
       .reduce((sum, item) => sum + toNumber(item.value), 0);
     const expense = periodTransactions
       .filter((item) => item.type === "EXPENSE")
@@ -223,13 +262,42 @@ export default function Metrics() {
     const hoursTotal = periodLogs.reduce((sum, item) => sum + getHoursBetween(item.startTime, item.endTime), 0);
     const fuelTotal = periodFuelLogs.reduce((sum, item) => sum + item.totalPrice, 0);
     const fuelQuantity = periodFuelLogs.reduce((sum, item) => sum + item.quantity, 0);
-    const incomePerKm = kmTotal > 0 ? income / kmTotal : 0;
-    const incomePerHour = hoursTotal > 0 ? income / hoursTotal : 0;
+    const incomePerKm = kmTotal > 0 ? operationalIncome / kmTotal : 0;
+    const incomePerHour = hoursTotal > 0 ? operationalIncome / hoursTotal : 0;
     const fuelPerKm = kmTotal > 0 ? fuelTotal / kmTotal : 0;
-    const profitPerKm = kmTotal > 0 ? (income - expense) / kmTotal : 0;
+    const profitPerKm = kmTotal > 0 ? (operationalIncome - expense) / kmTotal : 0;
     const consumptionAverage = fuelQuantity > 0 ? kmTotal / fuelQuantity : 0;
+    const ridesByPlatform = ridePlatforms.reduce(
+      (acc, platform) => {
+        acc[platform.id] = periodRideLogs.reduce((sum, item) => sum + (item.counts[platform.id] || 0), 0);
+        return acc;
+      },
+      {} as Record<RidePlatform, number>,
+    );
+    const incomeByPlatform = ridePlatforms.reduce(
+      (acc, platform) => {
+        acc[platform.id] = periodTransactions
+          .filter((item) => item.type === "INCOME" && platform.category && normalizeText(item.category) === platform.category)
+          .reduce((sum, item) => sum + toNumber(item.value), 0);
+        return acc;
+      },
+      {} as Record<RidePlatform, number>,
+    );
+    const totalRides = Object.values(ridesByPlatform).reduce((sum, value) => sum + value, 0);
+    const averagePerRide = totalRides > 0 ? operationalIncome / totalRides : 0;
+    const platformRideSummaries = ridePlatforms.map((platform) => {
+      const rides = ridesByPlatform[platform.id] || 0;
+      const incomeValue = incomeByPlatform[platform.id] || 0;
+      return {
+        ...platform,
+        rides,
+        income: incomeValue,
+        valuePerRide: rides > 0 ? incomeValue / rides : 0,
+      };
+    });
     return {
       income,
+      operationalIncome,
       expense,
       fuelTotal,
       fuelQuantity,
@@ -241,8 +309,11 @@ export default function Metrics() {
       fuelPerKm,
       profitPerKm,
       consumptionAverage,
+      totalRides,
+      averagePerRide,
+      platformRideSummaries,
     };
-  }, [completeLogs, fuelLogs, period, selectedDate, transactions]);
+  }, [activeRideLogs, completeLogs, fuelLogs, period, selectedDate, transactions]);
 
   const saveLocalOperationLogs = (nextLogs: OperationLog[]) => {
     setOperationLogs(nextLogs);
@@ -252,6 +323,11 @@ export default function Metrics() {
   const saveMaintenancePlansLocal = (nextPlans: MaintenancePlan[]) => {
     setMaintenancePlansState(nextPlans);
     saveMaintenancePlans(nextPlans);
+  };
+
+  const saveRideCountsLocal = (nextLogs: RideCountLog[]) => {
+    setRideCountLogs(nextLogs);
+    saveRideCountLogs(nextLogs);
   };
 
   const handleSaveLog = async () => {
@@ -285,6 +361,28 @@ export default function Metrics() {
       ? operationLogs.map((item) => (item.id === existing.id ? nextLog : item))
       : [nextLog, ...operationLogs];
     saveLocalOperationLogs(nextLogs);
+
+    if (activeVehicle) {
+      const existingRideCounts = rideCountLogs.find((item) => item.vehicleId === activeVehicle.id && item.date === selectedDate);
+      const nextRideCounts: RideCountLog = {
+        id: existingRideCounts?.id || generateLocalId("ride"),
+        vehicleId: activeVehicle.id,
+        date: selectedDate,
+        counts: {
+          UBER: Number(rideDraft.UBER) || 0,
+          "99": Number(rideDraft["99"]) || 0,
+          INDRIVE: Number(rideDraft.INDRIVE) || 0,
+          PARTICULAR: Number(rideDraft.PARTICULAR) || 0,
+          OUTRAS: Number(rideDraft.OUTRAS) || 0,
+        },
+        createdAt: existingRideCounts?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      const nextRideLogs = existingRideCounts
+        ? rideCountLogs.map((item) => (item.id === existingRideCounts.id ? nextRideCounts : item))
+        : [nextRideCounts, ...rideCountLogs];
+      saveRideCountsLocal(nextRideLogs);
+    }
 
     if (!isOperationLogComplete(nextLog)) {
       toast.success("Jornada salva. Voce pode completar os dados no fim do dia.");
@@ -474,6 +572,23 @@ export default function Metrics() {
               />
             </div>
           </div>
+          <div className="mt-4">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Corridas por plataforma</p>
+            <div className="grid gap-3 md:grid-cols-5">
+              {ridePlatforms.map((platform) => (
+                <div key={platform.id}>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">{platform.label}</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={rideDraft[platform.id]}
+                    onChange={(e) => setRideDraft((prev) => ({ ...prev, [platform.id]: e.target.value }))}
+                    className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
           <button
             onClick={handleSaveLog}
             disabled={savingLog}
@@ -501,6 +616,14 @@ export default function Metrics() {
             <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Lucro por KM</p>
             <p className={`text-2xl font-black ${stats.profitPerKm >= 0 ? "text-emerald-400" : "text-red-400"}`}>{money(stats.profitPerKm)}</p>
           </div>
+          <div className="rounded-xl bg-slate-900 border border-violet-500/20 p-4">
+            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Corridas no periodo</p>
+            <p className="text-2xl font-black text-violet-300">{stats.totalRides.toLocaleString("pt-BR")}</p>
+          </div>
+          <div className="rounded-xl bg-slate-900 border border-cyan-500/20 p-4">
+            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Valor por corrida</p>
+            <p className="text-2xl font-black text-cyan-300">{money(stats.averagePerRide)}</p>
+          </div>
         </section>
 
         <section className="rounded-xl bg-slate-900 border border-slate-800 p-4">
@@ -514,14 +637,44 @@ export default function Metrics() {
           <div className="grid gap-3">
             {[
               ["Receitas", money(stats.income), "text-emerald-300"],
+              ["Receita operacional", money(stats.operationalIncome), "text-cyan-300"],
               ["Despesas", money(stats.expense), "text-red-300"],
               ["Combustivel", money(stats.fuelTotal), "text-amber-300"],
               ["Manutencao", money(stats.maintenanceCost), "text-slate-300"],
+              ["Corridas", stats.totalRides.toLocaleString("pt-BR"), "text-violet-300"],
               ["Horas registradas", `${stats.hoursTotal.toFixed(1).replace(".", ",")} h`, "text-blue-300"],
             ].map(([label, value, color]) => (
               <div key={label} className="flex items-center justify-between border-b border-slate-800 pb-2 last:border-0 last:pb-0">
                 <span className="text-xs font-bold uppercase text-slate-500">{label}</span>
                 <span className={`text-sm font-black ${color}`}>{value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-xl bg-slate-900 border border-violet-500/20 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-sm font-bold">Corridas por plataforma</h2>
+              <p className="text-xs text-slate-500">Use as corridas do periodo para acompanhar ticket medio por app.</p>
+            </div>
+            <span className="material-symbols-outlined text-violet-300">local_taxi</span>
+          </div>
+          <div className="space-y-3">
+            {stats.platformRideSummaries.map((platform) => (
+              <div key={platform.id} className="rounded-lg bg-slate-950/60 border border-slate-800 px-3 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-white">{platform.label}</p>
+                    <p className="text-[10px] text-slate-500">
+                      {platform.rides.toLocaleString("pt-BR")} corridas - {money(platform.valuePerRide)} por corrida
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-black text-emerald-300">{money(platform.income)}</p>
+                    <p className="text-[10px] text-slate-500">Receita</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
