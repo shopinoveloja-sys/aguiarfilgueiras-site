@@ -10,6 +10,7 @@ interface DashboardData {
   totalExpenseMonth: number;
   netProfitMonth: number;
   todayIncome: number;
+  todayRewardIncome: number;
   todayExpense: number;
   todayProfit: number;
   daysWorked: number;
@@ -156,6 +157,7 @@ function normalizeDashboardData(value: Partial<DashboardData> | null | undefined
     totalExpenseMonth: toNumber(value?.totalExpenseMonth),
     netProfitMonth: toNumber(value?.netProfitMonth),
     todayIncome: toNumber(value?.todayIncome),
+    todayRewardIncome: toNumber(value?.todayRewardIncome),
     todayExpense: toNumber(value?.todayExpense),
     todayProfit: toNumber(value?.todayProfit),
     daysWorked: toNumber(value?.daysWorked),
@@ -1031,7 +1033,14 @@ export default function Dashboard() {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="bg-gradient-to-br from-slate-800/90 to-transparent border border-slate-700 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Receita do Dia</p>
-              <p className="text-2xl font-black text-white">{formatMoney(data.todayIncome)}</p>
+              <div className="flex flex-wrap items-end gap-2">
+                <p className="text-2xl font-black text-white">{formatMoney(data.todayIncome)}</p>
+                {data.todayRewardIncome > 0 ? (
+                  <p className="text-xs font-semibold text-slate-300 pb-1">
+                    / com recompensa: {formatMoneyPrecise(data.todayRewardIncome)}
+                  </p>
+                ) : null}
+              </div>
             </div>
             <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Media</p>
