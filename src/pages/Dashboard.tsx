@@ -774,7 +774,7 @@ export default function Dashboard() {
       !paidTodayExpenses.some((paid) => paid.id === expense.id),
   );
   const hiddenRecurringDayCategories = new Set(
-    categoryPeriod === "day"
+    categoryPeriod === "day" && categoryReferenceDate === todayKey()
       ? recurringExpenses
           .filter((expense) => expense.name && expense.isDueToday === false)
           .map((expense) => expense.name.trim().toLowerCase())
