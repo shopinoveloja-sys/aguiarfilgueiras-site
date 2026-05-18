@@ -244,7 +244,7 @@ export default function Dashboard() {
   const [editIncomeCategory, setEditIncomeCategory] = useState<CategorySummary | null>(null);
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [categoryPeriod, setCategoryPeriod] = useState<CategoryPeriod>("month");
-  const [categoryReferenceDate, setCategoryReferenceDate] = useState(todayKey());
+  const [categoryReferenceDate, setCategoryReferenceDate] = useState("");
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     return parseSessionUser(readStorage("drivercash_user"));
@@ -262,7 +262,7 @@ export default function Dashboard() {
   
   const loadDashboard = async () => {
     try {
-      const dashboard = await getDashboardData(categoryPeriod, categoryReferenceDate);
+      const dashboard = await getDashboardData(categoryPeriod, categoryReferenceDate || undefined);
       setData(normalizeDashboardData(dashboard));
       try {
         const planData = await getRecurringExpenses();
@@ -476,23 +476,57 @@ export default function Dashboard() {
   ];
 
   const getCategoryPeriodRange = () => {
-    const now = new Date(`${categoryReferenceDate}T12:00:00`);
-    const start = new Date(now);
-    const end = new Date(now);
+    const hasReferenceDate = Boolean(categoryReferenceDate);
+    const today = new Date(`${todayKey()}T12:00:00`);
+    const reference = hasReferenceDate ? new Date(`${categoryReferenceDate}T12:00:00`) : today;
+    const start = new Date(reference);
+    const end = new Date(reference);
 
     if (categoryPeriod === "day") {
+      if (!hasReferenceDate) {
+        const startToday = new Date(today);
+        const endToday = new Date(today);
+        startToday.setHours(0, 0, 0, 0);
+        endToday.setHours(23, 59, 59, 999);
+        return { start: startToday.toISOString(), end: endToday.toISOString() };
+      }
       start.setHours(0, 0, 0, 0);
       end.setHours(23, 59, 59, 999);
       return { start: start.toISOString(), end: end.toISOString() };
     }
 
     if (categoryPeriod === "week") {
+      if (!hasReferenceDate) {
+        const weekStart = new Date(today);
+        const weekEnd = new Date(today);
+        weekStart.setHours(0, 0, 0, 0);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+        return { start: weekStart.toISOString(), end: weekEnd.toISOString() };
+      }
       const day = start.getDay();
       const daysFromMonday = day === 0 ? 6 : day - 1;
       start.setDate(start.getDate() - daysFromMonday);
       start.setHours(0, 0, 0, 0);
+      end.setDate(start.getDate() + 6);
       end.setHours(23, 59, 59, 999);
       return { start: start.toISOString(), end: end.toISOString() };
+    }
+
+    if (!hasReferenceDate) {
+      const monthStart = new Date(today);
+      const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 12, 0, 0, 0);
+      monthStart.setDate(1);
+      monthStart.setHours(0, 0, 0, 0);
+      monthEnd.setHours(23, 59, 59, 999);
+      return { start: monthStart.toISOString(), end: monthEnd.toISOString() };
+    }
+
+    if (reference > today) {
+      const futureStart = new Date(today);
+      futureStart.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+      return { start: futureStart.toISOString(), end: end.toISOString() };
     }
 
     start.setDate(1);
@@ -528,6 +562,16 @@ export default function Dashboard() {
           onChange={(e) => setCategoryReferenceDate(e.target.value)}
           className="bg-transparent text-[11px] font-semibold text-slate-200 outline-none"
         />
+        {categoryReferenceDate ? (
+          <button
+            type="button"
+            onClick={() => setCategoryReferenceDate("")}
+            className="text-slate-500 hover:text-white transition-colors"
+            aria-label="Limpar data"
+          >
+            <span className="material-symbols-outlined text-sm">close</span>
+          </button>
+        ) : null}
       </label>
     </div>
   );
@@ -774,7 +818,7 @@ export default function Dashboard() {
       !paidTodayExpenses.some((paid) => paid.id === expense.id),
   );
   const hiddenRecurringDayCategories = new Set(
-    categoryPeriod === "day" && categoryReferenceDate === todayKey()
+    categoryPeriod === "day" && (!categoryReferenceDate || categoryReferenceDate === todayKey())
       ? recurringExpenses
           .filter((expense) => expense.name && expense.isDueToday === false)
           .map((expense) => expense.name.trim().toLowerCase())
