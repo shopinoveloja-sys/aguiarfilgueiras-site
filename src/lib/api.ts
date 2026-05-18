@@ -177,7 +177,7 @@ export const deleteKmDaily = async (id: string) => {
 export const createRecurringExpense = async (data: {
   name: string;
   value: number;
-  recurrenceType?: 'MONTHLY' | 'WEEKLY' | 'SPECIFIC_DATE';
+  recurrenceType?: 'DAILY' | 'MONTHLY' | 'WEEKLY' | 'SPECIFIC_DATE';
   dueDay?: number;
   dueDayOfWeek?: number;
   dueDate?: string;

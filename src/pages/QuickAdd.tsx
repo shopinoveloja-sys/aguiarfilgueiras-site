@@ -4,7 +4,7 @@ import { createTransaction, createRecurringExpense } from "../lib/api";
 import { FuelType, getActiveVehicle, loadVehicles, saveFuelLogs, loadFuelLogs, generateLocalId } from "../lib/fleet";
 import { toast } from "sonner";
 
-type RecurrenceType = "SPECIFIC_DATE" | "WEEKLY" | "MONTHLY";
+type RecurrenceType = "SPECIFIC_DATE" | "DAILY" | "WEEKLY" | "MONTHLY";
 
 const dateInputValue = (date = new Date()) => {
   const year = date.getFullYear();
@@ -52,6 +52,7 @@ export default function QuickAdd() {
 
   const recurrenceOptions: { id: RecurrenceType; label: string; icon: string }[] = [
     { id: "SPECIFIC_DATE", label: "Data", icon: "event" },
+    { id: "DAILY", label: "Diaria", icon: "today" },
     { id: "WEEKLY", label: "Semanal", icon: "calendar_view_week" },
     { id: "MONTHLY", label: "Mensal", icon: "calendar_month" },
   ];
@@ -69,6 +70,7 @@ export default function QuickAdd() {
   const currentCategories = type === "INCOME" ? apps : expenses;
   const isFuelExpense = type === "EXPENSE" && category === "COMBUSTIVEL";
   const isRewardIncome = type === "INCOME" && category === "RECOMPENSAS";
+  const visibleRecurrenceOptions = recurrenceOptions.filter((option) => option.id !== "DAILY" || isFuelExpense);
   const currentAmountValue = parseInt(amount || "0", 10) / 100;
   const currentFuelUnitPrice = Number((fuelUnitPrice || "0").replace(",", "."));
 
@@ -77,6 +79,12 @@ export default function QuickAdd() {
       setRecurrenceType("SPECIFIC_DATE");
     }
   }, [isRewardIncome, recurrenceType]);
+
+  useEffect(() => {
+    if (!isFuelExpense && recurrenceType === "DAILY") {
+      setRecurrenceType("SPECIFIC_DATE");
+    }
+  }, [isFuelExpense, recurrenceType]);
 
   const handleKeypad = (num: string) => {
     if (amount.length > 8) return;
@@ -110,6 +118,10 @@ export default function QuickAdd() {
       return { recurrenceType, dueDayOfWeek: parseInt(dueDayOfWeek, 10) || 0, recurrenceEndsAt };
     }
 
+    if (recurrenceType === "DAILY") {
+      return { recurrenceType, recurrenceEndsAt };
+    }
+
     const dueDate = new Date(`${selectedDate}T12:00:00`).toISOString();
     return { recurrenceType, dueDate };
   };
@@ -118,7 +130,9 @@ export default function QuickAdd() {
     const hasAmount = Boolean(amount) && parseInt(amount, 10) > 0;
     const finalValue = currentAmountValue;
     const parsedFuelUnitPrice = currentFuelUnitPrice;
-    const isFuelPayloadValid = !isFuelExpense || (parsedFuelUnitPrice > 0 && finalValue > 0 && !!activeVehicle);
+    const isRecurringProjectedFuel = isFuelExpense && recurrenceType !== "SPECIFIC_DATE";
+    const isFuelPayloadValid =
+      !isFuelExpense || isRecurringProjectedFuel || (parsedFuelUnitPrice > 0 && finalValue > 0 && !!activeVehicle);
 
     if (!hasAmount) {
       toast.error("Informe um valor valido.");
@@ -135,7 +149,7 @@ export default function QuickAdd() {
       return;
     }
 
-    if (isFuelExpense && (!fuelOdometerKm || Number(fuelOdometerKm) <= 0)) {
+    if (isFuelExpense && recurrenceType === "SPECIFIC_DATE" && (!fuelOdometerKm || Number(fuelOdometerKm) <= 0)) {
       toast.error("Informe o KM do abastecimento.");
       return;
     }
@@ -161,7 +175,7 @@ export default function QuickAdd() {
 
       if (shouldCreateRecurring) {
         await createRecurringExpense({
-          name: description || `Despesa fixa - ${category}`,
+          name: isFuelExpense ? "COMBUSTIVEL" : description || `Despesa fixa - ${category}`,
           value: finalValue,
           ...recurrencePayload,
         });
@@ -176,7 +190,7 @@ export default function QuickAdd() {
         });
       }
 
-      if (isFuelExpense && activeVehicle) {
+      if (isFuelExpense && recurrenceType === "SPECIFIC_DATE" && activeVehicle) {
         const quantity = finalValue / parsedFuelUnitPrice;
         const nextFuelLogs = [
           {
@@ -298,7 +312,7 @@ export default function QuickAdd() {
           <div>
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Periodicidade</p>
             <div className="grid grid-cols-3 gap-2">
-              {recurrenceOptions.map((option) => (
+              {visibleRecurrenceOptions.map((option) => (
                 <button
                   key={option.id}
                   onClick={() => setRecurrenceType(option.id)}
@@ -361,6 +375,7 @@ export default function QuickAdd() {
                   onChange={(e) => setFuelUnitPrice(e.target.value)}
                   placeholder="Ex: 5.89"
                   className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
+                  disabled={recurrenceType !== "SPECIFIC_DATE"}
                 />
               </div>
             </div>
@@ -374,9 +389,15 @@ export default function QuickAdd() {
                 placeholder="Ex: 257320"
                 className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
                 required
+                disabled={recurrenceType !== "SPECIFIC_DATE"}
               />
             </div>
-            {currentFuelUnitPrice > 0 && currentAmountValue > 0 && (
+            {recurrenceType !== "SPECIFIC_DATE" && (
+              <p className="text-[11px] text-amber-100/70">
+                No combustivel recorrente, o valor entra apenas em despesas projetadas. Nao soma no total reservado.
+              </p>
+            )}
+            {recurrenceType === "SPECIFIC_DATE" && currentFuelUnitPrice > 0 && currentAmountValue > 0 && (
               <div className="rounded-lg bg-[#0f172a] border border-slate-800 px-3 py-2 text-xs text-slate-400">
                 Quantidade abastecida:{" "}
                 <span className="font-bold text-amber-300">
