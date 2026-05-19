@@ -1,6 +1,7 @@
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, useState, type ErrorInfo, type ReactNode } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
+import { toast } from "sonner";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
@@ -14,7 +15,10 @@ import QuickAdd from "./pages/QuickAdd";
 import Privacy from "./pages/Privacy";
 import WorkCalendar from "./pages/WorkCalendar";
 import Metrics from "./pages/Metrics";
+import { login, saveSession } from "./lib/api";
 import "./index.css";
+
+const ADMIN_EMAIL = "shopinove.loja@gmail.com";
 
 class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -93,6 +97,101 @@ function AppOnlyRoute({ children }: { children: ReactNode }) {
   return isDesktopBrowser() ? <DesktopAppBlocked /> : <>{children}</>;
 }
 
+const readSessionUserEmail = () => {
+  try {
+    const raw = localStorage.getItem("drivercash_user");
+    if (!raw) return "";
+    const parsed = JSON.parse(raw);
+    return typeof parsed?.email === "string" ? parsed.email.toLowerCase().trim() : "";
+  } catch {
+    return "";
+  }
+};
+
+function AdminOnlyRoute() {
+  const [email, setEmail] = useState(ADMIN_EMAIL);
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const sessionEmail = readSessionUserEmail();
+
+  if (sessionEmail === ADMIN_EMAIL) {
+    return <AdminDashboard />;
+  }
+
+  const handleAdminLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const normalizedEmail = email.toLowerCase().trim();
+
+    if (normalizedEmail !== ADMIN_EMAIL) {
+      toast.error("Acesso administrativo restrito.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const session = await login({ email: normalizedEmail, password });
+      const userEmail = typeof session?.user?.email === "string" ? session.user.email.toLowerCase().trim() : "";
+      if (userEmail !== ADMIN_EMAIL) {
+        localStorage.removeItem("drivercash_token");
+        localStorage.removeItem("drivercash_user");
+        localStorage.removeItem("drivercash_access");
+        toast.error("Este usuario nao tem permissao administrativa.");
+        return;
+      }
+      saveSession(session);
+      toast.success("Acesso administrativo liberado.");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      toast.error("Nao foi possivel entrar na area administrativa.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6 text-white">
+      <form
+        onSubmit={handleAdminLogin}
+        className="w-full max-w-md rounded-2xl border border-blue-500/20 bg-[#0f172a] p-8 shadow-2xl"
+      >
+        <img alt="DriverCash" src="/drivercash-logo.svg" className="mx-auto mb-5 h-16 w-16 object-contain" />
+        <h1 className="mb-2 text-center text-2xl font-black">Area administrativa</h1>
+        <p className="mb-6 text-center text-sm leading-6 text-slate-400">
+          Acesso restrito ao administrador autorizado.
+        </p>
+        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400" htmlFor="admin-email">
+          E-mail
+        </label>
+        <input
+          id="admin-email"
+          className="mb-4 h-12 w-full rounded-xl border border-blue-500/20 bg-[#111827] px-4 text-white outline-none focus:border-blue-500"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400" htmlFor="admin-password">
+          Senha
+        </label>
+        <input
+          id="admin-password"
+          className="mb-6 h-12 w-full rounded-xl border border-blue-500/20 bg-[#111827] px-4 text-white outline-none focus:border-blue-500"
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="h-12 w-full rounded-xl bg-blue-600 text-sm font-bold text-white transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Entrando..." : "Entrar no admin"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
 function App() {
   return (
     <AppErrorBoundary>
@@ -105,7 +204,7 @@ function App() {
           <Route path="/earnings" element={<AppOnlyRoute><EarningsSettings /></AppOnlyRoute>} />
           <Route path="/rides" element={<AppOnlyRoute><RideHistory /></AppOnlyRoute>} />
           <Route path="/kinetic" element={<AppOnlyRoute><KineticOverlay /></AppOnlyRoute>} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin" element={<AdminOnlyRoute />} />
           <Route path="/onboarding" element={<AppOnlyRoute><Onboarding /></AppOnlyRoute>} />
           <Route path="/add" element={<AppOnlyRoute><QuickAdd /></AppOnlyRoute>} />
           <Route path="/calendar" element={<AppOnlyRoute><WorkCalendar /></AppOnlyRoute>} />
