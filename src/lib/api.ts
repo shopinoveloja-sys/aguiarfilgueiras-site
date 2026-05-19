@@ -80,6 +80,11 @@ export const requestReferralWithdrawal = async (data: { pixKey: string; requeste
   return response.data;
 };
 
+export const getAdminSummary = async () => {
+  const response = await api.get('/access/admin/summary');
+  return response.data;
+};
+
 export const redeemReferralCode = async (code: string) => {
   const response = await api.post('/access/referrals/redeem', { code });
   return response.data;
