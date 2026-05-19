@@ -62,25 +62,56 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
   }
 }
 
+const isDesktopBrowser = () => {
+  const nativeApp = Boolean((window as any).__DRIVERCASH_PLAY_APP__ && (window as any).ReactNativeWebView);
+  const mobileUserAgent = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const wideViewport = window.matchMedia("(min-width: 900px)").matches;
+  return !nativeApp && wideViewport && !mobileUserAgent;
+};
+
+function DesktopAppBlocked() {
+  return (
+    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6 text-center text-white">
+      <div className="max-w-md rounded-2xl border border-blue-500/20 bg-[#0f172a] p-8 shadow-2xl">
+        <img alt="DriverCash" src="/drivercash-logo.svg" className="mx-auto mb-5 h-16 w-16 object-contain" />
+        <h1 className="mb-3 text-2xl font-black">DriverCash agora e exclusivo pelo app</h1>
+        <p className="mb-6 text-sm leading-6 text-slate-400">
+          A area do motorista foi otimizada para uso no celular. No navegador desktop, somente a area administrativa fica disponivel.
+        </p>
+        <a
+          href="/admin"
+          className="inline-flex h-12 items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-bold text-white transition-colors hover:bg-blue-500"
+        >
+          Acessar area administrativa
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function AppOnlyRoute({ children }: { children: ReactNode }) {
+  return isDesktopBrowser() ? <DesktopAppBlocked /> : <>{children}</>;
+}
+
 function App() {
   return (
     <AppErrorBoundary>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/vehicle" element={<VehicleSettings />} />
-          <Route path="/earnings" element={<EarningsSettings />} />
-          <Route path="/rides" element={<RideHistory />} />
-          <Route path="/kinetic" element={<KineticOverlay />} />
+          <Route path="/" element={<AppOnlyRoute><Login /></AppOnlyRoute>} />
+          <Route path="/dashboard" element={<AppOnlyRoute><Dashboard /></AppOnlyRoute>} />
+          <Route path="/profile" element={<AppOnlyRoute><Profile /></AppOnlyRoute>} />
+          <Route path="/vehicle" element={<AppOnlyRoute><VehicleSettings /></AppOnlyRoute>} />
+          <Route path="/earnings" element={<AppOnlyRoute><EarningsSettings /></AppOnlyRoute>} />
+          <Route path="/rides" element={<AppOnlyRoute><RideHistory /></AppOnlyRoute>} />
+          <Route path="/kinetic" element={<AppOnlyRoute><KineticOverlay /></AppOnlyRoute>} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/add" element={<QuickAdd />} />
-          <Route path="/calendar" element={<WorkCalendar />} />
-          <Route path="/metrics" element={<Metrics />} />
+          <Route path="/onboarding" element={<AppOnlyRoute><Onboarding /></AppOnlyRoute>} />
+          <Route path="/add" element={<AppOnlyRoute><QuickAdd /></AppOnlyRoute>} />
+          <Route path="/calendar" element={<AppOnlyRoute><WorkCalendar /></AppOnlyRoute>} />
+          <Route path="/metrics" element={<AppOnlyRoute><Metrics /></AppOnlyRoute>} />
           <Route path="/agent" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/map" element={<Metrics />} />
+          <Route path="/map" element={<AppOnlyRoute><Metrics /></AppOnlyRoute>} />
           <Route path="/privacidade" element={<Privacy />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<Navigate to="/" replace />} />

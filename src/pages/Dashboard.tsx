@@ -262,12 +262,14 @@ export default function Dashboard() {
   
   const loadDashboard = async () => {
     try {
-      const dashboard = await getDashboardData(categoryPeriod, categoryReferenceDate || undefined);
+      const [dashboard, planData] = await Promise.all([
+        getDashboardData(categoryPeriod, categoryReferenceDate || undefined),
+        getRecurringExpenses().catch(() => null),
+      ]);
       setData(normalizeDashboardData(dashboard));
-      try {
-        const planData = await getRecurringExpenses();
+      if (planData) {
         setPlanning(planData);
-      } catch (e) {}
+      }
     } catch (error) {
       console.error("Failed to load dashboard data", error);
       setErrorMessage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
@@ -276,11 +278,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function init() {
-      await loadDashboard();
-      try {
-        const referralData = await getReferralSummary();
+      const [, referralData] = await Promise.all([
+        loadDashboard(),
+        getReferralSummary().catch(() => null),
+      ]);
+      if (referralData) {
         setReferrals(referralData);
-      } catch (e) {}
+      }
       setLoading(false);
     }
     init();
