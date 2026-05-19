@@ -52,7 +52,7 @@ interface EditableExpenseItem {
   date: string;
   createdAt?: string;
   description: string;
-  recurrenceType?: "MONTHLY" | "WEEKLY" | "SPECIFIC_DATE";
+  recurrenceType?: "DAILY" | "MONTHLY" | "WEEKLY" | "SPECIFIC_DATE";
   dueDay?: number | null;
   dueDayOfWeek?: number | null;
   dueDate?: string | null;
@@ -76,7 +76,7 @@ interface PlanningData {
 interface PlanningExpenseItem {
   id: string;
   name: string;
-  recurrenceType?: "MONTHLY" | "WEEKLY" | "SPECIFIC_DATE";
+  recurrenceType?: "DAILY" | "MONTHLY" | "WEEKLY" | "SPECIFIC_DATE";
   isDueToday?: boolean;
   remainingAmount?: number;
   requiredPerDay?: number;
@@ -591,7 +591,7 @@ export default function Dashboard() {
         t.date >= start &&
         t.date <= end
       );
-      const recurring = ((planningRes.data?.expenses || []) as any[])
+      const recurring = ((planningRes.data?.editableExpenses || planningRes.data?.expenses || []) as any[])
         .filter((expense: any) => expense.name === cat.category)
         .map((expense: any) => ({
           id: expense.id,
@@ -835,6 +835,9 @@ export default function Dashboard() {
   const recurringScheduleLabel = (tx: EditableExpenseItem, days: typeof weekDays) => {
     if (tx.kind !== "recurring") return `Lancado em ${tx.date}`;
     const untilSuffix = tx.recurrenceEndsAt ? ` ate ${tx.recurrenceEndsAt.slice(5, 7)}/${tx.recurrenceEndsAt.slice(0, 4)}` : "";
+    if (tx.recurrenceType === "DAILY") {
+      return `Diaria${untilSuffix}`;
+    }
     if (tx.recurrenceType === "WEEKLY" && typeof tx.dueDayOfWeek === "number") {
       return `Semanal - ${days.find((day) => day.value === String(tx.dueDayOfWeek))?.label || "Dia"}${untilSuffix}`;
     }
@@ -1268,8 +1271,8 @@ export default function Dashboard() {
                             )}
                             {currentEditingExpense?.kind === "recurring" && (
                               <div className="space-y-2">
-                                <div className="grid grid-cols-3 gap-2">
-                                  {(["MONTHLY", "WEEKLY", "SPECIFIC_DATE"] as const).map((type) => (
+                                <div className="grid grid-cols-4 gap-2">
+                                  {(["DAILY", "MONTHLY", "WEEKLY", "SPECIFIC_DATE"] as const).map((type) => (
                                     <button
                                       key={type}
                                       type="button"
@@ -1278,7 +1281,7 @@ export default function Dashboard() {
                                         editRecurringType === type ? "bg-blue-500 text-white" : "bg-[#0f172a] text-slate-400"
                                       }`}
                                     >
-                                      {type === "MONTHLY" ? "Mensal" : type === "WEEKLY" ? "Semanal" : "Data"}
+                                      {type === "DAILY" ? "Diaria" : type === "MONTHLY" ? "Mensal" : type === "WEEKLY" ? "Semanal" : "Data"}
                                     </button>
                                   ))}
                                 </div>
