@@ -278,6 +278,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function init() {
+      if (access && !access.hasAccess) {
+        setLoading(false);
+        return;
+      }
+
       const [, referralData] = await Promise.all([
         loadDashboard(),
         getReferralSummary().catch(() => null),
@@ -340,6 +345,15 @@ export default function Dashboard() {
     }
   };
 
+  const handleSubscribe = () => {
+    const nativeBridge = (window as any).ReactNativeWebView;
+    if (nativeBridge) {
+      nativeBridge.postMessage(JSON.stringify({ type: "DRIVERCASH_SUBSCRIBE" }));
+      return;
+    }
+    toast.info("A assinatura do DriverCash sera feita pelo aplicativo Android.");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center">
@@ -349,6 +363,66 @@ export default function Dashboard() {
   }
 
   const firstName = sessionUser?.name?.trim().split(/\s+/)[0] || "Motorista";
+
+  if (access && !access.hasAccess) {
+    return (
+      <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-5">
+        <div className="w-full max-w-md rounded-3xl border border-blue-500/20 bg-[#0f172a] p-6 shadow-2xl">
+          <div className="flex flex-col items-center text-center mb-6">
+            <img alt="DriverCash" src="/drivercash-logo.svg" className="h-20 w-20 object-contain mb-4" />
+            <h1 className="text-2xl font-black bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
+              Driver Cash
+            </h1>
+            <p className="text-sm text-slate-400 mt-1">Financas para quem acelera</p>
+          </div>
+
+          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 mb-4">
+            <p className="text-sm font-bold text-white">Acesso bloqueado</p>
+            <p className="text-xs leading-5 text-slate-300 mt-1">
+              Para continuar usando o DriverCash, assine o plano anual ou use um codigo de indicacao para liberar 15 dias gratis.
+            </p>
+          </div>
+
+          <button
+            onClick={handleSubscribe}
+            className="h-12 w-full rounded-xl bg-emerald-500 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 active:scale-95"
+          >
+            Assinar anual por {formatMoneyPrecise(access.annualPrice)}
+          </button>
+
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="text-[10px] uppercase tracking-wider text-slate-500">ou</span>
+            <div className="h-px flex-1 bg-white/10" />
+          </div>
+
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">
+              Tenho um codigo de indicacao
+            </p>
+            <div className="flex gap-2">
+              <input
+                value={redeemCode}
+                onChange={(event) => setRedeemCode(event.target.value.toUpperCase())}
+                placeholder="CODIGO"
+                className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-sm uppercase outline-none transition-all focus:border-emerald-500"
+              />
+              <button
+                onClick={handleRedeemCode}
+                disabled={redeeming || !redeemCode}
+                className="rounded-xl border border-emerald-500/30 bg-emerald-500/20 px-4 py-3 text-[10px] font-bold text-emerald-300 transition-all active:scale-95 disabled:opacity-50"
+              >
+                {redeeming ? "..." : "Resgatar"}
+              </button>
+            </div>
+            <p className="text-[10px] text-slate-500 mt-3">
+              Sem codigo de indicacao, o acesso fica liberado somente apos a assinatura.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (errorMessage) {
     return (
@@ -786,15 +860,6 @@ export default function Dashboard() {
     } finally {
       setPayingExpenseId(null);
     }
-  };
-
-  const handleSubscribe = () => {
-    const nativeBridge = (window as any).ReactNativeWebView;
-    if (nativeBridge) {
-      nativeBridge.postMessage(JSON.stringify({ type: "DRIVERCASH_SUBSCRIBE" }));
-      return;
-    }
-    toast.info("A assinatura do DriverCash sera feita pelo aplicativo Android.");
   };
 
   const projectionMessage =
