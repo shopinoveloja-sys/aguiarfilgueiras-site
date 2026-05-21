@@ -1,6 +1,6 @@
 ﻿import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { getDashboardData, getReferralSummary, requestReferralWithdrawal } from "../lib/api";
+import { getDashboardData, getReferralSummary, requestReferralWithdrawal, updateProfile } from "../lib/api";
 import { toast } from "sonner";
 
 interface ReferralData {
@@ -30,6 +30,8 @@ interface SessionUser {
   name: string;
   email: string;
   phone?: string;
+  document?: string;
+  avatarUrl?: string | null;
   profileCompletedAt?: string | null;
   phoneVerifiedAt?: string | null;
 }
@@ -54,13 +56,20 @@ export default function Profile() {
   const [requestedFor, setRequestedFor] = useState("");
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
   const [vehicle, setVehicle] = useState<VehicleConfig | null>(null);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [profileAvatar, setProfileAvatar] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
     try {
       const storedUser = readStorage("drivercash_user");
       const storedVehicle = readStorage("drivercash_vehicle");
-      setSessionUser(storedUser ? JSON.parse(storedUser) : null);
+      const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+      setSessionUser(parsedUser);
       setVehicle(storedVehicle ? JSON.parse(storedVehicle) : null);
+      setProfileName(parsedUser?.name || "");
+      setProfileAvatar(parsedUser?.avatarUrl || "");
     } catch {
       setSessionUser(null);
       setVehicle(null);
@@ -100,6 +109,54 @@ export default function Profile() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("drivercash_token");
+    localStorage.removeItem("drivercash_user");
+    localStorage.removeItem("drivercash_access");
+    toast.success("Voce saiu da sua conta.");
+    navigate("/", { replace: true });
+  };
+
+  const handleAvatarChange = (file?: File) => {
+    if (!file) return;
+    if (file.size > 450_000) {
+      toast.error("Escolha uma imagem menor para o perfil.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => setProfileAvatar(String(reader.result || ""));
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!sessionUser) return;
+    if (!profileName.trim()) {
+      toast.error("Informe seu nome.");
+      return;
+    }
+
+    setSavingProfile(true);
+    try {
+      const session = await updateProfile({
+        name: profileName.trim(),
+        phone: sessionUser.phone || "",
+        document: sessionUser.document || "",
+        avatarUrl: profileAvatar || undefined,
+      });
+      localStorage.setItem("drivercash_user", JSON.stringify(session.user));
+      localStorage.setItem("drivercash_access", JSON.stringify(session.access));
+      setSessionUser(session.user);
+      setEditingProfile(false);
+      toast.success("Perfil atualizado.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Nao foi possivel atualizar o perfil.");
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   const userInitial = useMemo(() => (sessionUser?.name?.trim()?.[0] || "D").toUpperCase(), [sessionUser]);
   const profileStatus = sessionUser?.profileCompletedAt
     ? "Cadastro completo"
@@ -116,8 +173,8 @@ export default function Profile() {
           </button>
           <h1 className="text-lg font-bold">Perfil</h1>
         </div>
-        <button className="p-2 rounded-lg hover:bg-white/5">
-          <span className="material-symbols-outlined text-blue-500">account_circle</span>
+        <button onClick={handleLogout} className="p-2 rounded-lg hover:bg-white/5" aria-label="Sair">
+          <span className="material-symbols-outlined text-red-400">logout</span>
         </button>
       </header>
 
@@ -125,9 +182,13 @@ export default function Profile() {
         <section className="flex flex-col items-center text-center space-y-4">
           <div className="relative">
             <div className="w-32 h-32 rounded-full border-4 border-blue-500/20 p-1 bg-gradient-to-tr from-blue-800 to-blue-500">
-              <div className="w-full h-full rounded-full bg-[#0f172a] flex items-center justify-center text-4xl font-black text-blue-300">
-                {userInitial}
-              </div>
+              {sessionUser?.avatarUrl ? (
+                <img alt="Foto do perfil" src={sessionUser.avatarUrl} className="w-full h-full rounded-full object-cover bg-[#0f172a]" />
+              ) : (
+                <div className="w-full h-full rounded-full bg-[#0f172a] flex items-center justify-center text-4xl font-black text-blue-300">
+                  {userInitial}
+                </div>
+              )}
             </div>
             <div className="absolute bottom-1 right-1 bg-blue-500 text-white rounded-full p-1.5 shadow-lg">
               <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
@@ -138,7 +199,62 @@ export default function Profile() {
             <p className="text-slate-400 text-sm font-medium">{profileStatus}</p>
             <p className="text-slate-500 text-xs">{sessionUser?.email || "Sem e-mail carregado"}</p>
           </div>
+          <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
+            <button
+              onClick={() => setEditingProfile(true)}
+              className="rounded-xl border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm font-bold text-blue-200 active:scale-95"
+            >
+              Editar perfil
+            </button>
+            <button
+              onClick={handleLogout}
+              className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200 active:scale-95"
+            >
+              Sair
+            </button>
+          </div>
         </section>
+
+        {editingProfile && (
+          <section className="rounded-xl border border-blue-500/10 bg-[#1e293b66] p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-white">Editar perfil</h3>
+              <button onClick={() => setEditingProfile(false)} className="text-slate-400">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <label className="block space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Nome</span>
+              <input
+                value={profileName}
+                onChange={(event) => setProfileName(event.target.value)}
+                className="w-full rounded-xl border border-blue-500/20 bg-[#0f172a] p-3 text-sm outline-none focus:border-blue-500"
+                placeholder="Seu nome"
+              />
+            </label>
+            <label className="block space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Foto</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => handleAvatarChange(event.target.files?.[0])}
+                className="w-full rounded-xl border border-blue-500/20 bg-[#0f172a] p-3 text-sm text-slate-300"
+              />
+            </label>
+            {profileAvatar ? (
+              <button onClick={() => setProfileAvatar("")} className="text-xs font-bold text-red-300">
+                Remover foto
+              </button>
+            ) : null}
+            <button
+              onClick={handleSaveProfile}
+              disabled={savingProfile}
+              className="w-full rounded-xl bg-blue-600 py-3 text-sm font-bold text-white disabled:opacity-60"
+            >
+              {savingProfile ? "Salvando..." : "Salvar perfil"}
+            </button>
+          </section>
+        )}
 
         <section className="grid grid-cols-2 gap-4">
           <button onClick={() => navigate("/vehicle")} className="flex flex-col items-start p-5 rounded-xl bg-[#1e293b66] border border-blue-500/10 hover:bg-blue-500/5 transition-colors text-left space-y-3">

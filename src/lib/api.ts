@@ -35,7 +35,7 @@ export const googleLogin = async (data: { credential: string; phone?: string; do
   return response.data;
 };
 
-export const updateProfile = async (data: { name: string; phone: string; document: string }) => {
+export const updateProfile = async (data: { name: string; phone: string; document: string; avatarUrl?: string }) => {
   const response = await api.post('/access/profile', data);
   return response.data;
 };

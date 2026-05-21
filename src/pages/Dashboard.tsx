@@ -115,6 +115,7 @@ interface SessionUser {
   email: string;
   phone?: string;
   document?: string;
+  avatarUrl?: string | null;
   phoneVerifiedAt?: string | null;
   profileCompletedAt?: string | null;
 }
@@ -965,7 +966,7 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-md border-b border-blue-500/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30 overflow-hidden">
-            <img className="w-full h-full object-cover" src={`https://avatar.vercel.sh/${sessionUser?.email || 'driver'}`} alt="Profile" />
+            <img className="w-full h-full object-cover" src={sessionUser?.avatarUrl || `https://avatar.vercel.sh/${sessionUser?.email || 'driver'}`} alt="Profile" />
           </div>
           <div>
             <p className="text-sm text-slate-500">Bem-vindo,</p>
