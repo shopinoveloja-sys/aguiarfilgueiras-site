@@ -127,7 +127,7 @@ export default function Privacy() {
           </p>
           <ul style={ulStyle}>
             <li>Assinantes ativos recebem um código de indicação único</li>
-            <li>Novos usuários que utilizam um código recebem 15 dias de teste grátis</li>
+            <li>Novos usuários que utilizam um código recebem 30 dias de teste grátis</li>
             <li>Quando um usuário indicado assina o plano anual, o indicador recebe R$ 10,00</li>
             <li>Indicações de segundo nível geram comissão de R$ 5,00</li>
             <li>O saque das comissões pode ser solicitado quando o saldo atinge R$ 200,00</li>

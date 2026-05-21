@@ -130,7 +130,13 @@ export default function Login() {
           : await register({ name, email, password, phone, document: documentNumber, referralCode: referralCode || undefined });
 
       saveSession(session);
-      toast.success(mode === "login" ? "Login realizado com sucesso!" : "Conta criada com 15 dias de teste!");
+      toast.success(
+        mode === "login"
+          ? "Login realizado com sucesso!"
+          : referralCode
+            ? "Conta criada com 30 dias de teste!"
+            : "Conta criada com sucesso!",
+      );
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
@@ -170,7 +176,7 @@ export default function Login() {
           <header className="mb-8 text-center">
             <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
             <p className="text-slate-400 text-sm">
-              {mode === "login" ? "Acesse sua conta financeira" : "Crie sua conta e ganhe 15 dias grátis para testar"}
+              {mode === "login" ? "Acesse sua conta financeira" : "Use um codigo de indicacao para liberar 30 dias gratis"}
             </p>
           </header>
 

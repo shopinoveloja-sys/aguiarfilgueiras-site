@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { confirmGooglePlayPurchase, createTransaction, getDashboardData, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
@@ -336,7 +336,7 @@ export default function Dashboard() {
       const session = await redeemReferralCode(redeemCode.trim().toUpperCase());
       localStorage.setItem("drivercash_access", JSON.stringify(session.access));
       setAccess(session.access as AccessData);
-      toast.success("Codigo resgatado! Voce ganhou 15 dias de teste.");
+      toast.success("Codigo resgatado! Voce ganhou 30 dias de teste.");
       // Reload to refresh all limits
       window.location.reload();
     } catch (error: any) {
@@ -380,7 +380,7 @@ export default function Dashboard() {
           <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 mb-4">
             <p className="text-sm font-bold text-white">Acesso bloqueado</p>
             <p className="text-xs leading-5 text-slate-300 mt-1">
-              Para continuar usando o DriverCash, assine o plano anual ou use um codigo de indicacao para liberar 15 dias gratis.
+              Para continuar usando o DriverCash, assine o plano anual ou use um codigo de indicacao para liberar 30 dias gratis.
             </p>
           </div>
 
@@ -1051,7 +1051,7 @@ export default function Dashboard() {
                     </button>
                   </div>
                   <p className="text-[9px] text-slate-500 mt-2">
-                      Use o codigo de quem te indicou para liberar 15 dias gratis.
+                      Use o codigo de quem te indicou para liberar 30 dias gratis.
                   </p>
                 </div>
               ) : null}
