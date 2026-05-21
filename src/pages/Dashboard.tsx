@@ -4,6 +4,7 @@ import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis }
 import { confirmGooglePlayPurchase, createTransaction, getDashboardData, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
 import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
 import { toast } from "sonner";
+import { TutorialCta } from "../components/TutorialCta";
 
 interface DashboardData {
   totalIncomeMonth: number;
@@ -90,6 +91,7 @@ interface PlanningExpenseItem {
 
 interface AccessData {
   status: "TRIALING" | "ACTIVE" | "EXPIRED";
+  hasAccess?: boolean;
   daysRemaining: number;
   annualPrice: number;
 }
@@ -113,6 +115,7 @@ interface ReferralData {
 interface SessionUser {
   name: string;
   email: string;
+  createdAt?: string;
   phone?: string;
   document?: string;
   avatarUrl?: string | null;
@@ -126,6 +129,13 @@ const formatDate = (value?: string | null) => {
   const [year, month, day] = value.split("T")[0].split("-");
   if (!year || !month || !day) return value;
   return `${day}/${month}/${year}`;
+};
+
+const isWithinFirstSevenDays = (createdAt?: string) => {
+  if (!createdAt) return false;
+  const createdTime = new Date(createdAt).getTime();
+  if (!Number.isFinite(createdTime)) return false;
+  return Date.now() - createdTime <= 7 * 24 * 60 * 60 * 1000;
 };
 
 const emptyChartData: DashboardData["chartData"] = {
@@ -390,6 +400,8 @@ export default function Dashboard() {
           >
             Assinar anual por {formatMoneyPrecise(access.annualPrice)}
           </button>
+
+          <TutorialCta compact className="mt-4" />
 
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-white/10" />
@@ -1534,6 +1546,12 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+          </section>
+        )}
+
+        {isWithinFirstSevenDays(sessionUser?.createdAt) && (
+          <section className="mb-6">
+            <TutorialCta compact />
           </section>
         )}
       </main>

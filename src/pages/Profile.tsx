@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getDashboardData, getReferralSummary, requestReferralWithdrawal, updateProfile } from "../lib/api";
 import { toast } from "sonner";
+import { TutorialCta } from "../components/TutorialCta";
 
 interface ReferralData {
   eligible: boolean;
@@ -142,7 +143,7 @@ export default function Profile() {
         name: profileName.trim(),
         phone: sessionUser.phone || "",
         document: sessionUser.document || "",
-        avatarUrl: profileAvatar || undefined,
+        avatarUrl: profileAvatar,
       });
       localStorage.setItem("drivercash_user", JSON.stringify(session.user));
       localStorage.setItem("drivercash_access", JSON.stringify(session.access));
@@ -214,6 +215,8 @@ export default function Profile() {
             </button>
           </div>
         </section>
+
+        <TutorialCta compact />
 
         {editingProfile && (
           <section className="rounded-xl border border-blue-500/10 bg-[#1e293b66] p-5 space-y-4">
