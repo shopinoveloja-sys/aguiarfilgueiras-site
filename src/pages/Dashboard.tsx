@@ -21,6 +21,11 @@ interface DashboardData {
   projectedMonth: number;
   dailyGoalTodayAverage: number;
   dailyGoalTodayBest: number;
+  goalDate: string;
+  goalDayIncome: number;
+  goalDayRewardIncome: number;
+  dailyGoalSelectedAverage: number;
+  dailyGoalSelectedBest: number;
   performanceStatus: 'below_average' | 'on_track' | 'above_average';
   incomeByCategory: CategorySummary[];
   expenseByCategory: CategorySummary[];
@@ -178,6 +183,11 @@ function normalizeDashboardData(value: Partial<DashboardData> | null | undefined
     projectedMonth: toNumber(value?.projectedMonth),
     dailyGoalTodayAverage: toNumber(value?.dailyGoalTodayAverage),
     dailyGoalTodayBest: toNumber(value?.dailyGoalTodayBest),
+    goalDate: typeof value?.goalDate === "string" ? value.goalDate : todayKey(),
+    goalDayIncome: toNumber(value?.goalDayIncome ?? value?.todayIncome),
+    goalDayRewardIncome: toNumber(value?.goalDayRewardIncome ?? value?.todayRewardIncome),
+    dailyGoalSelectedAverage: toNumber(value?.dailyGoalSelectedAverage ?? value?.dailyGoalTodayAverage),
+    dailyGoalSelectedBest: toNumber(value?.dailyGoalSelectedBest ?? value?.dailyGoalTodayBest),
     performanceStatus: value?.performanceStatus || "on_track",
     incomeByCategory: toCategoryList(value?.incomeByCategory),
     expenseByCategory: toCategoryList(value?.expenseByCategory),
@@ -256,6 +266,7 @@ export default function Dashboard() {
   const [editIncomeTransactions, setEditIncomeTransactions] = useState<Array<{ id: string; value: number; date: string; description: string }>>([]);
   const [categoryPeriod, setCategoryPeriod] = useState<CategoryPeriod>("month");
   const [categoryReferenceDate, setCategoryReferenceDate] = useState("");
+  const [goalReferenceDate, setGoalReferenceDate] = useState(() => todayKey());
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(() => {
     return parseSessionUser(readStorage("drivercash_user"));
@@ -274,7 +285,7 @@ export default function Dashboard() {
   const loadDashboard = async () => {
     try {
       const [dashboard, planData] = await Promise.all([
-        getDashboardData(categoryPeriod, categoryReferenceDate || undefined),
+        getDashboardData(categoryPeriod, categoryReferenceDate || undefined, goalReferenceDate || undefined),
         getRecurringExpenses().catch(() => null),
       ]);
       setData(normalizeDashboardData(dashboard));
@@ -310,7 +321,7 @@ export default function Dashboard() {
     if (!loading) {
       loadDashboard();
     }
-  }, [categoryPeriod, categoryReferenceDate]);
+  }, [categoryPeriod, categoryReferenceDate, goalReferenceDate]);
 
   useEffect(() => {
     const handlePlayPurchaseMessage = async (event: MessageEvent) => {
@@ -881,7 +892,7 @@ export default function Dashboard() {
       : data.projectedMonth >= data.averageGoalMonth && data.averageGoalMonth > 0
         ? "Voce esta perto da media esperada para o mes."
         : "Voce esta abaixo da media esperada para o mes.";
-  const todayOperationalDisplay = Math.max(data.todayIncome - data.todayRewardIncome, 0);
+  const goalDayOperationalDisplay = Math.max(data.goalDayIncome - data.goalDayRewardIncome, 0);
 
   const projectionChart = data.chartData.labels.map((label, index) => ({
     day: label,
@@ -1159,28 +1170,41 @@ export default function Dashboard() {
         </section>
 
         <section className="mb-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Metas Hoje</h2>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Metas Hoje</h2>
+            <label className="flex min-w-[190px] items-center gap-2 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-[10px] font-bold uppercase text-slate-400">
+              <span className="material-symbols-outlined text-sm text-blue-400">calendar_today</span>
+              <span>Dia</span>
+              <input
+                type="date"
+                value={goalReferenceDate}
+                onChange={(event) => setGoalReferenceDate(event.target.value || todayKey())}
+                className="min-w-0 flex-1 bg-transparent text-xs font-semibold text-slate-100 outline-none [color-scheme:dark]"
+                aria-label="Data das metas do dia"
+              />
+            </label>
+          </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="bg-gradient-to-br from-slate-800/90 to-transparent border border-slate-700 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Receita do Dia</p>
               <div className="flex flex-wrap items-end gap-2">
                 <p className="text-2xl font-black text-white">
-                  {formatMoney(data.todayRewardIncome > 0 ? todayOperationalDisplay : data.todayIncome)}
+                  {formatMoney(data.goalDayRewardIncome > 0 ? goalDayOperationalDisplay : data.goalDayIncome)}
                 </p>
-                {data.todayRewardIncome > 0 ? (
+                {data.goalDayRewardIncome > 0 ? (
                   <p className="text-xs font-semibold text-slate-300 pb-1">
-                    / total com recompensa: {formatMoneyPrecise(data.todayIncome)}
+                    / total com recompensa: {formatMoneyPrecise(data.goalDayIncome)}
                   </p>
                 ) : null}
               </div>
             </div>
             <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Media</p>
-              <p className="text-2xl font-black text-blue-400">{formatMoney(data.dailyGoalTodayAverage)}</p>
+              <p className="text-2xl font-black text-blue-400">{formatMoney(data.dailyGoalSelectedAverage)}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Recorde</p>
-              <p className="text-2xl font-black text-emerald-400">{formatMoney(data.dailyGoalTodayBest)}</p>
+              <p className="text-2xl font-black text-emerald-400">{formatMoney(data.dailyGoalSelectedBest)}</p>
             </div>
           </div>
         </section>
