@@ -1242,14 +1242,14 @@ export default function Dashboard() {
                       );
                     }}
                   />
-                  <Area type="monotone" dataKey="meta" stroke="none" fill="#60a5fa" fillOpacity={0.05} />
-                  <Area type="monotone" dataKey="projecao" stroke="none" fill="#f59e0b" fillOpacity={0.12} />
-                  <Area type="monotone" dataKey="despesas" stroke="none" fill="#ef4444" fillOpacity={0.1} />
-                  <Line type="monotone" dataKey="meta" name="Meta" stroke="#60a5fa" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
-                  <Line type="monotone" dataKey="despesas" name="Despesa projetada" stroke="#ef4444" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="lucroProjetado" name="Lucro projetado" stroke="#22c55e" strokeWidth={2} dot={false} />
+                  <Area type="linear" dataKey="meta" stroke="none" fill="#60a5fa" fillOpacity={0.05} />
+                  <Area type="linear" dataKey="projecao" stroke="none" fill="#f59e0b" fillOpacity={0.12} />
+                  <Area type="linear" dataKey="despesas" stroke="none" fill="#ef4444" fillOpacity={0.1} />
+                  <Line type="linear" dataKey="meta" name="Meta" stroke="#60a5fa" strokeWidth={2} dot={false} />
+                  <Line type="linear" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
+                  <Line type="linear" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
+                  <Line type="linear" dataKey="despesas" name="Despesa projetada" stroke="#ef4444" strokeWidth={2} dot={false} />
+                  <Line type="linear" dataKey="lucroProjetado" name="Lucro projetado" stroke="#22c55e" strokeWidth={2} dot={false} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
