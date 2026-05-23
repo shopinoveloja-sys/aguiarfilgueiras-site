@@ -159,6 +159,12 @@ const toNumber = (value: unknown) => {
 
 const ANNUAL_PRICE_FALLBACK = 119.99;
 
+const formatMoney = (value: number) =>
+  toNumber(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+const formatMoneyPrecise = (value: number) =>
+  toNumber(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 const toCategoryList = (value: unknown): CategorySummary[] => {
   if (!Array.isArray(value)) return [];
   return value.map((item: Partial<CategorySummary>) => ({
@@ -561,12 +567,6 @@ export default function Dashboard() {
     const num = parseInt(val, 10);
     return (num / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
-
-  const formatMoney = (value: number) =>
-    toNumber(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
-
-  const formatMoneyPrecise = (value: number) =>
-    toNumber(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const formatCategory = (category: string) => {
     if (category.startsWith("RECOMPENSA_")) {
