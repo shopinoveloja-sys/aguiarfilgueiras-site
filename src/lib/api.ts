@@ -12,6 +12,16 @@ const readStorage = (key: string) => {
   }
 };
 
+export const clearSession = () => {
+  try {
+    localStorage.removeItem('drivercash_token');
+    localStorage.removeItem('drivercash_user');
+    localStorage.removeItem('drivercash_access');
+  } catch {
+    // Storage can be unavailable in embedded browsers.
+  }
+};
+
 api.interceptors.request.use((config) => {
   const token = readStorage('drivercash_token');
   if (token) {
@@ -19,6 +29,20 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    if (status === 401 || status === 403) {
+      clearSession();
+      if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+        window.location.replace('/');
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export const login = async (data: { email: string; password: string }) => {
   const response = await api.post('/access/login', data);

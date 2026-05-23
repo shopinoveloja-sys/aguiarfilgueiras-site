@@ -15,7 +15,7 @@ import QuickAdd from "./pages/QuickAdd";
 import Privacy from "./pages/Privacy";
 import WorkCalendar from "./pages/WorkCalendar";
 import Metrics from "./pages/Metrics";
-import { login, saveSession } from "./lib/api";
+import { clearSession, login, saveSession } from "./lib/api";
 import "./index.css";
 
 const ADMIN_EMAIL = "shopinove.loja@gmail.com";
@@ -53,8 +53,8 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
               type="button"
               className="px-4 py-3 rounded-xl bg-slate-800 text-slate-200 text-sm font-bold"
               onClick={() => {
-                localStorage.removeItem("drivercash_token");
-                window.location.href = "/";
+                clearSession();
+                window.location.replace("/");
               }}
             >
               Entrar novamente
@@ -132,9 +132,7 @@ function AdminOnlyRoute() {
       const session = await login({ email: normalizedEmail, password });
       const userEmail = typeof session?.user?.email === "string" ? session.user.email.toLowerCase().trim() : "";
       if (userEmail !== ADMIN_EMAIL) {
-        localStorage.removeItem("drivercash_token");
-        localStorage.removeItem("drivercash_user");
-        localStorage.removeItem("drivercash_access");
+        clearSession();
         toast.error("Este usuario nao tem permissao administrativa.");
         return;
       }

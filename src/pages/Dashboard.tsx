@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { confirmGooglePlayPurchase, createTransaction, getDashboardData, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
+import { clearSession, confirmGooglePlayPurchase, createTransaction, getDashboardData, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
 import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
 import { toast } from "sonner";
 import { TutorialCta } from "../components/TutorialCta";
@@ -157,6 +157,8 @@ const toNumber = (value: unknown) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const ANNUAL_PRICE_FALLBACK = 119.99;
+
 const toCategoryList = (value: unknown): CategorySummary[] => {
   if (!Array.isArray(value)) return [];
   return value.map((item: Partial<CategorySummary>) => ({
@@ -240,7 +242,12 @@ function parseAccess(value: string | null): AccessData | null {
   if (!parsed || typeof parsed.status !== "string" || typeof parsed.daysRemaining !== "number") {
     return null;
   }
-  return parsed as AccessData;
+  return {
+    status: parsed.status as AccessData["status"],
+    hasAccess: parsed.hasAccess ?? parsed.status !== "EXPIRED",
+    daysRemaining: parsed.daysRemaining,
+    annualPrice: toNumber(parsed.annualPrice) || ANNUAL_PRICE_FALLBACK,
+  };
 }
 
 export default function Dashboard() {
@@ -294,12 +301,24 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error("Failed to load dashboard data", error);
+      const status = (error as any)?.response?.status;
+      if (status === 401 || status === 403) {
+        clearSession();
+        navigate("/", { replace: true });
+        return;
+      }
       setErrorMessage("Erro ao carregar os dados do painel. Por favor, tente novamente.");
     }
   };
 
   useEffect(() => {
     async function init() {
+      if (!readStorage("drivercash_token")) {
+        clearSession();
+        navigate("/", { replace: true });
+        return;
+      }
+
       if (access && !access.hasAccess) {
         setLoading(false);
         return;
@@ -544,10 +563,10 @@ export default function Dashboard() {
   };
 
   const formatMoney = (value: number) =>
-    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+    toNumber(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 
   const formatMoneyPrecise = (value: number) =>
-    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    toNumber(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const formatCategory = (category: string) => {
     if (category.startsWith("RECOMPENSA_")) {
