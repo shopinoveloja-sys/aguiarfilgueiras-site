@@ -951,6 +951,14 @@ export default function Dashboard() {
   }));
 
   const recurringExpenses = Array.isArray(planning?.expenses) ? (planning?.expenses as PlanningExpenseItem[]) : [];
+  const hasReserveSummary = Boolean(
+    planning?.summary && (
+      planning.summary.requiredPerDay > 0 ||
+      (planning.summary.totalAccumulated || 0) > 0 ||
+      (planning.summary.totalExpense || 0) > 0 ||
+      recurringExpenses.length > 0
+    ),
+  );
   const dueTodayExpenses = recurringExpenses.filter(
     (expense) =>
       expense.isDueToday &&
@@ -1582,7 +1590,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {planning?.summary && planning.summary.requiredPerDay > 0 && (
+        {planning?.summary && hasReserveSummary && (
           <section className="mb-6">
             <div onClick={() => navigate('/calendar')} className="bg-gradient-to-br from-amber-500/10 border border-amber-500/20 rounded-xl p-5 cursor-pointer active:scale-[0.98]">
               <div className="flex items-center justify-between mb-2">
@@ -1593,7 +1601,11 @@ export default function Dashboard() {
                 <span className="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
               </div>
               <p className="text-3xl font-black text-amber-400">{formatMoneyPrecise(planning.summary.requiredPerDay)}</p>
-              <p className="text-[9px] text-slate-500 mt-1 font-medium">Separe hoje para cobrir suas despesas fixas.</p>
+              <p className="text-[9px] text-slate-500 mt-1 font-medium">
+                {planning.summary.requiredPerDay > 0
+                  ? "Separe hoje para cobrir suas despesas fixas."
+                  : "Hoje esta marcado como folga. Nenhuma reserva diaria precisa ser separada hoje."}
+              </p>
               <div className="mt-3 pt-3 border-t border-amber-500/20 flex justify-between items-center">
                 <span className="text-[10px] font-bold uppercase text-slate-400">Total reservado</span>
                 <span className="text-sm font-black text-amber-300">
