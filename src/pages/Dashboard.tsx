@@ -10,6 +10,7 @@ interface DashboardData {
   totalIncomeMonth: number;
   totalExpenseMonth: number;
   netProfitMonth: number;
+  openingBalance: number;
   todayIncome: number;
   todayRewardIncome: number;
   todayExpense: number;
@@ -180,6 +181,7 @@ function normalizeDashboardData(value: Partial<DashboardData> | null | undefined
     totalIncomeMonth: toNumber(value?.totalIncomeMonth),
     totalExpenseMonth: toNumber(value?.totalExpenseMonth),
     netProfitMonth: toNumber(value?.netProfitMonth),
+    openingBalance: toNumber((value as any)?.openingBalance),
     todayIncome: toNumber(value?.todayIncome),
     todayRewardIncome: toNumber(value?.todayRewardIncome),
     todayExpense: toNumber(value?.todayExpense),
@@ -527,6 +529,7 @@ export default function Dashboard() {
   const projectedVsGoalColor = projectedVsGoalPercentage >= 0
     ? "text-emerald-400 bg-emerald-500/10"
     : "text-red-400 bg-red-500/10";
+  const hasOpeningBalance = Math.abs(data.openingBalance) > 0.004;
   const activeVehicle = getActiveVehicle(loadVehicles());
   const todayOperationLog = getOperationLogForDate(todayKey(), activeVehicle?.id);
   const metricsReminderVisible = !todayOperationLog || !isOperationLogComplete(todayOperationLog);
@@ -580,7 +583,8 @@ export default function Dashboard() {
       setShowBalanceModal(false);
       setPreviousBalance("");
       setBalanceNegative(false);
-      window.location.reload();
+      await loadDashboard();
+      toast.success("Saldo anterior atualizado.");
     } catch (e) {
       toast.error("Erro ao salvar saldo anterior.");
     }
@@ -1197,7 +1201,12 @@ export default function Dashboard() {
 
           <button onClick={() => setShowBalanceModal(true)} className="w-full flex items-center gap-3 bg-[#1e293b44] border border-dashed border-slate-700 rounded-xl p-3 mb-4 hover:bg-slate-800/50 transition-colors">
             <span className="material-symbols-outlined text-slate-500 text-lg">account_balance_wallet</span>
-            <span className="text-xs text-slate-500">Saldo anterior: <b className="text-slate-300">Ajustar aqui</b></span>
+            <span className="text-xs text-slate-500">
+              Saldo anterior:{" "}
+              <b className={hasOpeningBalance ? (data.openingBalance >= 0 ? "text-emerald-300" : "text-red-300") : "text-slate-300"}>
+                {hasOpeningBalance ? formatMoneyPrecise(data.openingBalance) : "Ajustar aqui"}
+              </b>
+            </span>
           </button>
 
           <div className="grid grid-cols-2 gap-4">
