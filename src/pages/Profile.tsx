@@ -49,6 +49,34 @@ const readStorage = (key: string) => {
   }
 };
 
+const resizeProfileImage = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Nao foi possivel ler a imagem."));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("Nao foi possivel carregar a imagem."));
+      image.onload = () => {
+        const maxSize = 320;
+        const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext("2d");
+        if (!context) {
+          reject(new Error("Nao foi possivel processar a imagem."));
+          return;
+        }
+        context.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.72));
+      };
+      image.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  });
+
 export default function Profile() {
   const navigate = useNavigate();
   const [referrals, setReferrals] = useState<ReferralData | null>(null);
@@ -118,16 +146,19 @@ export default function Profile() {
     navigate("/", { replace: true });
   };
 
-  const handleAvatarChange = (file?: File) => {
+  const handleAvatarChange = async (file?: File) => {
     if (!file) return;
-    if (file.size > 450_000) {
-      toast.error("Escolha uma imagem menor para o perfil.");
+    if (file.size > 5_000_000) {
+      toast.error("Escolha uma imagem de ate 5 MB.");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => setProfileAvatar(String(reader.result || ""));
-    reader.readAsDataURL(file);
+    try {
+      const avatar = await resizeProfileImage(file);
+      setProfileAvatar(avatar);
+    } catch {
+      toast.error("Nao foi possivel processar essa foto.");
+    }
   };
 
   const handleSaveProfile = async () => {
@@ -150,9 +181,10 @@ export default function Profile() {
       setSessionUser(session.user);
       setEditingProfile(false);
       toast.success("Perfil atualizado.");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Nao foi possivel atualizar o perfil.");
+      const status = error?.response?.status;
+      toast.error(status === 413 ? "A foto ficou muito grande. Tente outra imagem." : "Nao foi possivel atualizar o perfil.");
     } finally {
       setSavingProfile(false);
     }
