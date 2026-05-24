@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Onboarding from "./pages/Onboarding";
 import QuickAdd from "./pages/QuickAdd";
 import Privacy from "./pages/Privacy";
+import AccountDeletion from "./pages/AccountDeletion";
 import WorkCalendar from "./pages/WorkCalendar";
 import Metrics from "./pages/Metrics";
 import { clearSession, login, saveSession } from "./lib/api";
@@ -211,6 +212,8 @@ function App() {
           <Route path="/map" element={<AppOnlyRoute><Metrics /></AppOnlyRoute>} />
           <Route path="/privacidade" element={<Privacy />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/exclusao-de-conta" element={<AccountDeletion />} />
+          <Route path="/delete-account" element={<AccountDeletion />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
