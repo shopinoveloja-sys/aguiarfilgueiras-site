@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { format, addMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, subMonths } from "date-fns";
+import { format, addMonths, addYears, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { saveNonWorkingDays, getRecurringExpenses } from "../lib/api";
@@ -38,6 +38,8 @@ export default function WorkCalendar() {
   const [nonWorkingDays, setNonWorkingDays] = useState<Date[]>([]);
   const [loading, setLoading] = useState(false);
   const [planning, setPlanning] = useState<PlanningData | null>(null);
+  const [pendingDay, setPendingDay] = useState<Date | null>(null);
+  const [pendingAction, setPendingAction] = useState<"mark" | "unmark" | null>(null);
 
   useEffect(() => {
     const fetchPlanning = async () => {
@@ -60,12 +62,55 @@ export default function WorkCalendar() {
   const startDay = monthStart.getDay();
   const paddingDays = Array(startDay).fill(null);
 
-  const toggleDayOff = (day: Date) => {
+  const normalizeDay = (date: Date) => new Date(`${format(date, "yyyy-MM-dd")}T12:00:00`);
+  const dayKey = (date: Date) => format(date, "yyyy-MM-dd");
+
+  const uniqueDays = (days: Date[]) => {
+    const map = new Map<string, Date>();
+    days.forEach((day) => map.set(dayKey(day), normalizeDay(day)));
+    return Array.from(map.values()).sort((a, b) => a.getTime() - b.getTime());
+  };
+
+  const futureSameWeekdays = (day: Date) => {
+    const start = normalizeDay(day);
+    const end = addYears(start, 1);
+    const dates: Date[] = [];
+    const cursor = new Date(start);
+    while (cursor <= end) {
+      dates.push(normalizeDay(cursor));
+      cursor.setDate(cursor.getDate() + 7);
+    }
+    return dates;
+  };
+
+  const requestToggleDayOff = (day: Date) => {
+    const normalized = normalizeDay(day);
+    const isOff = nonWorkingDays.some(d => isSameDay(d, normalized));
+    setPendingDay(normalized);
+    setPendingAction(isOff ? "unmark" : "mark");
+  };
+
+  const closeDayOffPrompt = () => {
+    setPendingDay(null);
+    setPendingAction(null);
+  };
+
+  const applyDayOffChoice = (scope: "single" | "weekday") => {
+    if (!pendingDay || !pendingAction) return;
+
     setNonWorkingDays(prev => {
-      const isOff = prev.some(d => isSameDay(d, day));
-      if (isOff) return prev.filter(d => !isSameDay(d, day));
-      return [...prev, day];
+      if (pendingAction === "mark") {
+        const datesToAdd = scope === "weekday" ? futureSameWeekdays(pendingDay) : [pendingDay];
+        return uniqueDays([...prev, ...datesToAdd]);
+      }
+
+      if (scope === "weekday") {
+        return prev.filter((date) => date < pendingDay || date.getDay() !== pendingDay.getDay());
+      }
+
+      return prev.filter(d => !isSameDay(d, pendingDay));
     });
+    closeDayOffPrompt();
   };
 
   const saveDaysOff = async () => {
@@ -152,7 +197,7 @@ export default function WorkCalendar() {
               return (
                 <button
                   key={day.toString()}
-                  onClick={() => toggleDayOff(day)}
+                  onClick={() => requestToggleDayOff(day)}
                   className={`h-10 rounded-xl text-sm font-bold flex items-center justify-center transition-all active:scale-90 ${
                     isOff 
                     ? "bg-red-500/20 text-red-400 ring-1 ring-red-500/50" 
@@ -260,6 +305,55 @@ export default function WorkCalendar() {
           {loading ? "SALVANDO..." : "SALVAR ROTINA"}
         </button>
       </div>
+
+      {pendingDay && pendingAction && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+          <div className="w-full max-w-md rounded-3xl bg-[#0f172a] border border-blue-500/20 p-5 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <h3 className="font-black text-xl">
+                  {pendingAction === "mark" ? "Marcar folga" : "Remover folga"}
+                </h3>
+                <p className="text-sm text-slate-400 mt-1">
+                  {format(pendingDay, "dd/MM/yyyy", { locale: ptBR })} cai em{" "}
+                  {format(pendingDay, "EEEE", { locale: ptBR })}.
+                </p>
+              </div>
+              <button onClick={closeDayOffPrompt} className="p-2 rounded-full hover:bg-white/5 text-slate-400">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => applyDayOffChoice("single")}
+                className="w-full rounded-2xl border border-slate-700 bg-slate-900/80 p-4 text-left active:scale-[0.98]"
+              >
+                <p className="font-bold text-white">
+                  {pendingAction === "mark" ? "Somente este dia" : "Remover somente este dia"}
+                </p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Altera apenas a data selecionada.
+                </p>
+              </button>
+
+              <button
+                onClick={() => applyDayOffChoice("weekday")}
+                className="w-full rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-left active:scale-[0.98]"
+              >
+                <p className="font-bold text-red-200">
+                  {pendingAction === "mark"
+                    ? `Todas as ${format(pendingDay, "EEEE", { locale: ptBR })} futuras`
+                    : `Remover todas as ${format(pendingDay, "EEEE", { locale: ptBR })} futuras`}
+                </p>
+                <p className="text-xs text-red-200/70 mt-1">
+                  Aplica da data selecionada em diante. Depois você ainda pode ajustar uma data específica.
+                </p>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
