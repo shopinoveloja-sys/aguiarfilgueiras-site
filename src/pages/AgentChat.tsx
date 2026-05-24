@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAgentIntro, sendAgentMessage } from "../lib/api";
 import { toast } from "sonner";
@@ -73,8 +73,8 @@ export default function AgentChat() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex flex-col">
-      <header className="sticky top-0 z-20 bg-[#020617]/95 backdrop-blur border-b border-blue-500/10 p-4">
+    <div className="min-h-screen bg-[#0b0f19] text-white flex flex-col">
+      <header className="sticky top-0 z-20 bg-[#0b0f19]/95 backdrop-blur border-b border-emerald-500/10 p-4">
         <div className="flex items-center justify-between">
           <button onClick={() => navigate("/dashboard")} className="size-10 rounded-full hover:bg-white/5 flex items-center justify-center">
             <span className="material-symbols-outlined">arrow_back</span>
@@ -83,16 +83,16 @@ export default function AgentChat() {
             <h1 className="text-lg font-black">Agente DriverCash</h1>
             <p className="text-xs text-slate-500 font-bold uppercase">Insights dos seus dados</p>
           </div>
-          <div className="size-10 rounded-full bg-blue-500/10 text-blue-300 flex items-center justify-center">
+          <div className="size-10 rounded-full bg-emerald-500/10 text-emerald-300 flex items-center justify-center">
             <span className="material-symbols-outlined">smart_toy</span>
           </div>
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-4 max-w-3xl w-full mx-auto">
-        <section className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
+        <section className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
           <div className="flex items-start gap-3">
-            <span className="material-symbols-outlined text-blue-300">shield</span>
+            <span className="material-symbols-outlined text-emerald-300">shield</span>
             <div>
               <p className="text-sm font-bold">Escopo protegido</p>
               <p className="text-xs text-slate-400 mt-1">
@@ -120,7 +120,7 @@ export default function AgentChat() {
               <div
                 className={`max-w-[86%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
                   message.role === "user"
-                    ? "bg-blue-600 text-white rounded-br-sm"
+                    ? "bg-emerald-600 text-white rounded-br-sm"
                     : "bg-slate-900 border border-slate-800 text-slate-100 rounded-bl-sm"
                 }`}
               >
@@ -139,7 +139,7 @@ export default function AgentChat() {
         </section>
       </main>
 
-      <footer className="border-t border-blue-500/10 bg-[#020617]/95 backdrop-blur p-4">
+      <footer className="border-t border-emerald-500/10 bg-[#0b0f19]/95 backdrop-blur p-4">
         <form
           className="max-w-3xl mx-auto flex gap-3"
           onSubmit={(event) => {
@@ -151,9 +151,9 @@ export default function AgentChat() {
             value={input}
             onChange={(event) => setInput(event.target.value)}
             placeholder="Pergunte sobre seus ganhos, despesas, KM ou metas"
-            className="flex-1 rounded-xl bg-slate-900 border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
+            className="flex-1 rounded-xl bg-slate-900 border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-emerald-500"
           />
-          <button type="submit" disabled={loading || !input.trim()} className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white disabled:opacity-50">
+          <button type="submit" disabled={loading || !input.trim()} className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white disabled:opacity-50">
             Enviar
           </button>
         </form>

@@ -156,23 +156,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-10">
-          <div className="w-20 h-20 rounded-2xl bg-[#0f172a] flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4 ring-1 ring-blue-500/30 overflow-hidden">
+          <div className="w-20 h-20 rounded-2xl bg-[#161e2e] flex items-center justify-center shadow-lg shadow-emerald-500/20 mb-4 ring-1 ring-emerald-500/30 overflow-hidden">
             <img
               alt="Driver Cash Logo"
               className="w-full h-full object-contain"
               src="/drivercash-logo.svg"
             />
           </div>
-          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-br from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
             Driver Cash
           </h1>
           <p className="text-slate-400 text-sm mt-1 font-medium">Finanças para quem acelera</p>
         </div>
 
-        <div className="bg-[#1e293b66] rounded-xl p-8 shadow-2xl ring-1 ring-blue-500/10">
+        <div className="bg-[#1f2a3d66] rounded-xl p-8 shadow-2xl ring-1 ring-emerald-500/10">
           <header className="mb-8 text-center">
             <h2 className="text-xl font-bold text-white">{mode === "login" ? "Bem-vindo de volta" : "Criar conta"}</h2>
             <p className="text-slate-400 text-sm">
@@ -187,7 +187,7 @@ export default function Login() {
                   Nome
                 </label>
                 <input
-                  className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                  className="w-full bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
                   id="name"
                   placeholder="Seu nome"
                   type="text"
@@ -205,7 +205,7 @@ export default function Login() {
                     Celular
                   </label>
                   <input
-                    className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                    className="w-full bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
                     id="phone"
                     placeholder="(00) 00000-0000"
                     type="tel"
@@ -220,7 +220,7 @@ export default function Login() {
                     CPF/CNPJ
                   </label>
                   <input
-                    className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                    className="w-full bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
                     id="document"
                     placeholder="Somente números"
                     type="text"
@@ -237,7 +237,7 @@ export default function Login() {
                 Código de indicação (Opcional)
               </label>
               <input
-                className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
+                className="w-full bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center uppercase"
                 id="referralCode"
                 placeholder="CÓDIGO DE INDICAÇÃO"
                 type="text"
@@ -245,7 +245,7 @@ export default function Login() {
                 onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
               />
               {!referralCode && mode === "register" && (
-                <p className="text-[9px] text-blue-400 text-center animate-pulse">Com indicação, você ainda participa do programa de parceiros.</p>
+                <p className="text-[9px] text-emerald-400 text-center animate-pulse">Com indicação, você ainda participa do programa de parceiros.</p>
               )}
             </div>
 
@@ -254,7 +254,7 @@ export default function Login() {
                 E-mail
               </label>
               <input
-                className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                className="w-full bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
                 id="email"
                 placeholder="seu@email.com"
                 type="email"
@@ -269,7 +269,7 @@ export default function Login() {
                 Senha
               </label>
               <input
-                className="w-full bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
+                className="w-full bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 px-4 text-white placeholder:text-slate-600 transition-all duration-200 outline-none text-center"
                 id="password"
                 placeholder="********"
                 type="password"
@@ -281,7 +281,7 @@ export default function Login() {
             </div>
 
             <button
-              className="w-full bg-gradient-to-br from-blue-800 to-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all active:scale-[0.98] disabled:opacity-60"
+              className="w-full bg-gradient-to-br from-emerald-800 to-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all active:scale-[0.98] disabled:opacity-60"
               type="submit"
               disabled={loading}
             >
@@ -293,10 +293,10 @@ export default function Login() {
             <div className="mt-4 space-y-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-blue-500/10"></span>
+                  <span className="w-full border-t border-emerald-500/10"></span>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-[#1e293b] px-2 text-slate-500">Ou continue com</span>
+                  <span className="bg-[#1f2a3d] px-2 text-slate-500">Ou continue com</span>
                 </div>
               </div>
               <button
@@ -312,10 +312,10 @@ export default function Login() {
             <div className="mt-4 space-y-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-blue-500/10"></span>
+                  <span className="w-full border-t border-emerald-500/10"></span>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-[#1e293b] px-2 text-slate-500">Ou continue com</span>
+                  <span className="bg-[#1f2a3d] px-2 text-slate-500">Ou continue com</span>
                 </div>
               </div>
               <div ref={googleButtonRef} className="w-full flex justify-center" />
@@ -328,12 +328,12 @@ export default function Login() {
             </div>
           )}
 
-          <div className="mt-8 pt-6 border-t border-blue-500/10 text-center">
+          <div className="mt-8 pt-6 border-t border-emerald-500/10 text-center">
             <p className="text-sm text-slate-400">
               {mode === "login" ? "Não possui uma conta?" : "Já possui uma conta?"}{" "}
               <button
                 type="button"
-                className="text-blue-500 font-bold hover:underline underline-offset-4"
+                className="text-emerald-500 font-bold hover:underline underline-offset-4"
                 onClick={() => setMode(mode === "login" ? "register" : "login")}
               >
                 {mode === "login" ? "Criar conta" : "Entrar"}
@@ -350,8 +350,8 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full z-[-1]" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-800/10 blur-[120px] rounded-full z-[-1]" />
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full z-[-1]" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-800/10 blur-[120px] rounded-full z-[-1]" />
     </div>
   );
 }

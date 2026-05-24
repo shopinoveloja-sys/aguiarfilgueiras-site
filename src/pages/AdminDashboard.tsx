@@ -76,14 +76,14 @@ function StatCard({
   accent?: "blue" | "green" | "red" | "yellow";
 }) {
   const color = {
-    blue: "text-blue-500 bg-blue-500/10 border-l-blue-500",
+    blue: "text-emerald-500 bg-emerald-500/10 border-l-emerald-500",
     green: "text-emerald-400 bg-emerald-500/10 border-l-emerald-400",
     red: "text-red-400 bg-red-500/10 border-l-red-400",
     yellow: "text-yellow-300 bg-yellow-500/10 border-l-yellow-300",
   }[accent];
 
   return (
-    <div className={`bg-[#1e293b66] p-6 rounded-2xl shadow-xl border-l-4 ${color.split(" ")[2]}`}>
+    <div className={`bg-[#1f2a3d66] p-6 rounded-2xl shadow-xl border-l-4 ${color.split(" ")[2]}`}>
       <div className="flex justify-between items-start mb-4">
         <div className={`p-2 rounded-lg ${color.split(" ").slice(0, 2).join(" ")}`}>
           <span className="material-symbols-outlined">{icon}</span>
@@ -145,25 +145,25 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      <header className="fixed top-0 w-full z-50 bg-[#020617]/80 backdrop-blur-md border-b border-blue-500/10 shadow-xl flex items-center justify-between px-6 py-4">
+    <div className="min-h-screen bg-[#0b0f19] text-white">
+      <header className="fixed top-0 w-full z-50 bg-[#0b0f19]/80 backdrop-blur-md border-b border-emerald-500/10 shadow-xl flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/admin")} className="text-slate-400 hover:text-blue-400">
+          <button onClick={() => navigate("/admin")} className="text-slate-400 hover:text-emerald-400">
             <span className="material-symbols-outlined">menu</span>
           </button>
           <img alt="Driver Cash Logo" className="w-8 h-8 object-contain" src="/drivercash-logo.svg" />
-          <h1 className="text-lg font-bold bg-gradient-to-br from-blue-800 to-blue-500 bg-clip-text text-transparent">DriverCash Admin</h1>
+          <h1 className="text-lg font-bold bg-gradient-to-br from-emerald-800 to-emerald-500 bg-clip-text text-transparent">DriverCash Admin</h1>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs font-medium text-slate-400 hidden md:block">shopinove.loja@gmail.com</span>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-800 to-blue-500 flex items-center justify-center text-[10px] font-bold text-white shadow-lg">AD</div>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-800 to-emerald-500 flex items-center justify-center text-[10px] font-bold text-white shadow-lg">AD</div>
         </div>
       </header>
 
-      <aside className="hidden md:flex h-full w-64 fixed left-0 top-0 bg-[#020617] border-r border-blue-500/10 shadow-2xl flex-col p-4 pt-20 gap-2 z-40">
+      <aside className="hidden md:flex h-full w-64 fixed left-0 top-0 bg-[#0b0f19] border-r border-emerald-500/10 shadow-2xl flex-col p-4 pt-20 gap-2 z-40">
         <div className="flex items-center gap-3 px-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-[#1e293b] flex items-center justify-center border border-blue-500/20">
-            <span className="material-symbols-outlined text-blue-500">shield_person</span>
+          <div className="w-10 h-10 rounded-xl bg-[#1f2a3d] flex items-center justify-center border border-emerald-500/20">
+            <span className="material-symbols-outlined text-emerald-500">shield_person</span>
           </div>
           <div>
             <p className="text-sm font-bold">Cash Admin</p>
@@ -171,12 +171,12 @@ export default function AdminDashboard() {
           </div>
         </div>
         <nav className="flex flex-col gap-1">
-          <a className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-blue-800 to-blue-500 text-white rounded-xl shadow-lg" href="#">
+          <a className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-emerald-800 to-emerald-500 text-white rounded-xl shadow-lg" href="#">
             <span className="material-symbols-outlined">dashboard</span>
             <span className="text-sm font-medium">Dashboard</span>
           </a>
         </nav>
-        <div className="mt-auto border-t border-blue-500/10 pt-4">
+        <div className="mt-auto border-t border-emerald-500/10 pt-4">
           <button onClick={logout} className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-red-400 transition-colors">
             <span className="material-symbols-outlined">logout</span>
             <span className="text-sm font-medium">Sair</span>
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
       <main className="md:pl-64 pt-24 pb-24 md:pb-8 px-6 min-h-screen">
         <div className="max-w-7xl mx-auto space-y-8">
           {loading ? (
-            <div className="rounded-2xl bg-[#1e293b66] p-8 text-slate-300">Carregando dados reais...</div>
+            <div className="rounded-2xl bg-[#1f2a3d66] p-8 text-slate-300">Carregando dados reais...</div>
           ) : error ? (
             <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-8 text-red-200">{error}</div>
           ) : summary ? (
@@ -206,7 +206,7 @@ export default function AdminDashboard() {
               </section>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-[#1e293b66] p-8 rounded-2xl relative overflow-hidden">
+                <div className="lg:col-span-2 bg-[#1f2a3d66] p-8 rounded-2xl relative overflow-hidden">
                   <div className="flex justify-between items-center mb-10">
                     <div>
                       <h2 className="text-xl font-bold mb-1">Crescimento de usuarios</h2>
@@ -222,13 +222,13 @@ export default function AdminDashboard() {
                         </linearGradient>
                       </defs>
                       <path d={`${growthPath} L800,200 L0,200 Z`} fill="url(#admin-growth-gradient)" />
-                      <path d={growthPath} fill="none" stroke="#3b82f6" strokeLinecap="round" strokeWidth="4" />
+                      <path d={growthPath} fill="none" stroke="#10b981" strokeLinecap="round" strokeWidth="4" />
                     </svg>
                   </div>
                 </div>
 
-                <div className="bg-[#1e293b66] rounded-2xl flex flex-col">
-                  <div className="p-6 border-b border-blue-500/10">
+                <div className="bg-[#1f2a3d66] rounded-2xl flex flex-col">
+                  <div className="p-6 border-b border-emerald-500/10">
                     <h2 className="text-lg font-bold">Ultimas assinaturas</h2>
                   </div>
                   <div className="p-2 flex-grow overflow-y-auto max-h-[400px]">
@@ -239,14 +239,14 @@ export default function AdminDashboard() {
                         <div key={subscription.id} className="flex items-center justify-between p-4 hover:bg-slate-800/30 rounded-xl transition-colors">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center">
-                              <span className="material-symbols-outlined text-blue-500">person</span>
+                              <span className="material-symbols-outlined text-emerald-500">person</span>
                             </div>
                             <div>
                               <p className="text-sm font-bold">{subscription.userName}</p>
                               <p className="text-[10px] text-slate-500">{statusLabel[subscription.status] || subscription.status} - {timeAgo(subscription.updatedAt)}</p>
                             </div>
                           </div>
-                          <span className="text-sm font-black text-blue-500">{subscription.value > 0 ? money.format(subscription.value) : subscription.plan}</span>
+                          <span className="text-sm font-black text-emerald-500">{subscription.value > 0 ? money.format(subscription.value) : subscription.plan}</span>
                         </div>
                       ))
                     )}
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <section className="bg-[#1e293b66] p-6 rounded-2xl">
+              <section className="bg-[#1f2a3d66] p-6 rounded-2xl">
                 <h2 className="text-lg font-bold mb-4">Pedidos de saque pendentes</h2>
                 {summary.pendingWithdrawals.length === 0 ? (
                   <p className="text-sm text-slate-500">Nenhum saque pendente no momento.</p>
@@ -271,7 +271,7 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {summary.pendingWithdrawals.map((withdrawal) => (
-                          <tr key={withdrawal.id} className="border-t border-blue-500/10">
+                          <tr key={withdrawal.id} className="border-t border-emerald-500/10">
                             <td className="py-3">
                               <p className="font-bold">{withdrawal.userName}</p>
                               <p className="text-xs text-slate-500">{withdrawal.userEmail}</p>

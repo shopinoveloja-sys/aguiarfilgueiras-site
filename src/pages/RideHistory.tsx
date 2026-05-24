@@ -23,33 +23,33 @@ export default function RideHistory() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      <header className="sticky top-0 z-10 flex items-center bg-[#020617] p-4 border-b border-blue-500/10 justify-between">
+    <div className="min-h-screen bg-[#0b0f19] text-white">
+      <header className="sticky top-0 z-10 flex items-center bg-[#0b0f19] p-4 border-b border-emerald-500/10 justify-between">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate("/dashboard")} className="flex items-center justify-center size-10 rounded-full hover:bg-blue-500/10">
+          <button onClick={() => navigate("/dashboard")} className="flex items-center justify-center size-10 rounded-full hover:bg-emerald-500/10">
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div>
             <h1 className="text-xl font-bold">Histórico de Corridas</h1>
-            <p className="text-xs text-blue-400 font-medium uppercase tracking-wider">Driver Intelligence</p>
+            <p className="text-xs text-emerald-400 font-medium uppercase tracking-wider">Driver Intelligence</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex items-center justify-center size-10 rounded-full hover:bg-blue-500/10">
+          <button className="flex items-center justify-center size-10 rounded-full hover:bg-emerald-500/10">
             <span className="material-symbols-outlined">search</span>
           </button>
-          <button className="flex items-center justify-center size-10 rounded-full hover:bg-blue-500/10">
+          <button className="flex items-center justify-center size-10 rounded-full hover:bg-emerald-500/10">
             <span className="material-symbols-outlined">more_vert</span>
           </button>
         </div>
       </header>
 
-      <nav className="bg-[#020617] px-4 overflow-x-auto border-b border-blue-500/10">
+      <nav className="bg-[#0b0f19] px-4 overflow-x-auto border-b border-emerald-500/10">
         <div className="flex gap-6 min-w-max">
           {["Hoje", "Ontem", "Esta Semana", "Último Mês", "Personalizado"].map((item) => (
             <a
               key={item}
-              className={`flex flex-col items-center justify-center py-4 border-b-2 ${filter === item.toLowerCase() ? "border-blue-500 text-blue-400" : "border-transparent text-slate-400"}`}
+              className={`flex flex-col items-center justify-center py-4 border-b-2 ${filter === item.toLowerCase() ? "border-emerald-500 text-emerald-400" : "border-transparent text-slate-400"}`}
               href="#"
               onClick={(e) => { e.preventDefault(); setFilter(item.toLowerCase()); }}
             >
@@ -59,32 +59,32 @@ export default function RideHistory() {
         </div>
       </nav>
 
-      <div className="grid grid-cols-3 gap-2 p-4 bg-blue-500/5">
-        <div className="bg-[#1e293b66] p-3 rounded-lg border border-blue-500/20">
+      <div className="grid grid-cols-3 gap-2 p-4 bg-emerald-500/5">
+        <div className="bg-[#1f2a3d66] p-3 rounded-lg border border-emerald-500/20">
           <p className="text-[10px] text-slate-400 uppercase font-bold">Total de Corridas</p>
           <p className="text-lg font-bold">{rides.length}</p>
         </div>
-        <div className="bg-[#1e293b66] p-3 rounded-lg border border-blue-500/20">
+        <div className="bg-[#1f2a3d66] p-3 rounded-lg border border-emerald-500/20">
           <p className="text-[10px] text-slate-400 uppercase font-bold">Total Ganho</p>
-          <p className="text-lg font-bold text-blue-400">$138.55</p>
+          <p className="text-lg font-bold text-emerald-400">$138.55</p>
         </div>
-        <div className="bg-[#1e293b66] p-3 rounded-lg border border-blue-500/20">
+        <div className="bg-[#1f2a3d66] p-3 rounded-lg border border-emerald-500/20">
           <p className="text-[10px] text-slate-400 uppercase font-bold">Lucro Líquido</p>
-          <p className="text-lg font-bold text-blue-400">$105.20</p>
+          <p className="text-lg font-bold text-emerald-400">$105.20</p>
         </div>
       </div>
 
       <div className="flex gap-2 p-4 overflow-x-auto">
-        <button className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-blue-800 to-blue-500 px-4 text-white font-bold text-sm shadow-md">
+        <button className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-emerald-800 to-emerald-500 px-4 text-white font-bold text-sm shadow-md">
           <span className="material-symbols-outlined text-lg">filter_list</span> Todas
         </button>
-        <button className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-blue-500/10 px-4 text-slate-100 font-medium text-sm">Alto Lucro</button>
-        <button className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-blue-500/10 px-4 text-slate-100 font-medium text-sm">Viagens Curtas</button>
+        <button className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-500/10 px-4 text-slate-100 font-medium text-sm">Alto Lucro</button>
+        <button className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-500/10 px-4 text-slate-100 font-medium text-sm">Viagens Curtas</button>
       </div>
 
       <main className="flex-1 px-4 space-y-3 pb-24">
         {rides.map((ride) => (
-          <div key={ride.id} className="flex flex-col bg-[#1e293b66] border border-blue-500/10 rounded-xl overflow-hidden">
+          <div key={ride.id} className="flex flex-col bg-[#1f2a3d66] border border-emerald-500/10 rounded-xl overflow-hidden">
             <div className="flex items-center justify-between p-4 pb-2">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center size-10 rounded-lg bg-black text-white font-black text-xs">
@@ -96,42 +96,42 @@ export default function RideHistory() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold text-blue-400">{ride.value}</p>
+                <p className="text-lg font-bold text-emerald-400">{ride.value}</p>
                 <p className="text-[10px] text-slate-400 uppercase font-bold">Valor Total</p>
               </div>
             </div>
-            <div className="flex items-center justify-between px-4 py-3 bg-blue-500/10">
+            <div className="flex items-center justify-between px-4 py-3 bg-emerald-500/10">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
                   <span className="text-xs text-slate-400">Distância</span>
                   <span className="text-sm font-semibold">{ride.distance}</span>
                 </div>
-                <div className="w-px h-6 bg-blue-500/20" />
+                <div className="w-px h-6 bg-emerald-500/20" />
                 <div className="flex flex-col">
                   <span className="text-xs text-slate-400">Tempo</span>
                   <span className="text-sm font-semibold">{ride.duration}</span>
                 </div>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs text-blue-400 font-bold uppercase tracking-tighter">Lucro Líquido</span>
-                <span className="text-base font-black text-blue-400">{ride.profit}</span>
+                <span className="text-xs text-emerald-400 font-bold uppercase tracking-tighter">Lucro Líquido</span>
+                <span className="text-base font-black text-emerald-400">{ride.profit}</span>
               </div>
             </div>
           </div>
         ))}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-20 flex items-center justify-around border-t border-blue-500/10 bg-[#020617] px-4 pb-8">
+      <nav className="fixed bottom-0 left-0 right-0 z-20 flex items-center justify-around border-t border-emerald-500/10 bg-[#0b0f19] px-4 pb-8">
         <a className="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/dashboard"); }}>
           <span className="material-symbols-outlined">dashboard</span>
           <p className="text-[10px] font-bold uppercase">Painel</p>
         </a>
-        <a className="flex flex-1 flex-col items-center justify-center gap-1 text-blue-400" href="#">
+        <a className="flex flex-1 flex-col items-center justify-center gap-1 text-emerald-400" href="#">
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>history</span>
           <p className="text-[10px] font-bold uppercase">Corridas</p>
         </a>
         <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
-          <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center text-white ring-4 ring-[#020617] active:scale-95 transition-all">
+          <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center text-white ring-4 ring-[#0b0f19] active:scale-95 transition-all">
             <span className="material-symbols-outlined text-4xl">add</span>
           </button>
         </a>

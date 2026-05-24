@@ -44,9 +44,9 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white p-6 flex flex-col justify-center">
+    <div className="min-h-screen bg-[#0b0f19] text-white p-6 flex flex-col justify-center">
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-emerald-400 to-emerald-400 bg-clip-text text-transparent">
           BEM-VINDO AO DRIVERCASH
         </h1>
         <p className="text-slate-400">Vamos configurar suas metas iniciais.</p>
@@ -54,22 +54,22 @@ export default function Onboarding() {
 
       <div className="space-y-8">
         <section>
-          <label className="block text-xs font-bold uppercase tracking-widest text-blue-400 mb-4">
+          <label className="block text-xs font-bold uppercase tracking-widest text-emerald-400 mb-4">
             Quanto você deseja ganhar por dia?
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-slate-500">R$</span>
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={earnings}
               onChange={(e) => setEarnings(e.target.value)}
-              className="w-full bg-[#1e293b66] border border-blue-500/20 rounded-2xl py-6 pl-16 pr-6 text-4xl font-black focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-[#1f2a3d66] border border-emerald-500/20 rounded-2xl py-6 pl-16 pr-6 text-4xl font-black focus:outline-none focus:border-emerald-500 transition-colors"
             />
           </div>
         </section>
 
         <section>
-          <label className="block text-xs font-bold uppercase tracking-widest text-blue-400 mb-4">
+          <label className="block text-xs font-bold uppercase tracking-widest text-emerald-400 mb-4">
             Quais dias da semana você trabalha?
           </label>
           <div className="flex justify-between">
@@ -78,8 +78,8 @@ export default function Onboarding() {
                 key={day.id}
                 onClick={() => toggleDay(day.id)}
                 className={`size-11 rounded-xl font-bold transition-all ${
-                  workDays.includes(day.id) 
-                    ? "bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]" 
+                  workDays.includes(day.id)
+                    ? "bg-emerald-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                     : "bg-slate-800 text-slate-500"
                 }`}
               >
@@ -89,10 +89,10 @@ export default function Onboarding() {
           </div>
         </section>
 
-        <button 
+        <button
           onClick={handleSave}
           disabled={loading}
-          className="w-full py-5 bg-gradient-to-br from-blue-600 to-blue-400 rounded-2xl font-black text-xl shadow-xl shadow-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
+          className="w-full py-5 bg-gradient-to-br from-emerald-600 to-emerald-400 rounded-2xl font-black text-xl shadow-xl shadow-emerald-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
         >
           {loading ? "CONFIGURANDO..." : "COMEÇAR AGORA"}
         </button>

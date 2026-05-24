@@ -38,7 +38,7 @@ export default function QuickAdd() {
     { id: "UBER", name: "Uber", icon: "directions_car", color: "bg-black text-white" },
     { id: "99", name: "99", icon: "local_taxi", color: "bg-[#FFD100] text-black" },
     { id: "INDRIVE", name: "InDrive", icon: "hail", color: "bg-[#bcfc01] text-black" },
-    { id: "PARTICULAR", name: "Particular", icon: "person", color: "bg-blue-600 text-white" },
+    { id: "PARTICULAR", name: "Particular", icon: "person", color: "bg-emerald-600 text-white" },
     { id: "RECOMPENSAS", name: "Recompensas", icon: "featured_seasonal_and_gifts", color: "bg-amber-500 text-slate-950" },
     { id: "OUTRAS", name: "Outras", icon: "payments", color: "bg-emerald-600 text-white" },
   ];
@@ -220,7 +220,7 @@ export default function QuickAdd() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0b0f19] text-white flex flex-col">
       <header className="flex items-center justify-between p-4">
         <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-white/5">
           <span className="material-symbols-outlined text-slate-400">close</span>
@@ -230,7 +230,7 @@ export default function QuickAdd() {
       </header>
 
       <div className="px-6 mt-2">
-        <div className="flex bg-[#1e293b66] rounded-2xl p-1 border border-blue-500/10">
+        <div className="flex bg-[#1f2a3d66] rounded-2xl p-1 border border-emerald-500/10">
           <button
             onClick={() => { setType("INCOME"); setCategory("UBER"); setAmount(""); }}
             className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${type === "INCOME" ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-slate-400"}`}
@@ -254,8 +254,8 @@ export default function QuickAdd() {
               onClick={() => setCategory(cat.id)}
               className={`snap-center shrink-0 flex flex-col items-center justify-center w-20 h-20 rounded-2xl transition-all border ${
                 category === cat.id
-                  ? `${cat.color} border-transparent ring-2 ring-offset-2 ring-offset-[#020617] ring-blue-500`
-                  : "bg-[#1e293b66] border-blue-500/10 text-slate-400"
+                  ? `${cat.color} border-transparent ring-2 ring-offset-2 ring-offset-[#0b0f19] ring-emerald-500`
+                  : "bg-[#1f2a3d66] border-emerald-500/10 text-slate-400"
               }`}
             >
               <span className="material-symbols-outlined text-2xl mb-1">{cat.icon}</span>
@@ -272,12 +272,12 @@ export default function QuickAdd() {
             placeholder={type === "INCOME" ? "Fonte da receita (ex: Bonus, aluguel, acerto)" : "Nome da despesa (ex: Aluguel do carro)"}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full bg-[#1e293b66] border border-blue-500/20 rounded-xl p-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-[#1f2a3d66] border border-emerald-500/20 rounded-xl p-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         )}
 
         {isRewardIncome && (
-          <div className="bg-[#1e293b66] p-3 rounded-xl border border-amber-500/20 space-y-3">
+          <div className="bg-[#1f2a3d66] p-3 rounded-xl border border-amber-500/20 space-y-3">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Plataforma da recompensa</p>
               <div className="grid grid-cols-2 gap-2">
@@ -294,7 +294,7 @@ export default function QuickAdd() {
                     className={`h-11 rounded-xl border text-xs font-bold transition-all ${
                       rewardPlatform === platform.id
                         ? "bg-amber-500 text-slate-950 border-amber-400"
-                        : "bg-[#0f172a] text-slate-300 border-blue-500/20"
+                        : "bg-[#161e2e] text-slate-300 border-emerald-500/20"
                     }`}
                   >
                     {platform.label}
@@ -318,8 +318,8 @@ export default function QuickAdd() {
                   onClick={() => setRecurrenceType(option.id)}
                   className={`h-12 rounded-xl border text-xs font-bold flex items-center justify-center gap-1 transition-all ${
                     recurrenceType === option.id
-                      ? "bg-blue-500 text-white border-blue-400"
-                      : "bg-[#1e293b66] text-slate-400 border-blue-500/10"
+                      ? "bg-emerald-500 text-white border-emerald-400"
+                      : "bg-[#1f2a3d66] text-slate-400 border-emerald-500/10"
                   }`}
                 >
                   <span className="material-symbols-outlined text-base">{option.icon}</span>
@@ -331,21 +331,21 @@ export default function QuickAdd() {
         )}
 
         {(recurrenceType === "SPECIFIC_DATE" || isRewardIncome) && (
-          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20 space-y-3">
+          <div className="bg-[#1f2a3d66] p-3 rounded-xl border border-emerald-500/20 space-y-3">
             <div>
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Data do lancamento</label>
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
+                className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-3 text-white focus:outline-none"
               />
             </div>
           </div>
         )}
 
         {isFuelExpense && (
-          <div className="bg-[#1e293b66] p-3 rounded-xl border border-amber-500/20 space-y-3">
+          <div className="bg-[#1f2a3d66] p-3 rounded-xl border border-amber-500/20 space-y-3">
             <div className="flex items-center justify-between gap-3 text-xs">
               <span className="font-bold uppercase tracking-wider text-slate-500">Veiculo em uso</span>
               <span className="font-bold text-amber-300">{activeVehicle?.label || "Nao definido"}</span>
@@ -356,7 +356,7 @@ export default function QuickAdd() {
                 <select
                   value={fuelType}
                   onChange={(e) => setFuelType(e.target.value as FuelType)}
-                  className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
+                  className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-3 text-white focus:outline-none"
                 >
                   <option value="gasolina">Gasolina</option>
                   <option value="etanol">Etanol</option>
@@ -374,7 +374,7 @@ export default function QuickAdd() {
                   value={fuelUnitPrice}
                   onChange={(e) => setFuelUnitPrice(e.target.value)}
                   placeholder="Ex: 5.89"
-                  className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
+                  className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
                   disabled={recurrenceType !== "SPECIFIC_DATE"}
                 />
               </div>
@@ -387,7 +387,7 @@ export default function QuickAdd() {
                 value={fuelOdometerKm}
                 onChange={(e) => setFuelOdometerKm(e.target.value)}
                 placeholder="Ex: 257320"
-                className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
+                className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none"
                 required
                 disabled={recurrenceType !== "SPECIFIC_DATE"}
               />
@@ -398,7 +398,7 @@ export default function QuickAdd() {
               </p>
             )}
             {recurrenceType === "SPECIFIC_DATE" && currentFuelUnitPrice > 0 && currentAmountValue > 0 && (
-              <div className="rounded-lg bg-[#0f172a] border border-slate-800 px-3 py-2 text-xs text-slate-400">
+              <div className="rounded-lg bg-[#161e2e] border border-slate-800 px-3 py-2 text-xs text-slate-400">
                 Quantidade abastecida:{" "}
                 <span className="font-bold text-amber-300">
                   {(currentAmountValue / currentFuelUnitPrice).toLocaleString("pt-BR", {
@@ -412,7 +412,7 @@ export default function QuickAdd() {
         )}
 
         {recurrenceType === "MONTHLY" && (
-          <div className="flex items-center justify-between gap-3 bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+          <div className="flex items-center justify-between gap-3 bg-[#1f2a3d66] p-3 rounded-xl border border-emerald-500/20">
             <span className="text-sm text-slate-400">Dia do mes:</span>
             <input
               type="number"
@@ -420,13 +420,13 @@ export default function QuickAdd() {
               max="31"
               value={dueDay}
               onChange={(e) => setDueDay(e.target.value)}
-              className="w-16 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-center text-white focus:outline-none"
+              className="w-16 bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-center text-white focus:outline-none"
             />
           </div>
         )}
 
         {recurrenceType === "WEEKLY" && (
-          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+          <div className="bg-[#1f2a3d66] p-3 rounded-xl border border-emerald-500/20">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Dia da semana</p>
             <div className="grid grid-cols-7 gap-1.5">
               {weekDays.map((day) => (
@@ -434,7 +434,7 @@ export default function QuickAdd() {
                   key={day.value}
                   onClick={() => setDueDayOfWeek(day.value)}
                   className={`h-9 rounded-lg text-[10px] font-bold ${
-                    dueDayOfWeek === day.value ? "bg-blue-500 text-white" : "bg-[#0f172a] text-slate-400"
+                    dueDayOfWeek === day.value ? "bg-emerald-500 text-white" : "bg-[#161e2e] text-slate-400"
                   }`}
                 >
                   {day.label}
@@ -445,13 +445,13 @@ export default function QuickAdd() {
         )}
 
         {recurrenceType !== "SPECIFIC_DATE" && (
-          <div className="bg-[#1e293b66] p-3 rounded-xl border border-blue-500/20">
+          <div className="bg-[#1f2a3d66] p-3 rounded-xl border border-emerald-500/20">
             <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Recorre ate</label>
             <input
               type="month"
               value={recurrenceUntilMonth}
               onChange={(e) => setRecurrenceUntilMonth(e.target.value)}
-              className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none"
+              className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-3 text-white focus:outline-none"
             />
           </div>
         )}
@@ -466,20 +466,20 @@ export default function QuickAdd() {
         </div>
       </div>
 
-      <div className="bg-[#0f172a] rounded-t-[40px] p-6 border-t border-blue-500/10">
+      <div className="bg-[#161e2e] rounded-t-[40px] p-6 border-t border-emerald-500/10">
         <div className="grid grid-cols-3 gap-4 mb-6">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-            <button key={num} onClick={() => handleKeypad(num.toString())} className="h-14 rounded-2xl bg-[#1e293b] text-2xl font-bold text-white active:scale-95 transition-transform">
+            <button key={num} onClick={() => handleKeypad(num.toString())} className="h-14 rounded-2xl bg-[#1f2a3d] text-2xl font-bold text-white active:scale-95 transition-transform">
               {num}
             </button>
           ))}
-          <button onClick={() => setAmount(amount + "00")} className="h-14 rounded-2xl bg-[#1e293b] text-xl font-bold text-white active:scale-95 transition-transform">
+          <button onClick={() => setAmount(amount + "00")} className="h-14 rounded-2xl bg-[#1f2a3d] text-xl font-bold text-white active:scale-95 transition-transform">
             00
           </button>
-          <button onClick={() => handleKeypad("0")} className="h-14 rounded-2xl bg-[#1e293b] text-2xl font-bold text-white active:scale-95 transition-transform">
+          <button onClick={() => handleKeypad("0")} className="h-14 rounded-2xl bg-[#1f2a3d] text-2xl font-bold text-white active:scale-95 transition-transform">
             0
           </button>
-          <button onClick={() => setAmount((prev) => prev.slice(0, -1))} className="h-14 rounded-2xl bg-[#1e293b] text-slate-400 flex items-center justify-center active:scale-95 transition-transform">
+          <button onClick={() => setAmount((prev) => prev.slice(0, -1))} className="h-14 rounded-2xl bg-[#1f2a3d] text-slate-400 flex items-center justify-center active:scale-95 transition-transform">
             <span className="material-symbols-outlined">backspace</span>
           </button>
         </div>

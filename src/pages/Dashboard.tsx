@@ -296,7 +296,7 @@ export default function Dashboard() {
   const [paidTodayExpenses, setPaidTodayExpenses] = useState<Array<{ id: string; name: string; amount: number }>>([]);
   const visibleIncomeTotal = data?.incomeByCategory.reduce((sum, item) => sum + item.total, 0) || 0;
   const visibleExpenseTotal = data?.expenseByCategory.reduce((sum, item) => sum + item.total, 0) || 0;
-  
+
   const loadDashboard = async () => {
     try {
       const [dashboard, planData] = await Promise.all([
@@ -429,8 +429,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
+      <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500" />
       </div>
     );
   }
@@ -439,11 +439,11 @@ export default function Dashboard() {
 
   if (access && !access.hasAccess) {
     return (
-      <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-5">
-        <div className="w-full max-w-md rounded-3xl border border-blue-500/20 bg-[#0f172a] p-6 shadow-2xl">
+      <div className="min-h-screen bg-[#0b0f19] text-white flex items-center justify-center p-5">
+        <div className="w-full max-w-md rounded-3xl border border-emerald-500/20 bg-[#161e2e] p-6 shadow-2xl">
           <div className="flex flex-col items-center text-center mb-6">
             <img alt="DriverCash" src="/drivercash-logo.svg" className="h-20 w-20 object-contain mb-4" />
-            <h1 className="text-2xl font-black bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-black bg-gradient-to-br from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
               Driver Cash
             </h1>
             <p className="text-sm text-slate-400 mt-1">Financas para quem acelera</p>
@@ -501,9 +501,9 @@ export default function Dashboard() {
 
   if (errorMessage) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center flex-col text-center p-4">
+      <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center flex-col text-center p-4">
         <div className="text-red-400 text-lg font-bold mb-4">{errorMessage}</div>
-        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
+        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
           Tentar novamente
         </button>
       </div>
@@ -512,10 +512,10 @@ export default function Dashboard() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center flex-col text-center p-4">
+      <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center flex-col text-center p-4">
         <div className="text-slate-300 text-lg font-bold mb-2">Painel sem dados no momento</div>
         <div className="text-slate-500 text-sm mb-4 max-w-sm">A pagina carregou, mas ainda nao recebeu os dados do dashboard. Tente recarregar.</div>
-        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
+        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
           Recarregar
         </button>
       </div>
@@ -694,7 +694,7 @@ export default function Dashboard() {
             onClick={() => setCategoryPeriod(period)}
             className={`px-2.5 py-1.5 text-[10px] font-bold uppercase rounded-md transition-colors ${
               categoryPeriod === period
-                ? "bg-blue-500 text-white shadow-sm"
+                ? "bg-emerald-500 text-white shadow-sm"
                 : "text-slate-400 hover:text-white hover:bg-slate-800"
             }`}
           >
@@ -999,11 +999,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white pb-24">
+    <div className="min-h-screen bg-[#0b0f19] text-white pb-24">
       {/* Saldo Anterior Modal */}
       {showBalanceModal && (
         <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => setShowBalanceModal(false)}>
-          <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10" onClick={e => e.stopPropagation()}>
+          <div className="bg-[#161e2e] w-full max-w-lg rounded-t-[32px] p-6 border-t border-emerald-500/10" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
             <h3 className="text-lg font-bold text-white mb-2">Saldo Anterior</h3>
             <p className="text-xs text-slate-400 mb-5">Informe quanto voce ja tinha de saldo antes de usar o app.</p>
@@ -1026,11 +1026,11 @@ export default function Dashboard() {
             )}
             <div className="grid grid-cols-3 gap-3 mb-5">
               {[1,2,3,4,5,6,7,8,9].map(n => (
-                <button key={n} onClick={() => setPreviousBalance(p => p.length < 8 ? p + n : p)} className="h-12 rounded-xl bg-[#1e293b] text-xl font-bold text-white active:scale-95">{n}</button>
+                <button key={n} onClick={() => setPreviousBalance(p => p.length < 8 ? p + n : p)} className="h-12 rounded-xl bg-[#1f2a3d] text-xl font-bold text-white active:scale-95">{n}</button>
               ))}
-              <button onClick={() => setPreviousBalance(p => p + "00")} className="h-12 rounded-xl bg-[#1e293b] text-lg font-bold text-white active:scale-95">00</button>
-              <button onClick={() => setPreviousBalance(p => p.length < 8 ? p + "0" : p)} className="h-12 rounded-xl bg-[#1e293b] text-xl font-bold text-white active:scale-95">0</button>
-              <button onClick={() => setPreviousBalance(p => p.slice(0,-1))} className="h-12 rounded-xl bg-[#1e293b] text-slate-400 flex items-center justify-center active:scale-95">
+              <button onClick={() => setPreviousBalance(p => p + "00")} className="h-12 rounded-xl bg-[#1f2a3d] text-lg font-bold text-white active:scale-95">00</button>
+              <button onClick={() => setPreviousBalance(p => p.length < 8 ? p + "0" : p)} className="h-12 rounded-xl bg-[#1f2a3d] text-xl font-bold text-white active:scale-95">0</button>
+              <button onClick={() => setPreviousBalance(p => p.slice(0,-1))} className="h-12 rounded-xl bg-[#1f2a3d] text-slate-400 flex items-center justify-center active:scale-95">
                 <span className="material-symbols-outlined">backspace</span>
               </button>
             </div>
@@ -1041,9 +1041,9 @@ export default function Dashboard() {
         </div>
       )}
 
-      <header className="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-md border-b border-blue-500/10 px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-[#0b0f19]/80 backdrop-blur-md border-b border-emerald-500/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30 overflow-hidden">
+          <div className="size-10 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 overflow-hidden">
             <img className="w-full h-full object-cover" src={sessionUser?.avatarUrl || `https://avatar.vercel.sh/${sessionUser?.email || 'driver'}`} alt="Profile" />
           </div>
           <div>
@@ -1051,7 +1051,7 @@ export default function Dashboard() {
             <p className="text-base font-bold">{firstName}</p>
           </div>
         </div>
-        <button className="p-2 rounded-full bg-blue-500/10 text-blue-400">
+        <button className="p-2 rounded-full bg-emerald-500/10 text-emerald-400">
           <span className="material-symbols-outlined">notifications</span>
         </button>
       </header>
@@ -1182,15 +1182,15 @@ export default function Dashboard() {
             </span>
           </div>
 
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 mb-4 relative overflow-hidden">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 mb-4 relative overflow-hidden">
             <p className="text-slate-400 text-xs uppercase font-bold mb-2">Ganhos do Mes</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-extrabold text-blue-400">{formatMoney(data.totalIncomeMonth)}</span>
-              <span className="text-sm font-medium text-blue-400 flex items-center">
+              <span className="text-4xl font-extrabold text-emerald-400">{formatMoney(data.totalIncomeMonth)}</span>
+              <span className="text-sm font-medium text-emerald-400 flex items-center">
                 Proj: {formatMoney(data.projectedMonth)}
               </span>
             </div>
-            <div className="mt-4 pt-4 border-t border-blue-500/20 grid grid-cols-2 gap-4">
+            <div className="mt-4 pt-4 border-t border-emerald-500/20 grid grid-cols-2 gap-4">
               <div>
                 <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mes</p>
                 <p className={`text-xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -1207,7 +1207,7 @@ export default function Dashboard() {
           </div>
 
 
-          <button onClick={() => setShowBalanceModal(true)} className="w-full flex items-center gap-3 bg-[#1e293b44] border border-dashed border-slate-700 rounded-xl p-3 mb-4 hover:bg-slate-800/50 transition-colors">
+          <button onClick={() => setShowBalanceModal(true)} className="w-full flex items-center gap-3 bg-[#1f2a3d44] border border-dashed border-slate-700 rounded-xl p-3 mb-4 hover:bg-slate-800/50 transition-colors">
             <span className="material-symbols-outlined text-slate-500 text-lg">account_balance_wallet</span>
             <span className="text-xs text-slate-500">
               Saldo anterior:{" "}
@@ -1218,11 +1218,11 @@ export default function Dashboard() {
           </button>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-[#1e293b66] border border-blue-500/10 rounded-xl p-4">
+            <div className="bg-[#1f2a3d66] border border-emerald-500/10 rounded-xl p-4">
               <p className="text-[10px] font-bold uppercase text-slate-400 mb-1">Trabalhados</p>
               <p className="text-xl font-bold">{data.daysWorked} dias</p>
             </div>
-            <div className="bg-[#1e293b66] border border-blue-500/10 rounded-xl p-4">
+            <div className="bg-[#1f2a3d66] border border-emerald-500/10 rounded-xl p-4">
               <p className="text-[10px] font-bold uppercase text-slate-400 mb-1">Restantes</p>
               <p className="text-xl font-bold">{data.daysRemaining} dias</p>
             </div>
@@ -1233,7 +1233,7 @@ export default function Dashboard() {
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Metas Hoje</h2>
             <label className="flex min-w-[190px] items-center gap-2 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-[10px] font-bold uppercase text-slate-400">
-              <span className="material-symbols-outlined text-sm text-blue-400">calendar_today</span>
+              <span className="material-symbols-outlined text-sm text-emerald-400">calendar_today</span>
               <span>Dia</span>
               <input
                 type="date"
@@ -1258,9 +1258,9 @@ export default function Dashboard() {
                 ) : null}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
+            <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Media</p>
-              <p className="text-2xl font-black text-blue-400">{formatMoney(data.dailyGoalSelectedAverage)}</p>
+              <p className="text-2xl font-black text-emerald-400">{formatMoney(data.dailyGoalSelectedAverage)}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-4">
               <p className="text-xs text-slate-400 font-bold uppercase mb-1">Recorde</p>
@@ -1275,14 +1275,14 @@ export default function Dashboard() {
             <div className="h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={projectionChart} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
-                  <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={{ stroke: "#1e293b" }} />
+                  <XAxis dataKey="day" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={{ stroke: "#1f2a3d" }} />
                   <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} width={54} tickFormatter={(value) => `R$ ${value}`} />
                   <Tooltip
                     content={({ active, payload, label }) => {
                       if (!active || !payload?.length) return null;
                       const values = Object.fromEntries(payload.map((item) => [String(item.dataKey), Number(item.value || 0)]));
                       const lines = [
-                        { key: "meta", label: "Meta", color: "#60a5fa" },
+                        { key: "meta", label: "Meta", color: "#1fd072" },
                         { key: "recorde", label: "Recorde", color: "#34d399" },
                         { key: "projecao", label: "Projecao", color: "#f59e0b" },
                         { key: "despesas", label: "Despesa projetada", color: "#ef4444" },
@@ -1302,10 +1302,10 @@ export default function Dashboard() {
                       );
                     }}
                   />
-                  <Area type="linear" dataKey="meta" stroke="none" fill="#60a5fa" fillOpacity={0.05} />
+                  <Area type="linear" dataKey="meta" stroke="none" fill="#1fd072" fillOpacity={0.05} />
                   <Area type="linear" dataKey="projecao" stroke="none" fill="#f59e0b" fillOpacity={0.12} />
                   <Area type="linear" dataKey="despesas" stroke="none" fill="#ef4444" fillOpacity={0.1} />
-                  <Line type="linear" dataKey="meta" name="Meta" stroke="#60a5fa" strokeWidth={2} dot={false} />
+                  <Line type="linear" dataKey="meta" name="Meta" stroke="#1fd072" strokeWidth={2} dot={false} />
                   <Line type="linear" dataKey="recorde" name="Recorde" stroke="#34d399" strokeWidth={2} dot={false} />
                   <Line type="linear" dataKey="projecao" name="Projecao" stroke="#f59e0b" strokeWidth={3} dot={false} />
                   <Line type="linear" dataKey="despesas" name="Despesa projetada" stroke="#ef4444" strokeWidth={2} dot={false} />
@@ -1402,7 +1402,7 @@ export default function Dashboard() {
 
         {editCategory && (
           <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => { setEditCategory(null); setEditingId(null); }}>
-            <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="bg-[#161e2e] w-full max-w-lg rounded-t-[32px] p-6 border-t border-emerald-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
               <h3 className="text-lg font-bold text-white mb-1">Editar {formatCategory(editCategory.category)}</h3>
               <p className="text-xs text-slate-400 mb-4">Clique no valor para editar ou no icone de lixeira para remover.</p>
@@ -1412,7 +1412,7 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-2 mb-4">
                   {editTransactions.map((tx) => (
-                    <div key={tx.id} className="bg-[#1e293b] rounded-xl p-3 flex items-center justify-between gap-3">
+                    <div key={tx.id} className="bg-[#1f2a3d] rounded-xl p-3 flex items-center justify-between gap-3">
                       {editingId === tx.id ? (
                         <>
                           <div className="flex-1 space-y-2">
@@ -1421,7 +1421,7 @@ export default function Dashboard() {
                               inputMode="decimal"
                               value={editValue}
                               onChange={(e) => setEditValue(e.target.value)}
-                              className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
+                              className="w-28 bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
                               autoFocus
                             />
                             <span className="block text-[10px] text-slate-500">
@@ -1432,7 +1432,7 @@ export default function Dashboard() {
                                 type="date"
                                 value={editDate}
                                 onChange={(e) => setEditDate(e.target.value)}
-                                className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                                className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
                               />
                             )}
                             {currentEditingExpense?.kind === "recurring" && (
@@ -1444,7 +1444,7 @@ export default function Dashboard() {
                                       type="button"
                                       onClick={() => setEditRecurringType(type)}
                                       className={`h-9 rounded-lg text-[10px] font-bold ${
-                                        editRecurringType === type ? "bg-blue-500 text-white" : "bg-[#0f172a] text-slate-400"
+                                        editRecurringType === type ? "bg-emerald-500 text-white" : "bg-[#161e2e] text-slate-400"
                                       }`}
                                     >
                                       {type === "DAILY" ? "Diaria" : type === "MONTHLY" ? "Mensal" : type === "WEEKLY" ? "Semanal" : "Data"}
@@ -1459,7 +1459,7 @@ export default function Dashboard() {
                                         type="button"
                                         onClick={() => setEditRecurringDueDayOfWeek(day.value)}
                                         className={`h-8 rounded-lg text-[10px] font-bold ${
-                                          editRecurringDueDayOfWeek === day.value ? "bg-blue-500 text-white" : "bg-[#0f172a] text-slate-400"
+                                          editRecurringDueDayOfWeek === day.value ? "bg-emerald-500 text-white" : "bg-[#161e2e] text-slate-400"
                                         }`}
                                       >
                                         {day.label}
@@ -1474,7 +1474,7 @@ export default function Dashboard() {
                                     max="31"
                                     value={editRecurringDueDay}
                                     onChange={(e) => setEditRecurringDueDay(e.target.value)}
-                                    className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                                    className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
                                   />
                                 )}
                                 {editRecurringType === "SPECIFIC_DATE" && (
@@ -1482,7 +1482,7 @@ export default function Dashboard() {
                                     type="date"
                                     value={editRecurringDueDate}
                                     onChange={(e) => setEditRecurringDueDate(e.target.value)}
-                                    className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                                    className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
                                   />
                                 )}
                                 {editRecurringType !== "SPECIFIC_DATE" && (
@@ -1490,7 +1490,7 @@ export default function Dashboard() {
                                     type="month"
                                     value={editRecurringEndsAt}
                                     onChange={(e) => setEditRecurringEndsAt(e.target.value)}
-                                    className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                                    className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
                                   />
                                 )}
                               </div>
@@ -1528,7 +1528,7 @@ export default function Dashboard() {
 
         {editIncomeCategory && (
           <div className="fixed inset-0 z-[100] bg-black/70 flex items-end justify-center" onClick={() => { setEditIncomeCategory(null); setEditingId(null); }}>
-            <div className="bg-[#0f172a] w-full max-w-lg rounded-t-[32px] p-6 border-t border-blue-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="bg-[#161e2e] w-full max-w-lg rounded-t-[32px] p-6 border-t border-emerald-500/10 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-6"></div>
               <h3 className="text-lg font-bold text-white mb-1">Editar Receita - {formatCategory(editIncomeCategory.category)}</h3>
               <p className="text-xs text-slate-400 mb-4">Clique no valor para editar ou no icone de lixeira para remover.</p>
@@ -1538,7 +1538,7 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-2 mb-4">
                   {editIncomeTransactions.map((tx) => (
-                    <div key={tx.id} className="bg-[#1e293b] rounded-xl p-3 flex items-center justify-between gap-3">
+                    <div key={tx.id} className="bg-[#1f2a3d] rounded-xl p-3 flex items-center justify-between gap-3">
                       {editingId === tx.id ? (
                         <>
                           <div className="flex-1 space-y-2">
@@ -1547,7 +1547,7 @@ export default function Dashboard() {
                               inputMode="decimal"
                               value={editValue}
                               onChange={(e) => setEditValue(e.target.value)}
-                              className="w-28 bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
+                              className="w-28 bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-white text-sm text-center focus:outline-none"
                               autoFocus
                             />
                             <span className="block text-[10px] text-slate-500">
@@ -1557,7 +1557,7 @@ export default function Dashboard() {
                               type="date"
                               value={editDate}
                               onChange={(e) => setEditDate(e.target.value)}
-                              className="w-full bg-[#0f172a] border border-blue-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
+                              className="w-full bg-[#161e2e] border border-emerald-500/30 rounded-lg p-2 text-white text-sm focus:outline-none"
                             />
                           </div>
                           <div className="flex gap-1 ml-auto">
@@ -1644,8 +1644,8 @@ export default function Dashboard() {
         )}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#1e293b66] backdrop-blur-md border-t border-blue-500/10 px-6 py-3 pb-8 flex items-center justify-around">
-        <a className="flex flex-col items-center gap-1 text-blue-400" href="#" onClick={(e) => { e.preventDefault(); navigate("/dashboard"); }}>
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#1f2a3d66] backdrop-blur-md border-t border-emerald-500/10 px-6 py-3 pb-8 flex items-center justify-around">
+        <a className="flex flex-col items-center gap-1 text-emerald-400" href="#" onClick={(e) => { e.preventDefault(); navigate("/dashboard"); }}>
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
           <span className="text-[10px] font-bold uppercase">Hoje</span>
         </a>
@@ -1654,7 +1654,7 @@ export default function Dashboard() {
           <span className="text-[10px] font-bold uppercase">Historico</span>
         </a>
         <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
-          <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white ring-4 ring-[#020617] active:scale-95">
+          <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white ring-4 ring-[#0b0f19] active:scale-95">
             <span className="material-symbols-outlined text-4xl">add</span>
           </button>
         </a>
@@ -1670,6 +1670,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-
-

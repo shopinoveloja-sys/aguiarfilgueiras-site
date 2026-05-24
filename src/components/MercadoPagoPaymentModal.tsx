@@ -120,7 +120,7 @@ export function MercadoPagoPaymentModal({ open, amount, onClose, onSuccess }: Pr
 
   return (
     <div className="fixed inset-0 z-[120] bg-black/75 flex items-end justify-center sm:items-center p-0 sm:p-4">
-      <div className="w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl border border-emerald-500/20 bg-[#0f172a] p-5 shadow-2xl">
+      <div className="w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl border border-emerald-500/20 bg-[#161e2e] p-5 shadow-2xl">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-emerald-300">Assinatura DriverCash</p>

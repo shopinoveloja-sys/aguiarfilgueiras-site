@@ -36,7 +36,7 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
     if (!this.state.hasError) return this.props.children;
 
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center p-4 text-center">
+      <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-4 text-center">
         <div className="max-w-sm">
           <h1 className="text-xl font-bold text-white mb-2">Não foi possível abrir esta tela</h1>
           <p className="text-sm text-slate-400 mb-5">
@@ -45,7 +45,7 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
           <div className="flex gap-3 justify-center">
             <button
               type="button"
-              className="px-4 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold"
+              className="px-4 py-3 rounded-xl bg-emerald-600 text-white text-sm font-bold"
               onClick={() => window.location.reload()}
             >
               Atualizar
@@ -76,8 +76,8 @@ const isDesktopBrowser = () => {
 
 function DesktopAppBlocked() {
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6 text-center text-white">
-      <div className="max-w-md rounded-2xl border border-blue-500/20 bg-[#0f172a] p-8 shadow-2xl">
+    <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-6 text-center text-white">
+      <div className="max-w-md rounded-2xl border border-emerald-500/20 bg-[#161e2e] p-8 shadow-2xl">
         <img alt="DriverCash" src="/drivercash-logo.svg" className="mx-auto mb-5 h-16 w-16 object-contain" />
         <h1 className="mb-3 text-2xl font-black">DriverCash agora e exclusivo pelo app</h1>
         <p className="mb-6 text-sm leading-6 text-slate-400">
@@ -85,7 +85,7 @@ function DesktopAppBlocked() {
         </p>
         <a
           href="/admin"
-          className="inline-flex h-12 items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-bold text-white transition-colors hover:bg-blue-500"
+          className="inline-flex h-12 items-center justify-center rounded-xl bg-emerald-600 px-5 text-sm font-bold text-white transition-colors hover:bg-emerald-500"
         >
           Acessar area administrativa
         </a>
@@ -149,10 +149,10 @@ function AdminOnlyRoute() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6 text-white">
+    <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-6 text-white">
       <form
         onSubmit={handleAdminLogin}
-        className="w-full max-w-md rounded-2xl border border-blue-500/20 bg-[#0f172a] p-8 shadow-2xl"
+        className="w-full max-w-md rounded-2xl border border-emerald-500/20 bg-[#161e2e] p-8 shadow-2xl"
       >
         <img alt="DriverCash" src="/drivercash-logo.svg" className="mx-auto mb-5 h-16 w-16 object-contain" />
         <h1 className="mb-2 text-center text-2xl font-black">Area administrativa</h1>
@@ -164,7 +164,7 @@ function AdminOnlyRoute() {
         </label>
         <input
           id="admin-email"
-          className="mb-4 h-12 w-full rounded-xl border border-blue-500/20 bg-[#111827] px-4 text-white outline-none focus:border-blue-500"
+          className="mb-4 h-12 w-full rounded-xl border border-emerald-500/20 bg-[#161e2e] px-4 text-white outline-none focus:border-emerald-500"
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
@@ -174,7 +174,7 @@ function AdminOnlyRoute() {
         </label>
         <input
           id="admin-password"
-          className="mb-6 h-12 w-full rounded-xl border border-blue-500/20 bg-[#111827] px-4 text-white outline-none focus:border-blue-500"
+          className="mb-6 h-12 w-full rounded-xl border border-emerald-500/20 bg-[#161e2e] px-4 text-white outline-none focus:border-emerald-500"
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
@@ -182,7 +182,7 @@ function AdminOnlyRoute() {
         <button
           type="submit"
           disabled={loading}
-          className="h-12 w-full rounded-xl bg-blue-600 text-sm font-bold text-white transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+          className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? "Entrando..." : "Entrar no admin"}
         </button>

@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 220 30% 12%;
+    --background: 222 39% 7%;
+    --foreground: 210 40% 98%;
 
     --card: 0 0% 100%;
     --card-foreground: 220 30% 12%;
@@ -15,41 +15,46 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 30% 12%;
 
-    --primary: 220 45% 15%;
-    --primary-foreground: 42 50% 85%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 42 40% 88%;
-    --secondary-foreground: 220 45% 15%;
+    --secondary: 219 35% 13%;
+    --secondary-foreground: 152 76% 80%;
 
     --muted: 220 15% 92%;
     --muted-foreground: 220 10% 45%;
 
-    --accent: 42 55% 52%;
-    --accent-foreground: 220 45% 10%;
+    --accent: 148 73% 47%;
+    --accent-foreground: 222 39% 7%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 220 15% 88%;
     --input: 220 15% 88%;
-    --ring: 42 55% 52%;
+    --ring: 160 84% 39%;
 
     --radius: 0.375rem;
 
     /* Custom tokens */
-    --gold: 42 55% 52%;
-    --gold-light: 42 45% 72%;
-    --navy: 220 45% 15%;
-    --navy-light: 220 30% 25%;
-    --cream: 42 30% 95%;
+    --gold: 38 92% 50%;
+    --gold-light: 43 96% 56%;
+    --navy: 222 39% 7%;
+    --navy-light: 219 35% 13%;
+    --cream: 210 40% 98%;
+    --brand-midnight: #0b0f19;
+    --brand-slate: #161e2e;
+    --brand-card: #1f2a3d;
+    --brand-emerald: #10b981;
+    --brand-accent: #1fd072;
 
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Inter', sans-serif;
 
-    --gradient-hero: linear-gradient(135deg, hsl(220 45% 10%), hsl(220 35% 20%));
-    --gradient-gold: linear-gradient(135deg, hsl(42 55% 52%), hsl(42 45% 62%));
-    --shadow-elegant: 0 20px 60px -15px hsl(220 45% 15% / 0.15);
-    --shadow-card: 0 4px 24px -4px hsl(220 45% 15% / 0.08);
+    --gradient-hero: linear-gradient(135deg, #0b0f19, #161e2e);
+    --gradient-gold: linear-gradient(135deg, #10b981, #1fd072);
+    --shadow-elegant: 0 20px 60px -15px rgb(16 185 129 / 0.2);
+    --shadow-card: 0 4px 24px -4px rgb(16 185 129 / 0.1);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;

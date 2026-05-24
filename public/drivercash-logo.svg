@@ -1,12 +1,27 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="256" height="256" rx="56" fill="#020617"/>
-  <rect x="18" y="18" width="220" height="220" rx="46" fill="#0F172A" stroke="#2563EB" stroke-width="6"/>
-  <path d="M70 166V92H126C164 92 190 116 190 149C190 183 164 207 126 207H96C82 207 70 195 70 181V166Z" fill="#3B82F6"/>
-  <path d="M96 118H124C146 118 160 130 160 149C160 168 146 181 124 181H102C99 181 96 178 96 175V118Z" fill="#020617"/>
-  <path d="M66 76C66 61 78 49 93 49H151C159 49 166 56 166 64V76H66Z" fill="#60A5FA"/>
-  <path d="M76 78H185C190 78 194 82 194 87V100H76V78Z" fill="#93C5FD"/>
-  <circle cx="95" cy="197" r="15" fill="#020617" stroke="#60A5FA" stroke-width="8"/>
-  <circle cx="166" cy="197" r="15" fill="#020617" stroke="#60A5FA" stroke-width="8"/>
-  <path d="M105 137H134" stroke="#34D399" stroke-width="12" stroke-linecap="round"/>
-  <path d="M120 122V152" stroke="#34D399" stroke-width="12" stroke-linecap="round"/>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="35%" r="72%">
+      <stop offset="0%" stop-color="#1F2A3D"/>
+      <stop offset="100%" stop-color="#0B0F19"/>
+    </radialGradient>
+    <linearGradient id="money" x1="68" y1="54" x2="188" y2="204" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A7F3D0"/>
+      <stop offset="38%" stop-color="#1FD072"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.12 0 0 0 0 0.82 0 0 0 0 0.45 0 0 0 0.85 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+  <rect x="18" y="18" width="220" height="220" rx="46" fill="#161E2E" stroke="#1FD072" stroke-width="5"/>
+  <path d="M57 130c0-39.2 31.8-71 71-71 17.9 0 34.2 6.6 46.7 17.5" stroke="url(#money)" stroke-width="13" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M199 126c0 39.2-31.8 71-71 71-18.5 0-35.4-7.1-48.1-18.7" stroke="url(#money)" stroke-width="13" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M177 59v33h-33" stroke="url(#money)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M79 197v-33h33" stroke="url(#money)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M128 68v120" stroke="#D1FAE5" stroke-width="11" stroke-linecap="round"/>
+  <path d="M161 94c-8-9-20-15-35-15-19 0-33 10-33 25 0 17 17 23 35 29 18 6 34 12 34 30 0 17-16 28-37 28-16 0-31-6-40-17" stroke="#D1FAE5" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M58 130h20M178 130h20" stroke="#64748B" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
 </svg>

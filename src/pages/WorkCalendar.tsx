@@ -127,12 +127,12 @@ export default function WorkCalendar() {
     }
   };
 
-  const workingDaysCount = daysInMonth.length - nonWorkingDays.filter(d => 
+  const workingDaysCount = daysInMonth.length - nonWorkingDays.filter(d =>
     d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear()
   ).length;
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0b0f19] text-white flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-5 pb-2">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-white/5">
@@ -158,7 +158,7 @@ export default function WorkCalendar() {
             <p className="text-[10px] font-bold uppercase text-emerald-500/70 tracking-wider">Dias de Trabalho</p>
           </div>
           <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-center">
-            <p className="text-3xl font-black text-red-400">{nonWorkingDays.filter(d => 
+            <p className="text-3xl font-black text-red-400">{nonWorkingDays.filter(d =>
               d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear()
             ).length}</p>
             <p className="text-[10px] font-bold uppercase text-red-500/70 tracking-wider">Dias de Folga</p>
@@ -166,7 +166,7 @@ export default function WorkCalendar() {
         </div>
 
         {/* Month Selector */}
-        <div className="flex items-center justify-between bg-[#1e293b66] p-3 rounded-2xl border border-blue-500/10 mb-4">
+        <div className="flex items-center justify-between bg-[#1f2a3d66] p-3 rounded-2xl border border-emerald-500/10 mb-4">
           <button onClick={() => setCurrentDate(subMonths(currentDate, 1))} className="p-1 text-slate-400 hover:text-white">
             <span className="material-symbols-outlined">chevron_left</span>
           </button>
@@ -177,7 +177,7 @@ export default function WorkCalendar() {
         </div>
 
         {/* Calendar Grid */}
-        <div className="bg-[#0f172a] p-4 rounded-3xl border border-slate-800">
+        <div className="bg-[#161e2e] p-4 rounded-3xl border border-slate-800">
           <div className="grid grid-cols-7 gap-1.5 mb-3 text-center">
             {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
               <div key={i} className="text-[10px] font-bold text-slate-500 uppercase">{day}</div>
@@ -188,24 +188,24 @@ export default function WorkCalendar() {
             {paddingDays.map((_, i) => (
               <div key={`empty-${i}`} className="h-10" />
             ))}
-            
+
             {daysInMonth.map((day) => {
               const isOff = nonWorkingDays.some(d => isSameDay(d, day));
               const isToday = isSameDay(day, new Date());
               const isPast = day < new Date() && !isToday;
-              
+
               return (
                 <button
                   key={day.toString()}
                   onClick={() => requestToggleDayOff(day)}
                   className={`h-10 rounded-xl text-sm font-bold flex items-center justify-center transition-all active:scale-90 ${
-                    isOff 
-                    ? "bg-red-500/20 text-red-400 ring-1 ring-red-500/50" 
-                    : isToday 
+                    isOff
+                    ? "bg-red-500/20 text-red-400 ring-1 ring-red-500/50"
+                    : isToday
                       ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
                       : isPast
-                        ? "bg-[#1e293b44] text-slate-600"
-                        : "bg-[#1e293b] text-slate-300 hover:bg-emerald-500/20 hover:text-emerald-400"
+                        ? "bg-[#1f2a3d44] text-slate-600"
+                        : "bg-[#1f2a3d] text-slate-300 hover:bg-emerald-500/20 hover:text-emerald-400"
                   }`}
                 >
                   {format(day, "d")}
@@ -226,7 +226,7 @@ export default function WorkCalendar() {
             <span className="text-[10px] text-slate-500 font-bold uppercase">Hoje</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#1e293b]"></div>
+            <div className="w-3 h-3 rounded-full bg-[#1f2a3d]"></div>
             <span className="text-[10px] text-slate-500 font-bold uppercase">Trabalho</span>
           </div>
         </div>
@@ -291,11 +291,11 @@ export default function WorkCalendar() {
       </div>
 
       {/* Save Button */}
-      <div className="p-5 bg-[#020617] border-t border-slate-800">
-        <button 
+      <div className="p-5 bg-[#0b0f19] border-t border-slate-800">
+        <button
           onClick={saveDaysOff}
           disabled={loading}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 font-bold text-base text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] active:scale-95 transition-transform flex items-center justify-center gap-2"
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 font-bold text-base text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
           {loading ? (
             <span className="material-symbols-outlined animate-spin">sync</span>
@@ -308,7 +308,7 @@ export default function WorkCalendar() {
 
       {pendingDay && pendingAction && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-          <div className="w-full max-w-md rounded-3xl bg-[#0f172a] border border-blue-500/20 p-5 shadow-2xl">
+          <div className="w-full max-w-md rounded-3xl bg-[#161e2e] border border-emerald-500/20 p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
                 <h3 className="font-black text-xl">

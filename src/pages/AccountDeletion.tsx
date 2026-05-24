@@ -2,7 +2,7 @@ export default function AccountDeletion() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#020617',
+      background: '#0b0f19',
       color: '#e2e8f0',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       padding: '24px',
@@ -65,7 +65,7 @@ export default function AccountDeletion() {
         </section>
 
         <footer style={{
-          borderTop: '1px solid #1e293b',
+          borderTop: '1px solid #1f2a3d',
           paddingTop: 24,
           marginTop: 40,
           textAlign: 'center',
@@ -80,12 +80,12 @@ export default function AccountDeletion() {
 }
 
 const h2Style: React.CSSProperties = {
-  color: '#3b82f6',
+  color: '#10b981',
   fontSize: 20,
   fontWeight: 700,
   marginBottom: 12,
   paddingBottom: 8,
-  borderBottom: '1px solid #1e293b',
+  borderBottom: '1px solid #1f2a3d',
 };
 
 const pStyle: React.CSSProperties = {

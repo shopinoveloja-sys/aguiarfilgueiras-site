@@ -22,10 +22,10 @@ export function TutorialCta({
     <button
       type="button"
       onClick={openTutorial}
-      className={`w-full rounded-xl border border-blue-500/20 bg-blue-500/10 text-left transition-colors active:scale-[0.99] hover:bg-blue-500/15 ${compact ? "p-4" : "p-5"} ${className}`}
+      className={`w-full rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-left transition-colors active:scale-[0.99] hover:bg-emerald-500/15 ${compact ? "p-4" : "p-5"} ${className}`}
     >
       <div className="flex items-center gap-3">
-        <span className={`material-symbols-outlined rounded-xl bg-blue-500/15 text-blue-300 ${compact ? "p-2" : "p-3"}`}>
+        <span className={`material-symbols-outlined rounded-xl bg-emerald-500/15 text-emerald-300 ${compact ? "p-2" : "p-3"}`}>
           play_circle
         </span>
         <div className="min-w-0 flex-1">

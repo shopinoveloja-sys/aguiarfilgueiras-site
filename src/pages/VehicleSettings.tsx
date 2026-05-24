@@ -92,13 +92,13 @@ export default function VehicleSettings() {
   const fuelUnit = fuelUnitMap[draft.fuelType] || "L";
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white pb-24">
-      <header className="sticky top-0 z-10 bg-[#020617]/80 backdrop-blur-md border-b border-blue-500/10 px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-[#0b0f19] text-white pb-24">
+      <header className="sticky top-0 z-10 bg-[#0b0f19]/80 backdrop-blur-md border-b border-emerald-500/10 px-4 py-4 flex items-center justify-between">
         <button onClick={() => navigate("/profile")} className="flex items-center justify-center p-2 rounded-full hover:bg-white/5">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <h1 className="text-lg font-bold">Veiculos</h1>
-        <button onClick={addVehicle} className="size-10 rounded-full bg-blue-500/10 text-blue-300 flex items-center justify-center">
+        <button onClick={addVehicle} className="size-10 rounded-full bg-emerald-500/10 text-emerald-300 flex items-center justify-center">
           <span className="material-symbols-outlined">add</span>
         </button>
       </header>
@@ -113,7 +113,7 @@ export default function VehicleSettings() {
           {vehicles.map((vehicle) => (
             <div
               key={vehicle.id}
-              className={`rounded-xl border p-4 ${vehicle.active ? "border-blue-500/30 bg-blue-500/10" : "border-slate-800 bg-slate-900"}`}
+              className={`rounded-xl border p-4 ${vehicle.active ? "border-emerald-500/30 bg-emerald-500/10" : "border-slate-800 bg-slate-900"}`}
             >
               <div className="flex items-center justify-between gap-3">
                 <button className="text-left flex-1" onClick={() => selectVehicle(vehicle.id)}>
@@ -142,13 +142,13 @@ export default function VehicleSettings() {
           ))}
         </section>
 
-        <div className="bg-[#1e293b66] rounded-xl border border-blue-500/10 p-5 space-y-5">
+        <div className="bg-[#1f2a3d66] rounded-xl border border-emerald-500/10 p-5 space-y-5">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-slate-300">Nome do Veiculo</label>
             <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/60">directions_car</span>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500/60">directions_car</span>
               <input
-                className="w-full pl-10 pr-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white placeholder-slate-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg text-white placeholder-slate-500 transition-all"
                 placeholder="Ex: Toyota Corolla"
                 type="text"
                 value={draft.label}
@@ -160,7 +160,7 @@ export default function VehicleSettings() {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-slate-300">{`Consumo medio (km/${fuelUnit})`}</label>
             <input
-              className="w-full px-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white placeholder-slate-500 transition-all"
+              className="w-full px-4 py-3 bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg text-white placeholder-slate-500 transition-all"
               placeholder="Ex: 12.5"
               type="number"
               step="0.1"
@@ -173,7 +173,7 @@ export default function VehicleSettings() {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-slate-300">Combustivel principal</label>
             <select
-              className="w-full px-4 py-3 bg-[#0f172a] border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg text-white transition-all"
+              className="w-full px-4 py-3 bg-[#161e2e] border-transparent focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg text-white transition-all"
               value={draft.fuelType}
               onChange={(e) => setDraft({ ...draft, fuelType: e.target.value as FuelType })}
             >
@@ -186,14 +186,14 @@ export default function VehicleSettings() {
           </div>
         </div>
 
-        <div className="flex items-start gap-3 bg-blue-500/5 p-4 rounded-xl border border-blue-500/20">
-          <span className="material-symbols-outlined text-blue-400 mt-0.5">info</span>
+        <div className="flex items-start gap-3 bg-emerald-500/5 p-4 rounded-xl border border-emerald-500/20">
+          <span className="material-symbols-outlined text-emerald-400 mt-0.5">info</span>
           <p className="text-sm leading-relaxed text-slate-300">
             O veiculo marcado como em uso alimenta as metricas operacionais, combustivel e manutencoes do painel.
           </p>
         </div>
 
-        <button onClick={saveCurrentVehicle} className="w-full bg-gradient-to-br from-blue-800 to-blue-500 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]">
+        <button onClick={saveCurrentVehicle} className="w-full bg-gradient-to-br from-emerald-800 to-emerald-500 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98]">
           Salvar configuracoes
         </button>
       </main>

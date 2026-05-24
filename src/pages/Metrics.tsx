@@ -473,8 +473,8 @@ export default function Metrics() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
+      <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500" />
       </div>
     );
   }
@@ -483,8 +483,8 @@ export default function Metrics() {
   const currentKm = getLatestVehicleKm(activeVehicle?.id || "");
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white pb-28">
-      <header className="sticky top-0 z-20 bg-[#020617]/95 backdrop-blur border-b border-blue-500/10 p-4">
+    <div className="min-h-screen bg-[#0b0f19] text-white pb-28">
+      <header className="sticky top-0 z-20 bg-[#0b0f19]/95 backdrop-blur border-b border-emerald-500/10 p-4">
         <div className="flex items-center justify-between">
           <button onClick={() => navigate("/dashboard")} className="size-10 rounded-full hover:bg-white/5 flex items-center justify-center">
             <span className="material-symbols-outlined">arrow_back</span>
@@ -493,7 +493,7 @@ export default function Metrics() {
             <h1 className="text-lg font-black">Metricas</h1>
             <p className="text-xs text-slate-500 font-bold uppercase">Combustivel, KM e manutencao</p>
           </div>
-          <button onClick={() => navigate("/vehicle")} className="size-10 rounded-full bg-blue-600 flex items-center justify-center">
+          <button onClick={() => navigate("/vehicle")} className="size-10 rounded-full bg-emerald-600 flex items-center justify-center">
             <span className="material-symbols-outlined">directions_car</span>
           </button>
         </div>
@@ -502,7 +502,7 @@ export default function Metrics() {
             <button
               key={item}
               onClick={() => setPeriod(item)}
-              className={`h-10 rounded-lg text-xs font-bold uppercase ${period === item ? "bg-blue-500 text-white" : "text-slate-400"}`}
+              className={`h-10 rounded-lg text-xs font-bold uppercase ${period === item ? "bg-emerald-500 text-white" : "text-slate-400"}`}
             >
               {item === "day" ? "Hoje" : item === "week" ? "Semana" : "Mes"}
             </button>
@@ -511,13 +511,13 @@ export default function Metrics() {
       </header>
 
       <main className="p-4 space-y-4 max-w-4xl mx-auto">
-        <section className="rounded-xl bg-slate-900 border border-blue-500/20 p-4">
+        <section className="rounded-xl bg-slate-900 border border-emerald-500/20 p-4">
           <div className="flex items-start justify-between gap-3 mb-4">
             <div>
               <h2 className="text-sm font-bold">Jornada operacional</h2>
               <p className="text-xs text-slate-500">{activeLabel} em uso - lance inicio, fim, horario e KM.</p>
             </div>
-            <button onClick={() => navigate("/vehicle")} className="text-xs font-bold text-blue-300">Trocar veiculo</button>
+            <button onClick={() => navigate("/vehicle")} className="text-xs font-bold text-emerald-300">Trocar veiculo</button>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             <div>
@@ -526,12 +526,12 @@ export default function Metrics() {
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               />
             </div>
-            <div className="rounded-lg bg-[#0f172a] border border-slate-800 px-3 py-3 flex items-center justify-between">
+            <div className="rounded-lg bg-[#161e2e] border border-slate-800 px-3 py-3 flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">KM atual</span>
-              <span className="text-sm font-black text-blue-300">{stats.kmTotal.toLocaleString("pt-BR")} km no periodo</span>
+              <span className="text-sm font-black text-emerald-300">{stats.kmTotal.toLocaleString("pt-BR")} km no periodo</span>
             </div>
             <div>
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Horario de inicio</label>
@@ -539,7 +539,7 @@ export default function Metrics() {
                 type="time"
                 value={logDraft.startTime}
                 onChange={(e) => setLogDraft((prev) => ({ ...prev, startTime: e.target.value }))}
-                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               />
             </div>
             <div>
@@ -548,7 +548,7 @@ export default function Metrics() {
                 type="time"
                 value={logDraft.endTime}
                 onChange={(e) => setLogDraft((prev) => ({ ...prev, endTime: e.target.value }))}
-                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               />
             </div>
             <div>
@@ -558,7 +558,7 @@ export default function Metrics() {
                 min="0"
                 value={logDraft.kmStart}
                 onChange={(e) => setLogDraft((prev) => ({ ...prev, kmStart: e.target.value }))}
-                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               />
             </div>
             <div>
@@ -568,7 +568,7 @@ export default function Metrics() {
                 min="0"
                 value={logDraft.kmEnd}
                 onChange={(e) => setLogDraft((prev) => ({ ...prev, kmEnd: e.target.value }))}
-                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               />
             </div>
           </div>
@@ -583,7 +583,7 @@ export default function Metrics() {
                     min="0"
                     value={rideDraft[platform.id]}
                     onChange={(e) => setRideDraft((prev) => ({ ...prev, [platform.id]: e.target.value }))}
-                    className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                    className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
                   />
                 </div>
               ))}
@@ -592,7 +592,7 @@ export default function Metrics() {
           <button
             onClick={handleSaveLog}
             disabled={savingLog}
-            className="mt-4 w-full rounded-xl bg-blue-600 py-3 font-bold text-white disabled:opacity-60"
+            className="mt-4 w-full rounded-xl bg-emerald-600 py-3 font-bold text-white disabled:opacity-60"
           >
             {savingLog ? "Salvando..." : "Salvar jornada"}
           </button>
@@ -604,9 +604,9 @@ export default function Metrics() {
               <p className="text-2xl font-black text-emerald-400">{money(stats.incomePerKm)}</p>
               <p className="mt-1 text-[10px] text-slate-500">{stats.kmTotal.toLocaleString("pt-BR")} km percorridos</p>
             </div>
-          <div className="rounded-xl bg-slate-900 border border-blue-500/20 p-4">
+          <div className="rounded-xl bg-slate-900 border border-emerald-500/20 p-4">
             <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Ganho por Hora</p>
-            <p className="text-2xl font-black text-blue-400">{money(stats.incomePerHour)}</p>
+            <p className="text-2xl font-black text-emerald-400">{money(stats.incomePerHour)}</p>
           </div>
           <div className="rounded-xl bg-slate-900 border border-amber-500/20 p-4">
             <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Combustivel por KM</p>
@@ -632,7 +632,7 @@ export default function Metrics() {
               <h2 className="text-sm font-bold">Resumo operacional</h2>
               <p className="text-xs text-slate-500">{stats.kmTotal.toLocaleString("pt-BR")} km registrados no periodo</p>
             </div>
-            <span className="material-symbols-outlined text-blue-400">speed</span>
+            <span className="material-symbols-outlined text-emerald-400">speed</span>
           </div>
           <div className="grid gap-3">
             {[
@@ -642,7 +642,7 @@ export default function Metrics() {
               ["Combustivel", money(stats.fuelTotal), "text-amber-300"],
               ["Manutencao", money(stats.maintenanceCost), "text-slate-300"],
               ["Corridas", stats.totalRides.toLocaleString("pt-BR"), "text-violet-300"],
-              ["Horas registradas", `${stats.hoursTotal.toFixed(1).replace(".", ",")} h`, "text-blue-300"],
+              ["Horas registradas", `${stats.hoursTotal.toFixed(1).replace(".", ",")} h`, "text-emerald-300"],
             ].map(([label, value, color]) => (
               <div key={label} className="flex items-center justify-between border-b border-slate-800 pb-2 last:border-0 last:pb-0">
                 <span className="text-xs font-bold uppercase text-slate-500">{label}</span>
@@ -697,7 +697,7 @@ export default function Metrics() {
             </div>
             <div className="rounded-lg bg-slate-950/70 border border-slate-800 p-3">
               <p className="text-[10px] font-bold uppercase text-slate-500 mb-1">Quantidade</p>
-              <p className="text-xl font-black text-blue-300">{stats.fuelQuantity.toFixed(1).replace(".", ",")} L</p>
+              <p className="text-xl font-black text-emerald-300">{stats.fuelQuantity.toFixed(1).replace(".", ",")} L</p>
             </div>
           </div>
           <div className="space-y-2">
@@ -734,7 +734,7 @@ export default function Metrics() {
               <select
                 value={maintenanceTemplate}
                 onChange={(e) => setMaintenanceTemplate(e.target.value)}
-                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               >
                 {maintenanceTemplates.map((item) => (
                   <option key={item} value={item}>{item}</option>
@@ -748,7 +748,7 @@ export default function Metrics() {
                 min="0"
                 value={maintenanceDueKm}
                 onChange={(e) => setMaintenanceDueKm(e.target.value)}
-                className="w-full bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               />
             </div>
           </div>
@@ -758,7 +758,7 @@ export default function Metrics() {
               value={maintenanceCustomName}
               onChange={(e) => setMaintenanceCustomName(e.target.value)}
               placeholder="Descreva a manutencao"
-              className="w-full mb-4 bg-[#0f172a] border border-blue-500/20 rounded-lg p-3 text-white"
+              className="w-full mb-4 bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
             />
           )}
           <button onClick={handleSaveMaintenance} className="mb-4 w-full rounded-xl bg-slate-800 py-3 font-bold text-white">
