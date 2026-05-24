@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { clearSession, confirmGooglePlayPurchase, createTransaction, getDashboardData, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
+import { clearSession, confirmGooglePlayPurchase, createTransaction, getDashboardData, getProfile, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, saveSession, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
 import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
 import { toast } from "sonner";
 import { TutorialCta } from "../components/TutorialCta";
@@ -325,7 +325,24 @@ export default function Dashboard() {
         return;
       }
 
-      if (access && !access.hasAccess) {
+      let currentAccess = access;
+      try {
+        const session = await getProfile();
+        saveSession(session);
+        setSessionUser(session.user as SessionUser);
+        setAccess(session.access as AccessData);
+        currentAccess = parseAccess(JSON.stringify(session.access));
+      } catch (error) {
+        console.error("Failed to refresh session", error);
+        const status = (error as any)?.response?.status;
+        if (status === 401 || status === 403) {
+          clearSession();
+          navigate("/", { replace: true });
+          return;
+        }
+      }
+
+      if (currentAccess && !currentAccess.hasAccess) {
         setLoading(false);
         return;
       }
@@ -380,11 +397,18 @@ export default function Dashboard() {
     setRedeeming(true);
     try {
       const session = await redeemReferralCode(redeemCode.trim().toUpperCase());
-      localStorage.setItem("drivercash_access", JSON.stringify(session.access));
+      saveSession(session);
+      setSessionUser(session.user as SessionUser);
       setAccess(session.access as AccessData);
       toast.success("Codigo resgatado! Voce ganhou 30 dias de teste.");
-      // Reload to refresh all limits
-      window.location.reload();
+      setErrorMessage("");
+      setLoading(true);
+      await loadDashboard();
+      const referralData = await getReferralSummary().catch(() => null);
+      if (referralData) {
+        setReferrals(referralData);
+      }
+      setLoading(false);
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Erro ao resgatar codigo.");
     } finally {
