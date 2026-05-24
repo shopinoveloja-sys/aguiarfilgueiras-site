@@ -40,10 +40,20 @@ export interface MaintenancePlan {
   vehicleId: string;
   name: string;
   dueKm: number;
+  cost: number;
   notes: string;
   enabled: boolean;
   lastDismissedAtKm?: number | null;
   createdAt: string;
+}
+
+export interface MaintenanceReserveItem extends MaintenancePlan {
+  currentKm: number;
+  remainingKm: number;
+  averageKmPerDay: number;
+  estimatedDays: number | null;
+  dailyReserve: number;
+  accumulatedReserve: number;
 }
 
 export interface RideCountLog {
@@ -249,6 +259,7 @@ export function loadMaintenancePlans(): MaintenancePlan[] {
       vehicleId: item.vehicleId || getActiveVehicle().id,
       name: item.name || "Manutencao",
       dueKm: Number(item.dueKm) || 0,
+      cost: Number(item.cost) || 0,
       notes: item.notes || "",
       enabled: item.enabled !== false,
       lastDismissedAtKm: item.lastDismissedAtKm ?? null,
@@ -287,5 +298,43 @@ export function getDueMaintenance(vehicleId: string, currentKm: number) {
   return loadMaintenancePlans()
     .filter((item) => item.vehicleId === vehicleId && item.enabled && item.dueKm > 0)
     .filter((item) => currentKm >= item.dueKm && (!item.lastDismissedAtKm || item.lastDismissedAtKm < item.dueKm))
+    .sort((a, b) => a.dueKm - b.dueKm);
+}
+
+export function getVehicleAverageKmPerDay(vehicleId: string) {
+  const completeLogs = loadOperationLogs().filter((item) => item.vehicleId === vehicleId && isOperationLogComplete(item));
+  if (completeLogs.length === 0) return 0;
+  const totalKm = completeLogs.reduce((sum, item) => sum + Math.max(0, (item.kmEnd || 0) - (item.kmStart || 0)), 0);
+  const uniqueDays = new Set(completeLogs.map((item) => item.date)).size || completeLogs.length;
+  return uniqueDays > 0 ? totalKm / uniqueDays : 0;
+}
+
+export function getMaintenanceReserveItems(vehicleId: string, currentKm = getLatestVehicleKm(vehicleId)): MaintenanceReserveItem[] {
+  const averageKmPerDay = getVehicleAverageKmPerDay(vehicleId);
+  const today = new Date(`${todayKey()}T12:00:00`);
+
+  return loadMaintenancePlans()
+    .filter((item) => item.vehicleId === vehicleId && item.enabled && item.cost > 0 && item.dueKm > 0)
+    .map((item) => {
+      const remainingKm = Math.max(0, item.dueKm - currentKm);
+      const estimatedDays = averageKmPerDay > 0 ? Math.max(1, Math.ceil(remainingKm / averageKmPerDay)) : null;
+      const dailyReserve = estimatedDays ? item.cost / estimatedDays : item.cost;
+      const createdAt = new Date(item.createdAt || today);
+      const createdAtDay = Number.isNaN(createdAt.getTime())
+        ? today
+        : new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate(), 12, 0, 0, 0);
+      const elapsedDays = Math.max(1, Math.floor((today.getTime() - createdAtDay.getTime()) / 86400000) + 1);
+      const accumulatedReserve = Math.min(item.cost, dailyReserve * elapsedDays);
+
+      return {
+        ...item,
+        currentKm,
+        remainingKm,
+        averageKmPerDay,
+        estimatedDays,
+        dailyReserve,
+        accumulatedReserve,
+      };
+    })
     .sort((a, b) => a.dueKm - b.dueKm);
 }

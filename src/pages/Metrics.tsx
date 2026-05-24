@@ -12,7 +12,9 @@ import {
   getActiveVehicle,
   getDueMaintenance,
   getLatestVehicleKm,
+  getMaintenanceReserveItems,
   getPreviousVehicleKm,
+  getVehicleAverageKmPerDay,
   isOperationLogComplete,
   loadFuelLogs,
   loadMaintenancePlans,
@@ -146,6 +148,7 @@ export default function Metrics() {
   const [maintenanceTemplate, setMaintenanceTemplate] = useState("Troca de oleo");
   const [maintenanceCustomName, setMaintenanceCustomName] = useState("");
   const [maintenanceDueKm, setMaintenanceDueKm] = useState("");
+  const [maintenanceCost, setMaintenanceCost] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -238,6 +241,18 @@ export default function Metrics() {
     const currentKm = getLatestVehicleKm(activeVehicle?.id || "");
     return activeVehicle ? getDueMaintenance(activeVehicle.id, currentKm) : [];
   }, [activeVehicle, maintenancePlans]);
+  const maintenanceReserveItems = useMemo(
+    () => (activeVehicle ? getMaintenanceReserveItems(activeVehicle.id, getLatestVehicleKm(activeVehicle.id)) : []),
+    [activeVehicle, maintenancePlans, operationLogs],
+  );
+  const maintenanceReserveTotalPerDay = useMemo(
+    () => maintenanceReserveItems.reduce((sum, item) => sum + item.dailyReserve, 0),
+    [maintenanceReserveItems],
+  );
+  const vehicleAverageKmPerDay = useMemo(
+    () => (activeVehicle ? getVehicleAverageKmPerDay(activeVehicle.id) : 0),
+    [activeVehicle, operationLogs],
+  );
 
   const stats = useMemo(() => {
     const periodTransactions = transactions
@@ -428,6 +443,7 @@ export default function Metrics() {
       return;
     }
     const dueKm = Number(maintenanceDueKm);
+    const cost = Number(maintenanceCost);
     const name = maintenanceTemplate === "Outra" ? maintenanceCustomName.trim() : maintenanceTemplate;
     if (!name) {
       toast.error("Informe o nome da manutencao.");
@@ -437,12 +453,17 @@ export default function Metrics() {
       toast.error("Informe o KM da manutencao.");
       return;
     }
+    if (!Number.isFinite(cost) || cost <= 0) {
+      toast.error("Informe o custo estimado da manutencao.");
+      return;
+    }
     const nextPlans = [
       {
         id: generateLocalId("maintenance"),
         vehicleId: activeVehicle.id,
         name,
         dueKm,
+        cost,
         notes: maintenanceTemplate === "Outra" ? maintenanceCustomName.trim() : "",
         enabled: true,
         createdAt: new Date().toISOString(),
@@ -452,6 +473,7 @@ export default function Metrics() {
     ];
     saveMaintenancePlansLocal(nextPlans);
     setMaintenanceDueKm("");
+    setMaintenanceCost("");
     setMaintenanceCustomName("");
     setMaintenanceTemplate("Troca de oleo");
     toast.success("Manutencao cadastrada.");
@@ -724,11 +746,11 @@ export default function Metrics() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-sm font-bold">Manutencoes</h2>
-              <p className="text-xs text-slate-500">Avise no painel principal quando o KM bater com a manutencao planejada.</p>
+              <p className="text-xs text-slate-500">Planeje o custo por KM para separar a reserva diaria antes do vencimento.</p>
             </div>
             <span className="material-symbols-outlined text-slate-400">build</span>
           </div>
-          <div className="grid gap-3 md:grid-cols-[1.1fr_0.9fr] mb-4">
+          <div className="grid gap-3 md:grid-cols-3 mb-4">
             <div>
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Tipo</label>
               <select
@@ -742,12 +764,24 @@ export default function Metrics() {
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">KM da manutencao</label>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Proximo KM</label>
               <input
                 type="number"
                 min="0"
                 value={maintenanceDueKm}
                 onChange={(e) => setMaintenanceDueKm(e.target.value)}
+                className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Custo estimado</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={maintenanceCost}
+                onChange={(e) => setMaintenanceCost(e.target.value)}
+                placeholder="Ex: 250"
                 className="w-full bg-[#161e2e] border border-emerald-500/20 rounded-lg p-3 text-white"
               />
             </div>
@@ -764,6 +798,20 @@ export default function Metrics() {
           <button onClick={handleSaveMaintenance} className="mb-4 w-full rounded-xl bg-slate-800 py-3 font-bold text-white">
             Salvar manutencao
           </button>
+
+          {maintenanceReserveItems.length > 0 && (
+            <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase text-amber-300">Reserva diaria de manutencao</p>
+                  <p className="text-[10px] text-slate-500">
+                    Media atual: {vehicleAverageKmPerDay.toFixed(0).replace(".", ",")} km/dia
+                  </p>
+                </div>
+                <p className="text-lg font-black text-amber-300">{money(maintenanceReserveTotalPerDay)}</p>
+              </div>
+            </div>
+          )}
 
           {dueMaintenance.length > 0 && (
             <div className="space-y-2 mb-4">
@@ -795,7 +843,19 @@ export default function Metrics() {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-bold">{item.name}</p>
-                        <p className="text-[10px] text-slate-500">{item.dueKm.toLocaleString("pt-BR")} km</p>
+                        <p className="text-[10px] text-slate-500">
+                          {item.dueKm.toLocaleString("pt-BR")} km - {money(item.cost || 0)}
+                        </p>
+                        {(() => {
+                          const reserve = maintenanceReserveItems.find((reserveItem) => reserveItem.id === item.id);
+                          if (!reserve) return null;
+                          return (
+                            <p className="text-[10px] text-amber-300 mt-1">
+                              {money(reserve.dailyReserve)}/dia
+                              {reserve.estimatedDays ? ` por ${reserve.estimatedDays} dias` : " sem media de KM"}
+                            </p>
+                          );
+                        })()}
                       </div>
                       <button onClick={() => removeMaintenance(item.id)} className="text-slate-500 hover:text-red-300">
                         <span className="material-symbols-outlined text-base">delete</span>

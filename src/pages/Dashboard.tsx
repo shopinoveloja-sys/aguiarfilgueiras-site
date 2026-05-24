@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { clearSession, confirmGooglePlayPurchase, createTransaction, getDashboardData, getProfile, getRecurringExpenses, getReferralSummary, getTransactions, redeemReferralCode, saveSession, updateTransaction, deleteTransaction, updateRecurringExpense, deleteRecurringExpense } from "../lib/api";
-import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
+import { getActiveVehicle, getDueMaintenance, getLatestVehicleKm, getMaintenanceReserveItems, getOperationLogForDate, isOperationLogComplete, loadVehicles, todayKey } from "../lib/fleet";
 import { toast } from "sonner";
 import { TutorialCta } from "../components/TutorialCta";
 
@@ -544,6 +544,13 @@ export default function Dashboard() {
     ? `Dia ${formatDate(metricsReminderDate)}: falta ${metricsReminderMissing.join(", ")}.`
     : `Dia ${formatDate(metricsReminderDate)}: complete horario e KM da jornada.`;
   const dueMaintenance = activeVehicle ? getDueMaintenance(activeVehicle.id, getLatestVehicleKm(activeVehicle.id)) : [];
+  const maintenanceReserveItems = activeVehicle ? getMaintenanceReserveItems(activeVehicle.id, getLatestVehicleKm(activeVehicle.id)) : [];
+  const maintenanceReservePerDay = maintenanceReserveItems.reduce((sum, item) => sum + item.dailyReserve, 0);
+  const maintenanceReserveAccumulated = maintenanceReserveItems.reduce((sum, item) => sum + item.accumulatedReserve, 0);
+  const maintenanceReserveTotal = maintenanceReserveItems.reduce((sum, item) => sum + item.cost, 0);
+  const requiredReservePerDay = (planning?.summary?.requiredPerDay || 0) + maintenanceReservePerDay;
+  const totalReserveAccumulated = (planning?.summary?.totalAccumulated || 0) + maintenanceReserveAccumulated;
+  const totalReserveExpense = (planning?.summary?.totalExpense || 0) + maintenanceReserveTotal;
 
   const handleSaveBalance = async () => {
     const val = Number(previousBalance || "0") / 100;
@@ -953,9 +960,9 @@ export default function Dashboard() {
   const recurringExpenses = Array.isArray(planning?.expenses) ? (planning?.expenses as PlanningExpenseItem[]) : [];
   const hasReserveSummary = Boolean(
     planning?.summary && (
-      planning.summary.requiredPerDay > 0 ||
-      (planning.summary.totalAccumulated || 0) > 0 ||
-      (planning.summary.totalExpense || 0) > 0 ||
+      requiredReservePerDay > 0 ||
+      totalReserveAccumulated > 0 ||
+      totalReserveExpense > 0 ||
       recurringExpenses.length > 0
     ),
   );
@@ -1600,24 +1607,30 @@ export default function Dashboard() {
                 </div>
                 <span className="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
               </div>
-              <p className="text-3xl font-black text-amber-400">{formatMoneyPrecise(planning.summary.requiredPerDay)}</p>
+              <p className="text-3xl font-black text-amber-400">{formatMoneyPrecise(requiredReservePerDay)}</p>
               <p className="text-[9px] text-slate-500 mt-1 font-medium">
-                {planning.summary.requiredPerDay > 0
-                  ? "Separe hoje para cobrir suas despesas fixas."
+                {requiredReservePerDay > 0
+                  ? "Separe hoje para cobrir despesas fixas e manutencoes previstas."
                   : "Hoje esta marcado como folga. Nenhuma reserva diaria precisa ser separada hoje."}
               </p>
+              {maintenanceReservePerDay > 0 && (
+                <div className="mt-2 rounded-lg bg-amber-500/5 border border-amber-500/10 px-3 py-2 flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase text-slate-400">Manutencao prevista</span>
+                  <span className="text-xs font-black text-amber-300">{formatMoneyPrecise(maintenanceReservePerDay)}/dia</span>
+                </div>
+              )}
               <div className="mt-3 pt-3 border-t border-amber-500/20 flex justify-between items-center">
                 <span className="text-[10px] font-bold uppercase text-slate-400">Total reservado</span>
                 <span className="text-sm font-black text-amber-300">
-                  {formatMoneyPrecise(planning.summary.totalAccumulated || 0)}
+                  {formatMoneyPrecise(totalReserveAccumulated)}
                 </span>
               </div>
-              {planning.summary.totalExpense > 0 && (
+              {totalReserveExpense > 0 && (
                 <div className="mt-2">
                   <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
                     <span>Reservado ate hoje</span>
                     <span>
-                      {formatMoneyPrecise(planning.summary.totalAccumulated || 0)} de {formatMoneyPrecise(planning.summary.totalExpense || 0)}
+                      {formatMoneyPrecise(totalReserveAccumulated)} de {formatMoneyPrecise(totalReserveExpense)}
                     </span>
                   </div>
                   <div className="mt-2 h-2 rounded-full bg-slate-900/80 overflow-hidden">
@@ -1626,7 +1639,7 @@ export default function Dashboard() {
                       style={{
                         width: `${Math.min(
                           100,
-                          ((planning.summary.totalAccumulated || 0) / Math.max(planning.summary.totalExpense || 0, 1)) * 100,
+                          (totalReserveAccumulated / Math.max(totalReserveExpense, 1)) * 100,
                         )}%`,
                       }}
                     />
