@@ -17,7 +17,7 @@ export function TutorialCta({
       return;
     }
 
-    window.open(tutorialUrl, "_blank", "noopener,noreferrer");
+    window.location.href = tutorialUrl;
   };
 
   return (
