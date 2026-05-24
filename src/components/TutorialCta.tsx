@@ -1,6 +1,8 @@
 import { toast } from "sonner";
 
-const tutorialUrl = String(import.meta.env.VITE_TUTORIAL_URL || "").trim();
+const tutorialUrl = String(
+  import.meta.env.VITE_TUTORIAL_URL || "https://t.me/+yOL88fsSPcRjMDYx",
+).trim();
 
 export function TutorialCta({
   compact = false,
@@ -29,9 +31,9 @@ export function TutorialCta({
           play_circle
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-white">Ver tutorial rapido</p>
+          <p className="text-sm font-bold text-white">Ver tutorial e novidades</p>
           <p className="mt-0.5 text-xs text-slate-400">
-            Aprenda a lancar receitas, despesas e entender seu lucro real.
+            Acompanhe o guia rapido e as atualizacoes no canal oficial.
           </p>
         </div>
         <span className="material-symbols-outlined text-slate-500">open_in_new</span>
