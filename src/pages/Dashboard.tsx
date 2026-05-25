@@ -551,6 +551,8 @@ export default function Dashboard() {
   const requiredReservePerDay = (planning?.summary?.requiredPerDay || 0) + maintenanceReservePerDay;
   const totalReserveAccumulated = (planning?.summary?.totalAccumulated || 0) + maintenanceReserveAccumulated;
   const totalReserveExpense = (planning?.summary?.totalExpense || 0) + maintenanceReserveTotal;
+  const availableNetProfitMonth = data.netProfitMonth - maintenanceReserveAccumulated;
+  const availableTodayProfit = data.todayProfit - maintenanceReservePerDay;
 
   const handleSaveBalance = async () => {
     const val = Number(previousBalance || "0") / 100;
@@ -1200,14 +1202,14 @@ export default function Dashboard() {
             <div className="mt-4 pt-4 border-t border-emerald-500/20 grid grid-cols-2 gap-4">
               <div>
                 <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Mes</p>
-                <p className={`text-xl font-black ${data.netProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {formatMoney(data.netProfitMonth)}
+                <p className={`text-xl font-black ${availableNetProfitMonth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatMoney(availableNetProfitMonth)}
                 </p>
               </div>
               <div>
                 <p className="text-slate-400 text-xs uppercase font-bold mb-1">Lucro do Dia</p>
-                <p className={`text-xl font-black ${data.todayProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {formatMoney(data.todayProfit)}
+                <p className={`text-xl font-black ${availableTodayProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatMoney(availableTodayProfit)}
                 </p>
               </div>
             </div>
