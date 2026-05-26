@@ -1,4 +1,4 @@
-import { Component, useState, type ErrorInfo, type ReactNode } from "react";
+import { Component, useEffect, useState, type ErrorInfo, type ReactNode } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ import { clearSession, login, saveSession } from "./lib/api";
 import "./index.css";
 
 const ADMIN_EMAIL = "shopinove.loja@gmail.com";
+const TELEGRAM_URL = "https://t.me/+yOL88fsSPcRjMDYx";
 
 class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
@@ -96,6 +97,25 @@ function DesktopAppBlocked() {
 
 function AppOnlyRoute({ children }: { children: ReactNode }) {
   return isDesktopBrowser() ? <DesktopAppBlocked /> : <>{children}</>;
+}
+
+function ExternalRedirect({ to }: { to: string }) {
+  useEffect(() => {
+    window.location.replace(to);
+  }, [to]);
+
+  return (
+    <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-6 text-center text-white">
+      <div className="max-w-sm rounded-2xl border border-emerald-500/20 bg-[#161e2e] p-6">
+        <img alt="DriverCash" src="/drivercash-logo.svg" className="mx-auto mb-4 h-14 w-14 object-contain" />
+        <h1 className="mb-2 text-xl font-black">Abrindo canal oficial</h1>
+        <p className="mb-5 text-sm text-slate-400">Voce esta sendo direcionado para o Telegram.</p>
+        <a className="inline-flex h-11 items-center justify-center rounded-xl bg-emerald-600 px-5 text-sm font-bold text-white" href={to}>
+          Abrir Telegram
+        </a>
+      </div>
+    </div>
+  );
 }
 
 const readSessionUserEmail = () => {
@@ -212,6 +232,7 @@ function App() {
           <Route path="/map" element={<AppOnlyRoute><Metrics /></AppOnlyRoute>} />
           <Route path="/privacidade" element={<Privacy />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/telegram" element={<ExternalRedirect to={TELEGRAM_URL} />} />
           <Route path="/exclusao-de-conta" element={<AccountDeletion />} />
           <Route path="/delete-account" element={<AccountDeletion />} />
           <Route path="*" element={<Navigate to="/" replace />} />
