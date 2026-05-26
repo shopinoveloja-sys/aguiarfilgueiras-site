@@ -14,12 +14,16 @@ const FounderSection = () => {
             className="relative mx-auto max-w-sm lg:mx-0"
           >
             <div className="absolute -inset-3 rounded-sm border border-gold/20" />
-            <img
-              src={founderImg}
-              alt="Carlos Filgueiras - Advogado Militar e Sócio Fundador do escritório Aguiar Filgueiras Advocacia"
-              className="relative rounded-sm object-cover"
-              loading="lazy"
-            />
+            <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-gradient-to-br from-primary via-navy to-gold/20 shadow-[0_30px_80px_-45px_hsl(0_0%_0%/.9)]">
+              <img
+                src={founderImg}
+                alt="Carlos Filgueiras - Advogado Militar e Sócio Fundador do escritório Aguiar Filgueiras Advocacia"
+                className="h-full w-full object-cover object-[52%_45%]"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-transparent to-gold/10 mix-blend-multiply" />
+              <div className="absolute inset-0 ring-1 ring-inset ring-gold/20" />
+            </div>
           </motion.div>
 
           <motion.div

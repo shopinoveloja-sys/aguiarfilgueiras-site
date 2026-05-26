@@ -8,6 +8,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import founderImg from "@/assets/founder.jpg";
 import logoImg from "@/assets/aguiar-filgueiras-logo.jpeg";
 import { blogPosts } from "@/data/blogPosts";
 
@@ -62,11 +63,18 @@ const Links = () => {
           transition={{ duration: 0.5 }}
           className="flex items-center gap-4"
         >
-          <img
-            src={logoImg}
-            alt="Aguiar Filgueiras Advocacia"
-            className="h-16 w-16 rounded-full object-cover shadow-lg ring-1 ring-gold/40"
-          />
+          <div className="relative h-20 w-20 shrink-0">
+            <img
+              src={founderImg}
+              alt="Carlos Filgueiras"
+              className="h-full w-full rounded-full object-cover object-[52%_43%] shadow-lg ring-1 ring-gold/40"
+            />
+            <img
+              src={logoImg}
+              alt="Aguiar Filgueiras Advocacia"
+              className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full object-cover ring-2 ring-primary"
+            />
+          </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light">
               Aguiar Filgueiras
