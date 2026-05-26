@@ -1,118 +1,175 @@
 import { motion } from "framer-motion";
-import { Phone, Mail, Globe, Instagram, MapPin, FileText, Scale } from "lucide-react";
-import founderImg from "@/assets/founder.jpg";
+import {
+  ArrowUpRight,
+  BookOpenText,
+  FileText,
+  MessageCircle,
+  Scale,
+  UserRound,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import logoImg from "@/assets/aguiar-filgueiras-logo.jpeg";
+import { blogPosts } from "@/data/blogPosts";
 
-const links = [
+const latestArticle = blogPosts[0];
+
+const cards = [
   {
-    icon: Phone,
-    label: "WhatsApp",
-    desc: "Fale diretamente conosco",
-    href: "https://wa.me/5561981833328",
+    icon: UserRound,
+    label: "Quem sou eu",
+    eyebrow: "Fundador",
+    text: "Conheça a trajetória de Carlos Filgueiras e a atuação dedicada ao Direito Militar.",
+    to: "/#fundador",
+    tone: "tall",
   },
   {
-    icon: Globe,
-    label: "Site Oficial",
-    desc: "aguiarfilgueiras.com.br",
-    href: "https://chic-web-evolve.lovable.app",
-  },
-  {
-    icon: Mail,
-    label: "E-mail",
-    desc: "contato@aguiarfilgueiras.com.br",
-    href: "mailto:contato@aguiarfilgueiras.com.br",
-  },
-  {
-    icon: Instagram,
-    label: "Instagram",
-    desc: "@aguiarfilgueiras.adv",
-    href: "https://instagram.com/aguiarfilgueiras.adv",
-  },
-  {
-    icon: Scale,
-    label: "Áreas de Atuação",
-    desc: "Conheça nossas especialidades",
-    href: "https://chic-web-evolve.lovable.app/#areas",
+    icon: BookOpenText,
+    label: "Blog",
+    eyebrow: "Análises",
+    text: "Artigos sobre Direito Penal Militar, previdência militar e defesa disciplinar.",
+    to: "/#blog",
+    tone: "short",
   },
   {
     icon: FileText,
-    label: "Blog Jurídico",
-    desc: "Artigos e publicações",
-    href: "https://chic-web-evolve.lovable.app/#blog",
+    label: "Último artigo",
+    eyebrow: latestArticle?.category ?? "Publicação",
+    text: latestArticle?.title ?? "Leia a publicação mais recente do escritório.",
+    to: latestArticle ? `/blog/${latestArticle.slug}` : "/#blog",
+    tone: "short",
   },
   {
-    icon: MapPin,
-    label: "Localização",
-    desc: "CNB 3 – Taguatinga Norte, Brasília/DF",
-    href: "https://maps.google.com/?q=CNB+3+Taguatinga+Norte+Brasilia+DF",
+    icon: MessageCircle,
+    label: "Contato",
+    eyebrow: "Atendimento",
+    text: "Fale pelo WhatsApp para orientação jurídica especializada.",
+    to: "https://wa.me/5561981833328",
+    tone: "tall",
+    external: true,
   },
 ];
 
 const Links = () => {
   return (
-    <div className="min-h-screen bg-primary flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Profile */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
+    <main className="min-h-screen overflow-hidden bg-primary text-primary-foreground">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsl(42_55%_52%/.18),transparent_34%),linear-gradient(135deg,hsl(220_45%_11%),hsl(220_36%_20%))]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+
+      <section className="relative mx-auto flex min-h-screen w-full max-w-2xl flex-col px-5 py-8 sm:px-8">
+        <motion.header
+          initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col items-center text-center mb-10"
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-4"
         >
-          <div className="h-28 w-28 rounded-full border-2 border-accent overflow-hidden mb-4 shadow-lg">
-            <img
-              src={founderImg}
-              alt="Dr. Carlos Filgueiras"
-              className="h-full w-full object-cover"
-            />
+          <img
+            src={logoImg}
+            alt="Aguiar Filgueiras Advocacia"
+            className="h-16 w-16 rounded-full object-cover shadow-lg ring-1 ring-gold/40"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light">
+              Aguiar Filgueiras
+            </p>
+            <h1 className="mt-1 font-heading text-xl font-semibold leading-tight text-primary-foreground sm:text-2xl">
+              Advocacia Militar
+            </h1>
+            <p className="mt-1 max-w-[240px] text-xs leading-relaxed text-gold-light/70 sm:max-w-none">
+              Defesa técnica, estratégia e experiência para militares.
+            </p>
           </div>
-          <h1 className="font-heading text-2xl font-bold text-primary-foreground">
-            Aguiar Filgueiras
-          </h1>
-          <p className="text-sm text-gold-light tracking-[0.15em] uppercase mt-1">
-            Advocacia Militar &amp; Criminal
+        </motion.header>
+
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.55 }}
+          className="mt-8 border-l border-gold/40 pl-4"
+        >
+          <p className="max-w-full break-words font-heading text-2xl font-semibold leading-tight sm:text-4xl">
+            Um acesso direto ao essencial.
           </p>
-          <p className="text-xs text-muted-foreground mt-2 max-w-[280px]">
-            Defesa especializada para militares em Brasília e em todo o Brasil.
+          <p className="mt-3 max-w-lg text-sm leading-relaxed text-gold-light/75">
+            Escolha o caminho mais rápido para conhecer o escritório, ler os conteúdos
+            recentes ou falar com a equipe.
           </p>
         </motion.div>
 
-        {/* Links */}
-        <div className="flex flex-col gap-3">
-          {links.map((link, i) => (
-            <motion.a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + i * 0.07, duration: 0.4 }}
-              className="group flex items-center gap-4 rounded-sm border border-accent/20 bg-card/5 backdrop-blur-sm px-5 py-4 transition-all hover:border-accent/60 hover:bg-card/10"
-            >
-              <link.icon className="h-5 w-5 shrink-0 text-accent" />
-              <div className="flex-1 min-w-0">
-                <span className="block text-sm font-semibold text-primary-foreground group-hover:text-accent transition-colors">
-                  {link.label}
-                </span>
-                <span className="block text-xs text-gold-light/70 truncate">
-                  {link.desc}
-                </span>
-              </div>
-            </motion.a>
-          ))}
+        <div className="mt-9 grid flex-1 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 pb-8 sm:gap-4">
+          {cards.map((card, index) => {
+            const CardIcon = card.icon;
+            const className = `group relative flex min-h-[168px] w-full min-w-0 flex-col justify-between overflow-hidden rounded-sm border border-gold/25 bg-primary-foreground/[0.035] p-4 shadow-[0_20px_60px_-30px_hsl(0_0%_0%/.8)] backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-gold hover:bg-primary-foreground/[0.075] ${
+              card.tone === "tall" ? "sm:min-h-[220px]" : "sm:min-h-[190px]"
+            }`;
+
+            const content = (
+              <>
+                <div className="flex items-start justify-between gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-sm border border-gold/20 bg-gold/10 text-gold">
+                    <CardIcon className="h-5 w-5" />
+                  </span>
+                  <ArrowUpRight className="h-4 w-4 text-gold/55 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-gold" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-light/60">
+                    {card.eyebrow}
+                  </span>
+                  <h2 className="mt-2 break-words font-heading text-xl font-semibold leading-tight text-primary-foreground">
+                    {card.label}
+                  </h2>
+                  <p className="mt-2 line-clamp-4 break-words text-xs leading-relaxed text-gold-light/70">
+                    {card.text}
+                  </p>
+                </div>
+                <span className="absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-gold/70 via-gold/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+              </>
+            );
+
+            return card.external ? (
+              <motion.a
+                key={card.label}
+                href={card.to}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + index * 0.08, duration: 0.45 }}
+                className={className}
+              >
+                {content}
+              </motion.a>
+            ) : (
+              <motion.div
+                key={card.label}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + index * 0.08, duration: 0.45 }}
+                className="min-w-0"
+              >
+                <Link to={card.to} className={className}>
+                  {content}
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* Footer */}
-        <motion.p
+        <motion.footer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="mt-10 text-center text-[10px] text-gold-light/40 tracking-wider uppercase"
+          transition={{ delay: 0.65 }}
+          className="border-t border-gold/15 py-5 text-center"
         >
-          © {new Date().getFullYear()} Aguiar Filgueiras Advocacia
-        </motion.p>
-      </div>
-    </div>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-light/60 transition-colors hover:text-gold"
+          >
+            <Scale className="h-3.5 w-3.5" />
+            aguiarfilgueiras.com.br
+          </Link>
+        </motion.footer>
+      </section>
+    </main>
   );
 };
 
