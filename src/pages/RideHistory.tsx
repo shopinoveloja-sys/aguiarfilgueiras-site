@@ -98,12 +98,12 @@ export default function RideHistory() {
   };
 
   const startRide = () => {
-    if (closedDay) {
-      toast.error("Este dia ja foi encerrado. Reabra removendo o encerramento em uma futura versao.");
-      return;
-    }
     if (runningSession) return;
     const now = new Date().toISOString();
+    if (closedDay) {
+      persistDays(closedDays.filter((item) => item.id !== closedDay.id));
+      toast.info("Dia reaberto para registrar nova corrida.");
+    }
     const nextSession: RideTimerSession = {
       id: generateLocalId("route"),
       date: selectedDate,
@@ -213,7 +213,6 @@ export default function RideHistory() {
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <button
               onClick={runningSession ? pauseRide : startRide}
-              disabled={Boolean(closedDay && !runningSession)}
               className={`h-14 rounded-xl text-sm font-black text-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${
                 runningSession ? "bg-amber-500" : "bg-emerald-600"
               }`}
@@ -237,7 +236,7 @@ export default function RideHistory() {
 
           {closedDay && (
             <p className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-200">
-              Dia encerrado as {shortTime(closedDay.closedAt)}.
+              Dia encerrado as {shortTime(closedDay.closedAt)}. Toque em iniciar corrida para reabrir.
             </p>
           )}
         </section>
