@@ -66,12 +66,32 @@ export interface RideCountLog {
   updatedAt: string;
 }
 
+export interface RideTimerSession {
+  id: string;
+  date: string;
+  vehicleId: string;
+  startAt: string;
+  endAt: string | null;
+  durationMs: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RideTimerDay {
+  id: string;
+  date: string;
+  vehicleId: string;
+  closedAt: string;
+}
+
 const VEHICLES_KEY = "drivercash_vehicles";
 const LEGACY_VEHICLE_KEY = "drivercash_vehicle";
 const OPERATION_LOGS_KEY = "drivercash_operation_logs";
 const FUEL_LOGS_KEY = "drivercash_fuel_logs";
 const MAINTENANCE_KEY = "drivercash_maintenance_plans";
 const RIDE_COUNT_LOGS_KEY = "drivercash_ride_count_logs";
+const RIDE_TIMER_SESSIONS_KEY = "drivercash_ride_timer_sessions";
+const RIDE_TIMER_DAYS_KEY = "drivercash_ride_timer_days";
 
 const defaultVehicle: VehicleProfile = {
   id: "vehicle-default",
@@ -252,6 +272,47 @@ export function loadRideCountLogs(): RideCountLog[] {
 
 export function saveRideCountLogs(logs: RideCountLog[]) {
   safeWrite(RIDE_COUNT_LOGS_KEY, JSON.stringify(logs));
+}
+
+export function getRideTimerSessionDurationMs(session: RideTimerSession, now = new Date()) {
+  if (session.endAt) return Math.max(0, Number(session.durationMs) || 0);
+  const startedAt = new Date(session.startAt);
+  const elapsed = Number.isNaN(startedAt.getTime()) ? 0 : now.getTime() - startedAt.getTime();
+  return Math.max(0, elapsed);
+}
+
+export function loadRideTimerSessions(): RideTimerSession[] {
+  return parseList<Partial<RideTimerSession>>(safeRead(RIDE_TIMER_SESSIONS_KEY))
+    .map((item) => ({
+      id: item.id || generateLocalId("route"),
+      date: item.date || todayKey(),
+      vehicleId: item.vehicleId || getActiveVehicle().id,
+      startAt: item.startAt || new Date().toISOString(),
+      endAt: item.endAt || null,
+      durationMs: Number(item.durationMs) || 0,
+      createdAt: item.createdAt || new Date().toISOString(),
+      updatedAt: item.updatedAt || new Date().toISOString(),
+    }))
+    .sort((a, b) => (a.startAt < b.startAt ? 1 : -1));
+}
+
+export function saveRideTimerSessions(sessions: RideTimerSession[]) {
+  safeWrite(RIDE_TIMER_SESSIONS_KEY, JSON.stringify(sessions));
+}
+
+export function loadRideTimerDays(): RideTimerDay[] {
+  return parseList<Partial<RideTimerDay>>(safeRead(RIDE_TIMER_DAYS_KEY))
+    .map((item) => ({
+      id: item.id || generateLocalId("route-day"),
+      date: item.date || todayKey(),
+      vehicleId: item.vehicleId || getActiveVehicle().id,
+      closedAt: item.closedAt || new Date().toISOString(),
+    }))
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
+export function saveRideTimerDays(days: RideTimerDay[]) {
+  safeWrite(RIDE_TIMER_DAYS_KEY, JSON.stringify(days));
 }
 
 export function loadMaintenancePlans(): MaintenancePlan[] {

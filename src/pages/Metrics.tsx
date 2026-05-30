@@ -14,12 +14,14 @@ import {
   getLatestVehicleKm,
   getMaintenanceReserveItems,
   getPreviousVehicleKm,
+  getRideTimerSessionDurationMs,
   getVehicleAverageKmPerDay,
   isOperationLogComplete,
   loadFuelLogs,
   loadMaintenancePlans,
   loadOperationLogs,
   loadRideCountLogs,
+  loadRideTimerSessions,
   loadVehicles,
   saveMaintenancePlans,
   saveOperationLogs,
@@ -236,6 +238,10 @@ export default function Metrics() {
     () => rideCountLogs.filter((item) => item.vehicleId === activeVehicle?.id),
     [activeVehicle, rideCountLogs],
   );
+  const routeTimerLogs = useMemo(
+    () => loadRideTimerSessions().filter((item) => item.vehicleId === activeVehicle?.id),
+    [activeVehicle],
+  );
 
   const dueMaintenance = useMemo(() => {
     const currentKm = getLatestVehicleKm(activeVehicle?.id || "");
@@ -261,6 +267,7 @@ export default function Metrics() {
     const periodFuelLogs = fuelLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
     const periodLogs = completeLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
     const periodRideLogs = activeRideLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
+    const periodRouteTimerLogs = routeTimerLogs.filter((item) => isDateInRange(item.date, period, selectedDate));
     const income = periodTransactions
       .filter((item) => item.type === "INCOME")
       .reduce((sum, item) => sum + toNumber(item.value), 0);
@@ -275,10 +282,13 @@ export default function Metrics() {
       .reduce((sum, item) => sum + toNumber(item.value), 0);
     const kmTotal = periodLogs.reduce((sum, item) => sum + (item.kmEnd! - item.kmStart!), 0);
     const hoursTotal = periodLogs.reduce((sum, item) => sum + getHoursBetween(item.startTime, item.endTime), 0);
+    const routeHoursTotal = periodRouteTimerLogs.reduce((sum, item) => sum + getRideTimerSessionDurationMs(item), 0) / 3600000;
+    const idleHoursTotal = Math.max(0, hoursTotal - routeHoursTotal);
     const fuelTotal = periodFuelLogs.reduce((sum, item) => sum + item.totalPrice, 0);
     const fuelQuantity = periodFuelLogs.reduce((sum, item) => sum + item.quantity, 0);
     const incomePerKm = kmTotal > 0 ? operationalIncome / kmTotal : 0;
     const incomePerHour = hoursTotal > 0 ? operationalIncome / hoursTotal : 0;
+    const incomePerRouteHour = routeHoursTotal > 0 ? operationalIncome / routeHoursTotal : 0;
     const fuelPerKm = kmTotal > 0 ? fuelTotal / kmTotal : 0;
     const profitPerKm = kmTotal > 0 ? (operationalIncome - expense) / kmTotal : 0;
     const consumptionAverage = fuelQuantity > 0 ? kmTotal / fuelQuantity : 0;
@@ -319,8 +329,11 @@ export default function Metrics() {
       maintenanceCost,
       kmTotal,
       hoursTotal,
+      routeHoursTotal,
+      idleHoursTotal,
       incomePerKm,
       incomePerHour,
+      incomePerRouteHour,
       fuelPerKm,
       profitPerKm,
       consumptionAverage,
@@ -328,7 +341,7 @@ export default function Metrics() {
       averagePerRide,
       platformRideSummaries,
     };
-  }, [activeRideLogs, completeLogs, fuelLogs, period, selectedDate, transactions]);
+  }, [activeRideLogs, completeLogs, fuelLogs, period, routeTimerLogs, selectedDate, transactions]);
 
   const saveLocalOperationLogs = (nextLogs: OperationLog[]) => {
     setOperationLogs(nextLogs);
@@ -646,6 +659,14 @@ export default function Metrics() {
             <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Valor por corrida</p>
             <p className="text-2xl font-black text-cyan-300">{money(stats.averagePerRide)}</p>
           </div>
+          <div className="rounded-xl bg-slate-900 border border-emerald-500/20 p-4">
+            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Horas em rota</p>
+            <p className="text-2xl font-black text-emerald-300">{stats.routeHoursTotal.toFixed(1).replace(".", ",")} h</p>
+          </div>
+          <div className="rounded-xl bg-slate-900 border border-amber-500/20 p-4">
+            <p className="text-[10px] font-bold uppercase text-slate-500 mb-2">Tempo ocioso</p>
+            <p className="text-2xl font-black text-amber-300">{stats.idleHoursTotal.toFixed(1).replace(".", ",")} h</p>
+          </div>
         </section>
 
         <section className="rounded-xl bg-slate-900 border border-slate-800 p-4">
@@ -665,6 +686,9 @@ export default function Metrics() {
               ["Manutencao", money(stats.maintenanceCost), "text-slate-300"],
               ["Corridas", stats.totalRides.toLocaleString("pt-BR"), "text-violet-300"],
               ["Horas registradas", `${stats.hoursTotal.toFixed(1).replace(".", ",")} h`, "text-emerald-300"],
+              ["Horas em rota", `${stats.routeHoursTotal.toFixed(1).replace(".", ",")} h`, "text-emerald-300"],
+              ["Tempo ocioso", `${stats.idleHoursTotal.toFixed(1).replace(".", ",")} h`, "text-amber-300"],
+              ["Ganho por hora em rota", money(stats.incomePerRouteHour), "text-cyan-300"],
             ].map(([label, value, color]) => (
               <div key={label} className="flex items-center justify-between border-b border-slate-800 pb-2 last:border-0 last:pb-0">
                 <span className="text-xs font-bold uppercase text-slate-500">{label}</span>

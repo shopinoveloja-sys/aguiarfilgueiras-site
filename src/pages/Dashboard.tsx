@@ -1664,9 +1664,9 @@ export default function Dashboard() {
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
           <span className="text-[10px] font-bold uppercase">Hoje</span>
         </a>
-        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); toast.info("Estamos preparando uma novidade para versoes futuras."); }}>
-          <span className="material-symbols-outlined">history</span>
-          <span className="text-[10px] font-bold uppercase">Historico</span>
+        <a className="flex flex-col items-center gap-1 text-slate-500" href="#" onClick={(e) => { e.preventDefault(); navigate("/rides"); }}>
+          <span className="material-symbols-outlined">timer</span>
+          <span className="text-[10px] font-bold uppercase">Corridas</span>
         </a>
         <a className="relative -top-8" href="#" onClick={(e) => { e.preventDefault(); navigate("/add"); }}>
           <button className="size-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white ring-4 ring-[#0b0f19] active:scale-95">
