@@ -30,6 +30,7 @@ export default function QuickAdd() {
   const [fuelType, setFuelType] = useState<FuelType>("gasolina");
   const [fuelUnitPrice, setFuelUnitPrice] = useState("");
   const [fuelOdometerKm, setFuelOdometerKm] = useState("");
+  const [fuelPaymentMethod, setFuelPaymentMethod] = useState<"cash" | "card">("cash");
   const [loading, setLoading] = useState(false);
   const vehicles = useMemo(() => loadVehicles(), []);
   const activeVehicle = useMemo(() => getActiveVehicle(vehicles), [vehicles]);
@@ -172,6 +173,8 @@ export default function QuickAdd() {
         type === "EXPENSE" &&
         (recurrenceType !== "SPECIFIC_DATE" ||
           (recurrenceType === "SPECIFIC_DATE" && selectedDate > todayInputValue()));
+      const shouldSkipFuelExpenseTransaction =
+        isFuelExpense && recurrenceType === "SPECIFIC_DATE" && fuelPaymentMethod === "card";
 
       if (shouldCreateRecurring) {
         await createRecurringExpense({
@@ -179,7 +182,7 @@ export default function QuickAdd() {
           value: finalValue,
           ...recurrencePayload,
         });
-      } else if (hasAmount) {
+      } else if (hasAmount && !shouldSkipFuelExpenseTransaction) {
         await createTransaction({
           type,
           value: finalValue,
@@ -198,6 +201,7 @@ export default function QuickAdd() {
             date: selectedDate,
             vehicleId: activeVehicle.id,
             fuelType,
+            paymentMethod: fuelPaymentMethod,
             unitPrice: parsedFuelUnitPrice,
             totalPrice: finalValue,
             quantity,
@@ -209,7 +213,13 @@ export default function QuickAdd() {
         saveFuelLogs(nextFuelLogs);
       }
 
-      toast.success(type === "INCOME" ? "Ganho registrado com sucesso!" : "Despesa registrada com sucesso!");
+      toast.success(
+        isFuelExpense && recurrenceType === "SPECIFIC_DATE" && fuelPaymentMethod === "card"
+          ? "Abastecimento registrado nas metricas!"
+          : type === "INCOME"
+            ? "Ganho registrado com sucesso!"
+            : "Despesa registrada com sucesso!",
+      );
       navigate("/dashboard");
     } catch (error) {
       toast.error("Erro ao salvar lancamento.");
@@ -379,6 +389,36 @@ export default function QuickAdd() {
                 />
               </div>
             </div>
+            {recurrenceType === "SPECIFIC_DATE" && (
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Pagamento</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: "cash", label: "A vista", hint: "entra nas despesas" },
+                    { id: "card", label: "Cartao", hint: "so metricas" },
+                  ].map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => setFuelPaymentMethod(option.id as "cash" | "card")}
+                      className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                        fuelPaymentMethod === option.id
+                          ? "border-amber-400 bg-amber-500/15 text-amber-200"
+                          : "border-emerald-500/20 bg-[#161e2e] text-slate-300"
+                      }`}
+                    >
+                      <span className="block text-xs font-black uppercase">{option.label}</span>
+                      <span className="block text-[10px] text-slate-500">{option.hint}</span>
+                    </button>
+                  ))}
+                </div>
+                {fuelPaymentMethod === "card" && (
+                  <p className="mt-2 text-[11px] text-amber-100/70">
+                    Abastecimento no cartao alimenta consumo, KM e custo de combustivel, mas nao entra como despesa do dia.
+                  </p>
+                )}
+              </div>
+            )}
             <div>
               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">KM no abastecimento</label>
               <input

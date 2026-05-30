@@ -28,6 +28,7 @@ export interface FuelLog {
   date: string;
   vehicleId: string;
   fuelType: FuelType;
+  paymentMethod?: "cash" | "card";
   unitPrice: number;
   totalPrice: number;
   quantity: number;
@@ -216,6 +217,7 @@ export function loadFuelLogs(): FuelLog[] {
       date: item.date || todayKey(),
       vehicleId: item.vehicleId || getActiveVehicle().id,
       fuelType: normalizeFuelType(item.fuelType),
+      paymentMethod: item.paymentMethod === "card" ? "card" : "cash",
       unitPrice: Number(item.unitPrice) || 0,
       totalPrice: Number(item.totalPrice) || 0,
       quantity: Number(item.quantity) || 0,
