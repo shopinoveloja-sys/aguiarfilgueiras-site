@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Calendar, FileSearch, Search, Shield, Tags } from "lucide-react";
+import { ArrowRight, BookOpen, Calendar, FileSearch, MapPin, Search, Shield, Tags } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { blogPosts } from "@/data/blogPosts";
@@ -8,49 +8,122 @@ import { servicePages } from "@/data/servicePages";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 
-const topics = [
+const audiences = [
   {
-    id: "todos",
-    label: "Todos",
-    description: "Todos os artigos publicados.",
-    serviceSlugs: [] as string[],
-    terms: [] as string[],
+    id: "federais",
+    label: "Forcas Federais",
+    description: "Exercito, Marinha, Aeronautica, Policia Federal, Policia Rodoviaria Federal e outros servidores federais.",
+    terms: ["militar", "forcas armadas", "exercito", "marinha", "aeronautica", "federal", "prf", "policia federal"],
+    groups: [
+      { label: "Exercito", query: "militar" },
+      { label: "Marinha", query: "militar" },
+      { label: "Aeronautica", query: "militar" },
+      { label: "Policia Federal", query: "federal" },
+      { label: "Policia Rodoviaria Federal", query: "federal" },
+      { label: "Outros servidores federais", query: "federal" },
+    ],
+    topics: [
+      {
+        id: "todos",
+        label: "Todos",
+        description: "Todos os artigos aplicaveis ao publico federal.",
+        serviceSlugs: [] as string[],
+        terms: [] as string[],
+      },
+      {
+        id: "penal-ipm",
+        label: "Penal militar e IPM",
+        description: "Crimes militares, IPM, oitivas e defesa tecnica.",
+        serviceSlugs: ["direito-penal-militar", "defesa-em-ipm"],
+        terms: ["penal", "crime", "ipm", "codigo penal", "inquerito"],
+      },
+      {
+        id: "carreira",
+        label: "Carreira militar",
+        description: "Promocao, exclusao, licenciamento e reintegracao.",
+        serviceSlugs: ["exclusao-das-forcas-armadas", "licenciamento-indevido-militar", "promocao-militar-preterida"],
+        terms: ["exclusao", "licenciamento", "promocao", "carreira", "forcas armadas"],
+      },
+      {
+        id: "saude-beneficios",
+        label: "Saude, pensao e beneficios",
+        description: "Reforma, invalidez, pensao militar e abate-teto.",
+        serviceSlugs: ["reforma-militar-por-invalidez", "pensao-militar", "abate-teto-pensao-militar"],
+        terms: ["pensao", "previdenciario", "reforma", "invalidez", "abate-teto", "beneficio"],
+      },
+    ],
   },
   {
-    id: "penal-ipm",
-    label: "Penal militar e IPM",
-    description: "Crimes militares, IPM, oitivas e defesa tecnica.",
-    serviceSlugs: ["direito-penal-militar", "defesa-em-ipm"],
-    terms: ["penal", "crime", "ipm", "codigo penal", "inquerito"],
+    id: "estaduais",
+    label: "Forcas Estaduais",
+    description: "Policiais militares, bombeiros militares e carreiras estaduais com demandas disciplinares e administrativas.",
+    terms: ["policial", "bombeiro", "estadual", "disciplinar", "punicao", "administrativo", "transgressao"],
+    groups: [
+      { label: "Policiais militares", query: "policial" },
+      { label: "Bombeiros militares", query: "bombeiro" },
+    ],
+    topics: [
+      {
+        id: "todos",
+        label: "Todos",
+        description: "Todos os artigos aplicaveis ao publico estadual.",
+        serviceSlugs: ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
+        terms: [] as string[],
+      },
+      {
+        id: "disciplina",
+        label: "Disciplina e punicoes",
+        description: "Punicoes, transgressoes, ampla defesa e recursos disciplinares.",
+        serviceSlugs: ["punicao-disciplinar-militar", "processo-administrativo-militar"],
+        terms: ["disciplinar", "punicao", "transgressao", "ampla defesa"],
+      },
+      {
+        id: "processos",
+        label: "Processos administrativos",
+        description: "Sindicancias, PAD, conselhos e defesa administrativa.",
+        serviceSlugs: ["processo-administrativo-militar", "punicao-disciplinar-militar"],
+        terms: ["administrativo", "sindicancia", "processo", "conselho", "defesa"],
+      },
+      {
+        id: "carreira-estadual",
+        label: "Carreira e permanencia",
+        description: "Promocao, exclusao, licenciamento e impactos na carreira estadual.",
+        serviceSlugs: ["promocao-militar-preterida", "exclusao-das-forcas-armadas", "licenciamento-indevido-militar"],
+        terms: ["promocao", "exclusao", "licenciamento", "carreira", "permanencia"],
+      },
+    ],
   },
-  {
-    id: "disciplina",
-    label: "Disciplina e punicoes",
-    description: "Punicoes, transgressoes, ampla defesa e processo administrativo.",
-    serviceSlugs: ["punicao-disciplinar-militar", "processo-administrativo-militar"],
-    terms: ["disciplinar", "punicao", "transgressao", "ampla defesa", "administrativo"],
-  },
-  {
-    id: "carreira",
-    label: "Carreira militar",
-    description: "Promocao, exclusao, licenciamento e reintegracao.",
-    serviceSlugs: ["exclusao-das-forcas-armadas", "licenciamento-indevido-militar", "promocao-militar-preterida"],
-    terms: ["exclusao", "licenciamento", "promocao", "carreira", "forcas armadas"],
-  },
-  {
-    id: "saude-beneficios",
-    label: "Saude, pensao e beneficios",
-    description: "Reforma, invalidez, pensao militar e abate-teto.",
-    serviceSlugs: ["reforma-militar-por-invalidez", "pensao-militar", "abate-teto-pensao-militar"],
-    terms: ["pensao", "previdenciario", "reforma", "invalidez", "abate-teto", "beneficio"],
-  },
-  {
-    id: "policiais",
-    label: "Policiais e bombeiros",
-    description: "Conteudos uteis para militares estaduais, policiais e bombeiros militares.",
-    serviceSlugs: ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
-    terms: ["policial", "bombeiro", "estadual", "disciplinar", "punicao"],
-  },
+];
+
+const states = [
+  "Todos os estados",
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
 ];
 
 const normalize = (value: string) =>
@@ -60,7 +133,9 @@ const normalize = (value: string) =>
     .replace(/[\u0300-\u036f]/g, "");
 
 const Blog = () => {
+  const [activeAudience, setActiveAudience] = useState("federais");
   const [activeTopic, setActiveTopic] = useState("todos");
+  const [activeState, setActiveState] = useState("Todos os estados");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -101,20 +176,25 @@ const Blog = () => {
   }, []);
 
   const filteredPosts = useMemo(() => {
-    const topic = topics.find((item) => item.id === activeTopic) || topics[0];
+    const audience = audiences.find((item) => item.id === activeAudience) || audiences[0];
+    const topic = audience.topics.find((item) => item.id === activeTopic) || audience.topics[0];
     const query = normalize(search.trim());
+    const selectedState = activeState === "Todos os estados" ? "" : normalize(activeState);
 
     return blogPosts.filter((post) => {
       const text = normalize(
         [post.title, post.category, post.excerpt, post.carlosComment, ...(post.keywords || [])].join(" "),
       );
+      const matchesAudience = audience.terms.some((term) => text.includes(normalize(term)));
       const matchesTopic = topic.id === "todos" || topic.terms.some((term) => text.includes(normalize(term)));
+      const matchesState = !selectedState || text.includes(selectedState);
       const matchesSearch = !query || text.includes(query);
-      return matchesTopic && matchesSearch;
+      return matchesAudience && matchesTopic && matchesState && matchesSearch;
     });
-  }, [activeTopic, search]);
+  }, [activeAudience, activeTopic, activeState, search]);
 
-  const activeTopicData = topics.find((topic) => topic.id === activeTopic) || topics[0];
+  const activeAudienceData = audiences.find((audience) => audience.id === activeAudience) || audiences[0];
+  const activeTopicData = activeAudienceData.topics.find((topic) => topic.id === activeTopic) || activeAudienceData.topics[0];
   const featuredPost = filteredPosts[0] || blogPosts[0];
 
   return (
@@ -130,11 +210,11 @@ const Blog = () => {
             <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
               <div>
                 <h1 className="max-w-3xl font-heading text-3xl font-bold leading-tight sm:text-5xl">
-                  Artigos organizados por tema para militares e familiares
+                  Artigos separados por forca, tema e estado
                 </h1>
                 <p className="mt-5 max-w-2xl text-base leading-relaxed text-gold-light/80">
-                  Encontre orientacoes sobre IPM, punicoes, carreira, pensao e beneficios militares sem precisar
-                  navegar por uma lista solta de publicacoes.
+                  Comece escolhendo entre Forcas Federais e Forcas Estaduais. Depois filtre por assunto, estado
+                  ou palavra-chave para encontrar a orientacao mais proxima do seu caso.
                 </p>
               </div>
               <div className="rounded-sm border border-gold/20 bg-primary-foreground/5 p-5">
@@ -155,9 +235,50 @@ const Blog = () => {
 
         <section className="border-b border-border bg-card py-8">
           <div className="container mx-auto max-w-6xl px-6">
-            <div className="grid gap-4 lg:grid-cols-[1fr_0.45fr]">
+            <div className="grid gap-4 md:grid-cols-2">
+              {audiences.map((audience) => (
+                <button
+                  key={audience.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveAudience(audience.id);
+                    setActiveTopic("todos");
+                    setActiveState("Todos os estados");
+                  }}
+                  className={`group relative overflow-hidden rounded-sm border p-5 text-left transition-all ${
+                    activeAudience === audience.id
+                      ? "border-accent bg-primary text-primary-foreground shadow-[var(--shadow-elegant)]"
+                      : "border-border bg-background text-muted-foreground hover:-translate-y-0.5 hover:border-accent hover:text-primary hover:shadow-[var(--shadow-soft)]"
+                  }`}
+                >
+                  <span
+                    className={`absolute right-0 top-0 h-full w-1 ${
+                      activeAudience === audience.id ? "bg-accent" : "bg-border group-hover:bg-accent"
+                    }`}
+                  />
+                  <span className="block font-heading text-2xl font-bold">{audience.label}</span>
+                  <span className={`mt-2 block text-sm leading-relaxed ${activeAudience === audience.id ? "text-gold-light/80" : ""}`}>
+                    {audience.description}
+                  </span>
+                  <span className="mt-4 flex flex-wrap gap-2">
+                    {audience.groups.slice(0, 3).map((group) => (
+                      <span
+                        key={group.label}
+                        className={`rounded-sm px-2.5 py-1 text-xs font-semibold ${
+                          activeAudience === audience.id ? "bg-primary-foreground/10 text-gold" : "bg-accent/10 text-accent"
+                        }`}
+                      >
+                        {group.label}
+                      </span>
+                    ))}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_0.28fr_0.45fr]">
               <div className="flex gap-3 overflow-x-auto pb-2">
-                {topics.map((topic) => (
+                {activeAudienceData.topics.map((topic) => (
                   <button
                     key={topic.id}
                     type="button"
@@ -172,6 +293,24 @@ const Blog = () => {
                   </button>
                 ))}
               </div>
+              {activeAudience === "estaduais" ? (
+                <label className="relative block">
+                  <MapPin className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <select
+                    value={activeState}
+                    onChange={(event) => setActiveState(event.target.value)}
+                    className="min-h-12 w-full rounded-sm border border-border bg-background pl-11 pr-4 text-sm outline-none transition-colors focus:border-accent"
+                  >
+                    {states.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : (
+                <div className="hidden lg:block" />
+              )}
               <label className="relative block">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
@@ -193,10 +332,31 @@ const Blog = () => {
                 <div>
                   <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-accent">
                     <Tags className="h-4 w-4" />
-                    Topico
+                    Segmento
                   </span>
-                  <h2 className="mt-3 font-heading text-2xl font-bold text-primary">{activeTopicData.label}</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{activeTopicData.description}</p>
+                  <h2 className="mt-3 font-heading text-2xl font-bold text-primary">{activeAudienceData.label}</h2>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{activeAudienceData.description}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {activeAudienceData.groups.map((group) => (
+                      <button
+                        key={group.label}
+                        type="button"
+                        onClick={() => setSearch(group.query)}
+                        className="rounded-sm border border-border bg-card px-3 py-2 text-left text-sm font-semibold text-primary transition-colors hover:border-accent hover:text-accent"
+                      >
+                        {group.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-6 border-t border-border pt-5">
+                    <p className="text-sm font-semibold text-primary">{activeTopicData.label}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{activeTopicData.description}</p>
+                    {activeAudience === "estaduais" && activeState !== "Todos os estados" && (
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                        Filtro de estado ativo: <span className="font-semibold text-primary">{activeState}</span>.
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="rounded-sm border border-border bg-cream p-5">

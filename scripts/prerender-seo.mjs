@@ -142,10 +142,25 @@ const blogIndexBody = (posts, servicePages) => `
   <main>
     <section>
       <p>Biblioteca de Direito Militar</p>
-      <h1>Artigos organizados por tema para militares e familiares</h1>
-      <p>Encontre orientacoes sobre IPM, punicoes, carreira, pensao e beneficios militares.</p>
+      <h1>Artigos separados por forca, tema e estado</h1>
+      <p>Encontre orientacoes para Forcas Federais, Forcas Estaduais, IPM, punicoes, carreira, pensao e beneficios militares.</p>
     </section>
     <section>
+      <h2>Forcas Federais</h2>
+      <ul>
+        <li>Exercito</li>
+        <li>Marinha</li>
+        <li>Aeronautica</li>
+        <li>Policia Federal</li>
+        <li>Policia Rodoviaria Federal</li>
+        <li>Outros servidores federais</li>
+      </ul>
+      <h2>Forcas Estaduais</h2>
+      <ul>
+        <li>Policiais militares</li>
+        <li>Bombeiros militares</li>
+        <li>Filtro preparado para artigos por estado</li>
+      </ul>
       <h2>Topicos do blog</h2>
       <ul>
         <li>Penal militar e IPM</li>
