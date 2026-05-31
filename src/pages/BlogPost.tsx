@@ -4,7 +4,8 @@ import { ArrowLeft, Calendar, MessageSquareQuote } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import founderImg from "@/assets/founder.jpg";
-import { getBlogPostBySlug } from "@/data/blogPosts";
+import { getBlogPostBySlug, getRelatedServiceSlugsForPost } from "@/data/blogPosts";
+import { getServicePageBySlug } from "@/data/servicePages";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
@@ -12,6 +13,9 @@ const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 const BlogPost = () => {
   const { slug } = useParams();
   const post = getBlogPostBySlug(slug);
+  const relatedServices = getRelatedServiceSlugsForPost(slug)
+    .map((serviceSlug) => getServicePageBySlug(serviceSlug))
+    .filter(Boolean);
 
   useEffect(() => {
     if (!post) {
@@ -170,6 +174,25 @@ const BlogPost = () => {
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
+
+          {relatedServices.length > 0 && (
+            <section className="mt-12 rounded-sm border border-border bg-cream p-6">
+              <h2 className="font-heading text-xl font-bold text-primary">
+                Orientacoes relacionadas
+              </h2>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {relatedServices.map((service) => (
+                  <Link
+                    key={service!.slug}
+                    to={`/${service!.slug}`}
+                    className="rounded-sm border border-border bg-background px-4 py-3 text-sm font-semibold text-accent transition-colors hover:border-accent"
+                  >
+                    {service!.title}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           <div className="mt-12 border-t border-border pt-8">
             <Link

@@ -4,9 +4,19 @@ import { ArrowLeft, ArrowRight, CheckCircle2, FileText, Phone } from "lucide-rea
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getServicePageBySlug } from "@/data/servicePages";
+import { blogPosts } from "@/data/blogPosts";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
+
+const relatedBlogByService: Record<string, string[]> = {
+  "direito-penal-militar": ["reforma-codigo-penal-militar"],
+  "defesa-em-ipm": ["reforma-codigo-penal-militar"],
+  "punicao-disciplinar-militar": ["transgressoes-disciplinares-ampla-defesa"],
+  "processo-administrativo-militar": ["transgressoes-disciplinares-ampla-defesa"],
+  "pensao-militar": ["pensao-militar-direitos-dependentes"],
+  "abate-teto-pensao-militar": ["pensao-militar-direitos-dependentes"],
+};
 
 type ServicePageProps = {
   slug?: string;
@@ -15,6 +25,9 @@ type ServicePageProps = {
 const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
   const { slug } = useParams();
   const page = getServicePageBySlug(fixedSlug || slug);
+  const relatedPosts = (page ? relatedBlogByService[page.slug] || [] : [])
+    .map((postSlug) => blogPosts.find((post) => post.slug === postSlug))
+    .filter(Boolean);
 
   useEffect(() => {
     if (!page) {
@@ -183,6 +196,22 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                   ))}
                 </div>
               </div>
+              {relatedPosts.length > 0 && (
+                <div className="mt-8 border-t border-border pt-6">
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Artigos relacionados</h3>
+                  <div className="mt-4 space-y-3">
+                    {relatedPosts.map((post) => (
+                      <Link
+                        key={post!.slug}
+                        to={`/blog/${post!.slug}`}
+                        className="block text-sm font-semibold leading-relaxed text-accent hover:underline"
+                      >
+                        {post!.title}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </aside>
           </div>
         </section>
