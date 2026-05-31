@@ -163,6 +163,156 @@ export const servicePages: ServicePage[] = [
     documents: ["ato de licenciamento ou exclusao", "historico funcional", "laudos medicos", "procedimento disciplinar"],
     related: ["punicao-disciplinar-militar", "defesa-em-ipm", "advogado-direito-militar"],
   },
+  {
+    slug: "licenciamento-indevido-militar",
+    eyebrow: "Reintegracao e carreira",
+    title: "Licenciamento indevido militar: como requerer a reintegracao",
+    seoTitle: "Licenciamento Indevido Militar | Reintegracao",
+    seoDescription:
+      "Saiba quando o licenciamento militar pode ser indevido e quais medidas podem buscar reintegracao, reforma ou indenizacao.",
+    keywords: ["licenciamento indevido militar", "reintegracao militar", "militar temporario licenciamento", "exclusao militar"],
+    intro:
+      "O licenciamento nem sempre encerra definitivamente a relacao com a Forca. Em alguns casos, falhas no procedimento, problemas de saude ignorados ou ausencia de motivacao permitem contestar o ato.",
+    problems: [
+      "licenciamento durante tratamento de saude",
+      "desligamento sem avaliacao medica adequada",
+      "militar temporario licenciado apesar de incapacidade",
+      "ato administrativo sem fundamentacao clara",
+    ],
+    approach: [
+      "analise do ato de licenciamento e do historico funcional",
+      "verificacao de laudos, inspecoes de saude e tratamento medico",
+      "avaliacao de pedido administrativo, acao judicial ou tutela de urgencia",
+      "estrategia para reintegracao, reforma ou reparacao conforme o caso",
+    ],
+    documents: ["ato de licenciamento", "alteracoes/ficha funcional", "laudos e exames", "atestados e prontuario medico"],
+    related: ["exclusao-das-forcas-armadas", "reforma-militar-por-invalidez", "advogado-direito-militar"],
+  },
+  {
+    slug: "reforma-militar-por-invalidez",
+    eyebrow: "Saude e incapacidade",
+    title: "Reforma militar por invalidez: direitos e como requerer",
+    seoTitle: "Reforma Militar por Invalidez | Direitos do Militar",
+    seoDescription:
+      "Entenda quando o militar tem direito a reforma por invalidez, quais provas reunir e como contestar decisao medica ou administrativa.",
+    keywords: ["reforma militar por invalidez", "militar incapaz reforma", "junta medica militar", "direitos do militar doente"],
+    intro:
+      "A incapacidade para o servico militar pode gerar direito a reforma, mas a decisao depende de prova medica, nexo com o servico e correta aplicacao das normas militares.",
+    problems: [
+      "militar considerado apto apesar de limitacoes reais",
+      "incapacidade reconhecida sem concessao de reforma",
+      "duvida sobre nexo entre doenca, acidente e servico",
+      "licenciamento de militar ainda em tratamento",
+    ],
+    approach: [
+      "organizacao da documentacao medica e funcional",
+      "analise de laudos da junta medica militar",
+      "avaliacao do nexo causal e da extensao da incapacidade",
+      "pedido administrativo ou judicial para proteger remuneracao e carreira",
+    ],
+    documents: ["ata de inspecao de saude", "laudos medicos", "exames", "comunicados de acidente ou documentos de servico"],
+    related: ["licenciamento-indevido-militar", "exclusao-das-forcas-armadas", "advogado-direito-militar"],
+  },
+  {
+    slug: "pensao-militar",
+    eyebrow: "Familiares e dependentes",
+    title: "Pensao militar: quem tem direito e como garantir",
+    seoTitle: "Pensao Militar | Direitos de Familiares",
+    seoDescription:
+      "Orientacao sobre pensao militar, dependentes, documentos, revisoes e medidas para proteger direitos de familiares e pensionistas.",
+    keywords: ["pensao militar", "pensao militar regras", "dependentes de militar", "direito previdenciario militar"],
+    intro:
+      "A pensao militar envolve regras proprias e exige cuidado com habilitacao de dependentes, documentos, prazos e eventuais descontos ou revisoes indevidas.",
+    problems: [
+      "duvidas sobre quem pode ser habilitado como dependente",
+      "negativa ou demora na concessao da pensao",
+      "divisao de cotas entre familiares",
+      "descontos, revisoes ou abate-teto aplicados ao beneficio",
+    ],
+    approach: [
+      "identificacao dos dependentes e da regra aplicavel",
+      "conferencia da documentacao civil, militar e previdenciaria",
+      "pedido administrativo de habilitacao ou revisao",
+      "acao judicial quando houver negativa, demora ou desconto irregular",
+    ],
+    documents: ["certidao de obito", "documentos dos dependentes", "contracheques", "processo de habilitacao"],
+    related: ["abate-teto-pensao-militar", "advogado-direito-militar", "advogado-militar-brasilia"],
+  },
+  {
+    slug: "abate-teto-pensao-militar",
+    eyebrow: "Revisao de descontos",
+    title: "Abate-teto na pensao militar: o que e e como contestar",
+    seoTitle: "Abate-teto Pensao Militar | Como Contestar",
+    seoDescription:
+      "Entenda o abate-teto na pensao militar, quando o desconto pode ser contestado e quais documentos ajudam na revisao.",
+    keywords: ["abate-teto pensao militar", "desconto pensao militar", "teto constitucional pensao militar", "revisao pensao militar"],
+    intro:
+      "O abate-teto pode reduzir de forma relevante a pensao militar. Antes de aceitar o desconto, e preciso verificar a base de calculo, a acumulacao de beneficios e os fundamentos usados pela administracao.",
+    problems: [
+      "reducoes inesperadas no contracheque da pensionista",
+      "aplicacao de teto sem explicacao suficiente",
+      "duvidas sobre acumulacao de pensao e aposentadoria",
+      "necessidade de revisar valores ja descontados",
+    ],
+    approach: [
+      "comparacao dos contracheques antes e depois do desconto",
+      "analise da base juridica aplicada pela administracao",
+      "calculo preliminar dos valores discutidos",
+      "pedido de revisao administrativa ou medida judicial",
+    ],
+    documents: ["contracheques", "ato de concessao da pensao", "comunicacao do desconto", "documentos de outros beneficios"],
+    related: ["pensao-militar", "advogado-direito-militar", "advogado-militar-brasilia"],
+  },
+  {
+    slug: "promocao-militar-preterida",
+    eyebrow: "Carreira e antiguidade",
+    title: "Promocao militar preterida: quando e como contestar",
+    seoTitle: "Promocao Militar Preterida | Como Contestar",
+    seoDescription:
+      "Militar preterido em promocao pode avaliar criterios, documentos e medidas para contestar ilegalidades e proteger a carreira.",
+    keywords: ["promocao militar preterida", "pretericao militar", "carreira militar promocao", "direito administrativo militar"],
+    intro:
+      "A promocao militar depende de criterios formais e historico funcional. Quando ha pretericao indevida, o prejuizo pode refletir em remuneracao, antiguidade e progressao.",
+    problems: [
+      "militar ultrapassado por colega em situacao semelhante",
+      "pontuacao, conceito ou avaliacao funcional questionavel",
+      "punicao ou anotacao usada de forma irregular",
+      "ausencia de fundamentacao para a nao promocao",
+    ],
+    approach: [
+      "analise das regras de promocao e documentos da carreira",
+      "comparacao objetiva dos criterios aplicados",
+      "identificacao de erro material, nulidade ou discriminacao",
+      "pedido de revisao, recurso administrativo ou acao judicial",
+    ],
+    documents: ["ficha funcional", "quadros de acesso", "boletins", "avaliacoes e punicoes"],
+    related: ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
+  },
+  {
+    slug: "processo-administrativo-militar",
+    eyebrow: "Defesa administrativa",
+    title: "Processo administrativo militar: como funciona a defesa",
+    seoTitle: "Processo Administrativo Militar | Defesa",
+    seoDescription:
+      "Defesa em processo administrativo militar, sindicancia, conselho de disciplina e procedimentos que podem afetar carreira e permanencia.",
+    keywords: ["processo administrativo militar", "defesa processo administrativo militar", "sindicancia militar", "conselho de disciplina"],
+    intro:
+      "Processos administrativos militares exigem resposta tecnica, respeito a prazos e atencao ao contraditorio. Uma defesa incompleta pode gerar reflexos duradouros na carreira.",
+    problems: [
+      "notificacao para sindicancia, PAD ou conselho de disciplina",
+      "dificuldade de acessar documentos e provas",
+      "prazo curto para apresentar defesa",
+      "risco de punicao, licenciamento ou exclusao",
+    ],
+    approach: [
+      "leitura integral do procedimento e dos prazos",
+      "mapeamento de provas, testemunhas e inconsistencias",
+      "elaboracao de defesa tecnica e pedidos de diligencia",
+      "acompanhamento de recurso ou judicializacao quando necessario",
+    ],
+    documents: ["notificacao", "portaria de instauracao", "autos do procedimento", "provas e nomes de testemunhas"],
+    related: ["punicao-disciplinar-militar", "defesa-em-ipm", "exclusao-das-forcas-armadas"],
+  },
 ];
 
 export const getServicePageBySlug = (slug: string | undefined) =>
