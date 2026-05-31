@@ -57,7 +57,8 @@ const applySeo = (template, route) => {
   const title = escapeHtml(route.title);
   const description = escapeHtml(route.description);
   const keywords = escapeHtml(route.keywords?.join(", ") || "");
-  const canonical = `${siteUrl}${route.path}`;
+  const canonicalPath = route.path === "/" || route.path.endsWith("/") ? route.path : `${route.path}/`;
+  const canonical = `${siteUrl}${canonicalPath}`;
 
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
   html = setOrCreateMeta(html, [/<meta name="description" content="[^"]*"\s*\/?>/i, ""], `<meta name="description" content="${description}">`);
@@ -143,7 +144,7 @@ for (const page of servicePages) {
       "@context": "https://schema.org",
       "@type": "LegalService",
       name: "Aguiar Filgueiras Advocacia",
-      url: `${siteUrl}/${page.slug}`,
+      url: `${siteUrl}/${page.slug}/`,
       description: page.seoDescription,
       areaServed: "Brasil",
       serviceType: stripAccents(page.title),
@@ -165,8 +166,8 @@ for (const post of blogPosts) {
       "@type": "Article",
       headline: post.title,
       description: post.seoDescription || post.excerpt,
-      mainEntityOfPage: `${siteUrl}/blog/${post.slug}`,
-      url: `${siteUrl}/blog/${post.slug}`,
+      mainEntityOfPage: `${siteUrl}/blog/${post.slug}/`,
+      url: `${siteUrl}/blog/${post.slug}/`,
       datePublished: post.date,
       dateModified: post.date,
       articleSection: post.category,

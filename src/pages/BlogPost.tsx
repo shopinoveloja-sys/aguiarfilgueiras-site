@@ -23,7 +23,7 @@ const BlogPost = () => {
       return;
     }
 
-    const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
+    const canonicalUrl = `${SITE_URL}/blog/${post.slug}/`;
     const seoTitle = post.seoTitle || `${post.title} | Aguiar Filgueiras Advocacia`;
     const seoDescription = post.seoDescription || post.excerpt;
     const keywords = post.keywords?.join(", ") || post.category;

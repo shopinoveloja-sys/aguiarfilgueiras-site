@@ -35,7 +35,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
       return;
     }
 
-    const canonicalUrl = `${SITE_URL}/${page.slug}`;
+    const canonicalUrl = `${SITE_URL}/${page.slug}/`;
     document.title = page.seoTitle;
 
     const setMeta = (selector: string, attribute: "content" | "href", value: string) => {
