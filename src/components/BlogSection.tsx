@@ -97,6 +97,15 @@ const BlogSection = () => {
           ))}
         </div>
 
+        <div className="mt-10 text-center">
+          <Link
+            to="/blog"
+            className="inline-flex items-center gap-2 rounded-sm border border-accent px-5 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
+            Ver biblioteca por topicos <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

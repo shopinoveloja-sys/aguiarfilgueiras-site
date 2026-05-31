@@ -8,7 +8,7 @@ const navItems = [
   { label: "O Escritorio", href: "/#escritorio" },
   { label: "Areas de Atuacao", href: "/#areas" },
   { label: "Fundador", href: "/#fundador" },
-  { label: "Blog", href: "/#blog" },
+  { label: "Blog", href: "/blog" },
   { label: "Contato", href: "/#contato" },
 ];
 

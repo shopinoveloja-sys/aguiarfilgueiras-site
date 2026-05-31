@@ -138,6 +138,29 @@ const blogBody = (post, servicePages) => {
   </main>`;
 };
 
+const blogIndexBody = (posts, servicePages) => `
+  <main>
+    <section>
+      <p>Biblioteca de Direito Militar</p>
+      <h1>Artigos organizados por tema para militares e familiares</h1>
+      <p>Encontre orientacoes sobre IPM, punicoes, carreira, pensao e beneficios militares.</p>
+    </section>
+    <section>
+      <h2>Topicos do blog</h2>
+      <ul>
+        <li>Penal militar e IPM</li>
+        <li>Disciplina e punicoes</li>
+        <li>Carreira militar</li>
+        <li>Saude, pensao e beneficios</li>
+        <li>Policiais e bombeiros militares</li>
+      </ul>
+      <h2>Publicacoes</h2>
+      <ul>${posts.map((post) => `<li><a href="/blog/${post.slug}/">${escapeHtml(post.title)}</a> - ${escapeHtml(post.category)}</li>`).join("")}</ul>
+      <h2>Areas relacionadas</h2>
+      <ul>${servicePages.map((page) => `<li><a href="/${page.slug}/">${escapeHtml(page.title)}</a></li>`).join("")}</ul>
+    </section>
+  </main>`;
+
 const writeRoute = (route) => {
   const template = fs.readFileSync(path.join(distDir, "index.html"), "utf8");
   const html = applySeo(template, route);
@@ -187,6 +210,35 @@ for (const page of servicePages) {
   });
 }
 
+writeRoute({
+  path: "/blog",
+  title: "Blog de Direito Militar | Aguiar Filgueiras Advocacia",
+  description:
+    "Artigos, guias e analises sobre Direito Militar, IPM, punicoes disciplinares, carreira, pensao e beneficios militares.",
+  keywords: ["blog direito militar", "artigos direito militar", "advogado militar", "IPM", "punicao disciplinar militar"],
+  body: blogIndexBody(blogPosts, servicePages),
+  jsonLd: {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Blog de Direito Militar - Aguiar Filgueiras Advocacia",
+    url: `${siteUrl}/blog/`,
+    description:
+      "Artigos, guias e analises sobre Direito Militar, IPM, punicoes disciplinares, carreira, pensao e beneficios militares.",
+    publisher: {
+      "@type": "LegalService",
+      name: "Aguiar Filgueiras Advocacia",
+      url: siteUrl,
+    },
+    blogPost: blogPosts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: `${siteUrl}/blog/${post.slug}/`,
+      datePublished: post.date,
+      articleSection: post.category,
+    })),
+  },
+});
+
 for (const post of blogPosts) {
   writeRoute({
     path: `/blog/${post.slug}`,
@@ -219,4 +271,4 @@ for (const post of blogPosts) {
   });
 }
 
-console.log(`Pre-render SEO concluido: ${servicePages.length + blogPosts.length} rotas.`);
+console.log(`Pre-render SEO concluido: ${servicePages.length + blogPosts.length + 1} rotas.`);
