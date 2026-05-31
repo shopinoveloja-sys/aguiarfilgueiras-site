@@ -7,6 +7,9 @@ export type BlogPost = {
   category: string;
   title: string;
   excerpt: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  keywords?: string[];
   carlosComment: string;
   content: string[];
 };

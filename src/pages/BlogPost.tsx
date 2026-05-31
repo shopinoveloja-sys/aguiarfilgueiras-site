@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, MessageSquareQuote } from "lucide-react";
 import Header from "@/components/Header";
@@ -5,9 +6,100 @@ import Footer from "@/components/Footer";
 import founderImg from "@/assets/founder.jpg";
 import { getBlogPostBySlug } from "@/data/blogPosts";
 
+const SITE_URL = "https://aguiarfilgueiras.com.br";
+const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
+
 const BlogPost = () => {
   const { slug } = useParams();
   const post = getBlogPostBySlug(slug);
+
+  useEffect(() => {
+    if (!post) {
+      document.title = "Artigo nao encontrado | Aguiar Filgueiras Advocacia";
+      return;
+    }
+
+    const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
+    const seoTitle = post.seoTitle || `${post.title} | Aguiar Filgueiras Advocacia`;
+    const seoDescription = post.seoDescription || post.excerpt;
+    const keywords = post.keywords?.join(", ") || post.category;
+    const articleJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: post.title,
+      description: seoDescription,
+      mainEntityOfPage: canonicalUrl,
+      url: canonicalUrl,
+      datePublished: post.date,
+      dateModified: post.date,
+      articleSection: post.category,
+      keywords,
+      author: {
+        "@type": "Person",
+        name: "Carlos Filgueiras",
+        jobTitle: "Advogado especializado em Direito Militar",
+      },
+      publisher: {
+        "@type": "LegalService",
+        name: "Aguiar Filgueiras Advocacia",
+        url: SITE_URL,
+      },
+    };
+
+    const setMeta = (selector: string, attribute: "content" | "href", value: string) => {
+      let element = document.head.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
+
+      if (!element) {
+        element = selector.startsWith("link")
+          ? document.createElement("link")
+          : document.createElement("meta");
+
+        if (selector.includes("canonical")) {
+          element.setAttribute("rel", "canonical");
+        }
+        if (selector.includes("description")) {
+          element.setAttribute("name", "description");
+        }
+        if (selector.includes("keywords")) {
+          element.setAttribute("name", "keywords");
+        }
+        if (selector.includes("og:")) {
+          element.setAttribute("property", selector.match(/og:[^'"]+/)?.[0] || "");
+        }
+        if (selector.includes("twitter:")) {
+          element.setAttribute("name", selector.match(/twitter:[^'"]+/)?.[0] || "");
+        }
+
+        document.head.appendChild(element);
+      }
+
+      element.setAttribute(attribute, value);
+    };
+
+    document.title = seoTitle;
+    setMeta("meta[name='description']", "content", seoDescription);
+    setMeta("meta[name='keywords']", "content", keywords);
+    setMeta("link[rel='canonical']", "href", canonicalUrl);
+    setMeta("meta[property='og:type']", "content", "article");
+    setMeta("meta[property='og:title']", "content", seoTitle);
+    setMeta("meta[property='og:description']", "content", seoDescription);
+    setMeta("meta[property='og:url']", "content", canonicalUrl);
+    setMeta("meta[property='og:image']", "content", DEFAULT_IMAGE);
+    setMeta("meta[name='twitter:card']", "content", "summary_large_image");
+    setMeta("meta[name='twitter:title']", "content", seoTitle);
+    setMeta("meta[name='twitter:description']", "content", seoDescription);
+    setMeta("meta[name='twitter:image']", "content", DEFAULT_IMAGE);
+
+    const scriptId = "blog-article-jsonld";
+    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
+    if (!script) {
+      script = document.createElement("script");
+      script.id = scriptId;
+      script.type = "application/ld+json";
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(articleJsonLd);
+  }, [post]);
 
   if (!post) {
     return (
