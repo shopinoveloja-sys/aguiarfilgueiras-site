@@ -1,0 +1,4 @@
+interface:
+  display_name: "Carlos Advogado Guardrails"
+  short_description: "Regras e contexto do projeto Aguiar Filgueiras."
+  default_prompt: "Use esta skill antes de alterar o projeto Carlos Advogado / Aguiar Filgueiras."

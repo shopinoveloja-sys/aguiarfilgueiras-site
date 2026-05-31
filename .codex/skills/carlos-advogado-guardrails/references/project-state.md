@@ -1,0 +1,82 @@
+# Project State
+
+## Purpose
+
+Aguiar Filgueiras / Carlos Advogado is a legal services site focused on Direito Militar. Current strategic goal: improve Google positioning with indexable service pages, clean SEO, blog content with approval, and n8n/Evolution automation.
+
+## Repo And Deploy
+
+- GitHub repo: `shopinoveloja-sys/aguiarfilgueiras-site`
+- Production branch: `carlos-stable`
+- Local branch often used: `carlos-stable-local`
+- Production URL: `https://aguiarfilgueiras.com.br`
+- Stack: React/Vite, static build, Nixpacks/Caddy, pre-rendered SEO route HTML.
+- Build command: `npm run build`
+- Build currently runs: `vite build && node scripts/prerender-seo.mjs`
+- Caddy/Nixpacks must serve route-specific `index.html` files before falling back to SPA.
+
+## Key Implemented Work
+
+- Added 12 fixed service/problem pages for SEO.
+- Added sitemap entries for the service/problem pages.
+- Added `scripts/prerender-seo.mjs` to produce indexable HTML for service pages and blog posts.
+- Added Caddy `try_files {path} {path}/index.html /index.html` behavior through `nixpacks.toml`.
+- Added internal links between service pages and blog posts.
+- Ensured pre-rendered blog/service HTML includes canonical, meta description, keywords, JSON-LD, H1, and internal links.
+- Added competitor SEO scrape report in `docs/seo-scrape-concorrentes-2026-05-31.md`.
+- Added editorial approval queue:
+  - `docs/fila-editorial-12-artigos-carlos-2026-05-31.md`
+  - `docs/fila-editorial-12-artigos-carlos.json`
+
+## Existing SEO Pages
+
+Service/problem pages currently include:
+
+- `/advogado-direito-militar`
+- `/advogado-militar-brasilia`
+- `/direito-penal-militar`
+- `/defesa-em-ipm`
+- `/punicao-disciplinar-militar`
+- `/exclusao-das-forcas-armadas`
+- `/licenciamento-indevido-militar`
+- `/reforma-militar-por-invalidez`
+- `/pensao-militar`
+- `/abate-teto-pensao-militar`
+- `/promocao-militar-preterida`
+- `/processo-administrativo-militar`
+
+## Blog And Editorial Rules
+
+- Blog source: `src/data/blogPosts.json`
+- Blog helper: `src/data/blogPosts.ts`
+- Blog page: `src/pages/BlogPost.tsx`
+- Existing posts are intentionally in the current model with fields:
+  `id`, `slug`, `date`, `category`, `title`, `excerpt`, `carlosComment`, `content`, optional `seoTitle`, `seoDescription`, `keywords`.
+- Every weekly or on-demand article must be approved by Carlos before publication.
+- Valid approval commands are conceptually: `APROVAR`, `AJUSTAR: ...`, `RECUSAR`.
+- Generated previews may show article content to Carlos, but published site content must never include AI/provider/model/prompt/log metadata.
+- The 12 strategic article topics are tracked in `docs/fila-editorial-12-artigos-carlos.json` and all start as `aguardando_aprovacao`.
+
+## n8n And Automation Notes
+
+- There are n8n workflows for on-demand and weekly blog generation.
+- The intended flow is:
+  1. Generate draft from approved editorial queue or user prompt.
+  2. Send WhatsApp preview for Carlos approval.
+  3. Only after approval, update `src/data/blogPosts.json`, update `public/sitemap.xml`, then deploy.
+- Previous errors included referencing n8n nodes by unstable internal IDs. Prefer `$input` or stable node outputs over direct internal ID references in Code nodes.
+- Avoid writing `$http.request` inside Code nodes when native HTTP Request nodes are more robust.
+
+## Tracking
+
+- GTM is installed through the current site flow.
+- GA4 and Meta Pixel are configured through GTM.
+- Do not reintroduce direct/persistent manual `docker cp` fixes as the normal path. The repo/build should be the source of truth.
+
+## Content Quality
+
+- Tone: professional, calm, senior legal guidance.
+- Avoid guarantees of result.
+- Avoid technical AI disclosure in public content.
+- Preserve Carlos's authority and the site's existing visual/legal tone.
+- Prefer SEO pages and articles that link to each other naturally.
