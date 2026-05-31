@@ -79,7 +79,8 @@ const applySeo = (template, route) => {
   return html;
 };
 
-const serviceBody = (page, blogPosts) => {
+const serviceBody = (page, blogPosts, serviceGuides) => {
+  const guide = serviceGuides[page.slug];
   const relatedPosts = (relatedPostsByService[page.slug] || [])
     .map((slug) => blogPosts.find((post) => post.slug === slug))
     .filter(Boolean);
@@ -99,6 +100,21 @@ const serviceBody = (page, blogPosts) => {
       <ol>${page.approach.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
       <h2>Documentos uteis</h2>
       <ul>${page.documents.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      ${
+        guide
+          ? `
+      <h2>Prazos e primeiros passos</h2>
+      <p>${escapeHtml(guide.deadline)}</p>
+      <h2>Riscos de agir sem orientacao</h2>
+      <ul>${guide.risks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <h2>Quando falar com advogado</h2>
+      <ul>${guide.whenToCall.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <h2>${escapeHtml(guide.ctaTitle)}</h2>
+      <p>${escapeHtml(guide.ctaText)}</p>
+      <h2>Duvidas frequentes</h2>
+      ${guide.faqs.map((faq) => `<h3>${escapeHtml(faq.question)}</h3><p>${escapeHtml(faq.answer)}</p>`).join("")}`
+          : ""
+      }
       ${relatedPosts.length ? `<h2>Artigos relacionados</h2><ul>${relatedPosts.map((post) => `<li><a href="/blog/${post.slug}">${escapeHtml(post.title)}</a></li>`).join("")}</ul>` : ""}
     </section>
   </main>`;
@@ -132,24 +148,42 @@ const writeRoute = (route) => {
 
 const servicePages = readServicePages();
 const blogPosts = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "blogPosts.json"), "utf8"));
+const serviceGuides = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "servicePageGuides.json"), "utf8"));
 
 for (const page of servicePages) {
+  const guide = serviceGuides[page.slug];
+  const legalServiceSchema = {
+    "@context": "https://schema.org",
+    "@type": "LegalService",
+    name: "Aguiar Filgueiras Advocacia",
+    url: `${siteUrl}/${page.slug}/`,
+    description: page.seoDescription,
+    areaServed: "Brasil",
+    serviceType: stripAccents(page.title),
+    telephone: "+55-61-98183-3328",
+  };
+  const faqSchema = guide?.faqs?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: guide.faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+
   writeRoute({
     path: `/${page.slug}`,
     title: page.seoTitle,
     description: page.seoDescription,
     keywords: page.keywords,
-    body: serviceBody(page, blogPosts),
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "LegalService",
-      name: "Aguiar Filgueiras Advocacia",
-      url: `${siteUrl}/${page.slug}/`,
-      description: page.seoDescription,
-      areaServed: "Brasil",
-      serviceType: stripAccents(page.title),
-      telephone: "+55-61-98183-3328",
-    },
+    body: serviceBody(page, blogPosts, serviceGuides),
+    jsonLd: faqSchema ? [legalServiceSchema, faqSchema] : legalServiceSchema,
   });
 }
 

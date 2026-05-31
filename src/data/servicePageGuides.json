@@ -1,0 +1,374 @@
+{
+  "advogado-direito-militar": {
+    "deadline": "Os prazos variam conforme o procedimento, mas notificacoes disciplinares, sindicancias, IPMs e recursos costumam exigir resposta rapida. O ideal e buscar orientacao assim que receber qualquer comunicacao oficial.",
+    "risks": [
+      "perder prazo para defesa, recurso ou pedido de reconsideracao",
+      "assinar declaracao sem compreender os reflexos administrativos e penais",
+      "tratar como simples advertencia um fato que pode prejudicar promocao, permanencia ou remuneracao",
+      "apresentar defesa generica, sem organizar provas, testemunhas e documentos funcionais"
+    ],
+    "whenToCall": [
+      "ao receber notificacao, portaria, punicao, intimacao ou chamada para oitiva",
+      "antes de prestar declaracao em sindicancia, IPM ou processo administrativo",
+      "quando houver risco de punicao, licenciamento, exclusao, reforma negada ou perda financeira",
+      "quando a decisao administrativa parecer injusta, incompleta ou sem fundamentacao clara"
+    ],
+    "ctaTitle": "Recebeu uma notificacao militar?",
+    "ctaText": "Envie os documentos principais para uma analise inicial. A primeira medida e entender prazo, risco e melhor caminho antes de responder.",
+    "faqs": [
+      {
+        "question": "O advogado militar atende apenas membros das Forcas Armadas?",
+        "answer": "Nao. O atendimento pode envolver militares das Forcas Armadas, policiais militares, bombeiros militares, familiares e pensionistas, conforme o tipo de caso e a legislacao aplicavel."
+      },
+      {
+        "question": "Preciso esperar ser punido para procurar defesa?",
+        "answer": "Nao. Em muitos casos, a orientacao antes da primeira manifestacao evita erros, organiza provas e reduz riscos administrativos ou judiciais."
+      },
+      {
+        "question": "O atendimento pode ser feito a distancia?",
+        "answer": "Sim. A maior parte da analise inicial pode ser feita por atendimento virtual, com envio de documentos e definicao dos proximos passos."
+      }
+    ]
+  },
+  "advogado-militar-brasilia": {
+    "deadline": "Em Brasilia ou fora do DF, o ponto critico e a data de ciencia da notificacao. Ela costuma marcar o inicio do prazo para defesa, recurso ou providencia urgente.",
+    "risks": [
+      "demorar para reunir documentos por acreditar que o caso ainda esta em fase informal",
+      "perder oportunidade de atuar perante orgaos administrativos sediados em Brasilia",
+      "responder sem considerar os reflexos em carreira, remuneracao e historico funcional",
+      "deixar de pedir acesso integral aos autos antes de apresentar defesa"
+    ],
+    "whenToCall": [
+      "quando o procedimento tramitar em unidade, comando, orgao ou tribunal localizado no DF",
+      "quando o militar estiver em outro estado, mas precisar de acompanhamento nacional",
+      "quando houver audiencia, oitiva, inspecao de saude ou prazo administrativo marcado",
+      "quando familiares ou pensionistas precisarem revisar documentos e beneficios"
+    ],
+    "ctaTitle": "Atendimento em Brasilia e online",
+    "ctaText": "Organize a notificacao, documentos funcionais e prazos. A equipe avalia se o caso exige medida administrativa, judicial ou acompanhamento preventivo.",
+    "faqs": [
+      {
+        "question": "O escritorio atende militares fora de Brasilia?",
+        "answer": "Sim. O atendimento virtual permite analisar documentos, orientar medidas e acompanhar casos em diferentes estados."
+      },
+      {
+        "question": "Quando vale buscar advogado em Brasilia?",
+        "answer": "Brasilia pode ser estrategica quando o caso envolve orgaos centrais, comandos, administracao federal ou processos com tramitacao no DF."
+      },
+      {
+        "question": "Posso enviar documentos por WhatsApp?",
+        "answer": "Sim. Para a analise inicial, e possivel enviar notificacoes, portarias, boletins, contracheques e demais documentos relevantes por canal digital."
+      }
+    ]
+  },
+  "direito-penal-militar": {
+    "deadline": "Em acusacoes penais militares, cada ato importa: oitiva, interrogatorio, denuncia, citacao e prazo de resposta. A defesa deve ser preparada antes de qualquer declaracao relevante.",
+    "risks": [
+      "prestar depoimento sem conhecer a acusacao e as provas ja existentes",
+      "ignorar reflexos disciplinares ou administrativos de uma investigacao penal",
+      "confundir crime militar, transgressao disciplinar e irregularidade administrativa",
+      "deixar de apontar nulidades, contradicoes ou falta de justa causa no momento adequado"
+    ],
+    "whenToCall": [
+      "ao ser chamado para depor em IPM ou procedimento relacionado a crime militar",
+      "quando houver denuncia, citacao, busca, apreensao ou medida cautelar",
+      "se a acusacao envolver desercao, abandono, insubordinacao, violencia, dano ou desacato",
+      "quando o caso puder afetar liberdade, carreira, promocao ou permanencia na Forca"
+    ],
+    "ctaTitle": "Acusacao penal militar exige estrategia desde o inicio",
+    "ctaText": "Antes de depor ou apresentar versao formal, alinhe documentos, linha do tempo e riscos. A defesa penal e funcional precisa caminhar junta.",
+    "faqs": [
+      {
+        "question": "IPM ja significa que existe condenacao?",
+        "answer": "Nao. O IPM e procedimento de apuracao, mas pode produzir elementos usados em denuncia ou em medidas disciplinares."
+      },
+      {
+        "question": "Crime militar tambem pode gerar punicao administrativa?",
+        "answer": "Sim. Dependendo do fato, a mesma situacao pode ter reflexos penais, disciplinares e funcionais."
+      },
+      {
+        "question": "Devo depor sem advogado?",
+        "answer": "O ideal e buscar orientacao antes da oitiva para compreender direitos, riscos e a melhor forma de apresentar os fatos."
+      }
+    ]
+  },
+  "defesa-em-ipm": {
+    "deadline": "No IPM, a urgencia costuma estar na oitiva e no acesso aos autos. Mesmo antes de haver denuncia, o militar deve se preparar para nao produzir uma versao incompleta ou contraditoria.",
+    "risks": [
+      "comparecer a oitiva sem conhecer o objeto da investigacao",
+      "nao pedir acesso aos documentos e provas ja juntados",
+      "deixar mensagens, testemunhas ou registros importantes fora da defesa",
+      "permitir que uma apuracao preliminar avance sem contraditorio efetivo"
+    ],
+    "whenToCall": [
+      "assim que receber convocacao para prestar declaracao",
+      "quando a portaria do IPM mencionar fato grave ou crime militar",
+      "se houver apreensao de celular, documentos, armas, equipamentos ou mensagens",
+      "quando o militar nao conseguir acesso claro ao teor da investigacao"
+    ],
+    "ctaTitle": "Foi chamado para depor em IPM?",
+    "ctaText": "Nao trate a oitiva como conversa informal. Separe notificacao, portaria e documentos relacionados para avaliar a melhor postura defensiva.",
+    "faqs": [
+      {
+        "question": "Posso ter acesso ao IPM?",
+        "answer": "A defesa deve buscar acesso aos elementos ja documentados, respeitadas eventuais restricoes legais e diligencias sigilosas."
+      },
+      {
+        "question": "O IPM pode virar processo criminal?",
+        "answer": "Sim. O IPM pode embasar denuncia penal militar ou outras medidas, por isso a atuacao inicial e importante."
+      },
+      {
+        "question": "Testemunhas podem ajudar no IPM?",
+        "answer": "Podem, desde que sejam pertinentes e organizadas dentro da estrategia do caso, com documentos que confirmem a versao apresentada."
+      }
+    ]
+  },
+  "punicao-disciplinar-militar": {
+    "deadline": "O prazo para recurso ou reconsideracao pode ser curto e depende do regulamento aplicavel e da data de ciencia da punicao. Guarde a notificacao e registre quando tomou conhecimento.",
+    "risks": [
+      "aceitar punicao sem analisar contraditorio, motivacao e proporcionalidade",
+      "perder prazo por contar dias de forma errada",
+      "deixar de juntar provas, testemunhas e documentos funcionais",
+      "permitir que a punicao prejudique conceito, escala, promocao ou permanencia"
+    ],
+    "whenToCall": [
+      "no mesmo dia em que receber a punicao ou notificacao",
+      "quando a descricao do fato for generica ou incompleta",
+      "se a penalidade parecer desproporcional ao ocorrido",
+      "quando a punicao puder afetar promocao, permanencia, curso ou transferencia"
+    ],
+    "ctaTitle": "Punicao disciplinar tem prazo e reflexos",
+    "ctaText": "Envie nota de punicao, boletim, defesa anterior e documentos de prova. A analise rapida ajuda a preservar o direito de recorrer.",
+    "faqs": [
+      {
+        "question": "Toda punicao disciplinar pode ser contestada?",
+        "answer": "A possibilidade depende do caso, do regulamento e dos prazos. Falhas de motivacao, contraditorio ou proporcionalidade podem justificar impugnacao."
+      },
+      {
+        "question": "Punicao leve tambem pode prejudicar a carreira?",
+        "answer": "Pode. Mesmo medidas aparentemente pequenas podem influenciar conceito, avaliacao, promocao e historico funcional."
+      },
+      {
+        "question": "O que devo guardar ao ser punido?",
+        "answer": "Guarde notificacao, boletim, nota de punicao, defesa apresentada, mensagens, provas, nomes de testemunhas e data de ciencia."
+      }
+    ]
+  },
+  "exclusao-das-forcas-armadas": {
+    "deadline": "A contestacao de exclusao ou licenciamento exige agir rapidamente, especialmente quando ha prazo administrativo, risco de desligamento imediato ou necessidade de medida judicial urgente.",
+    "risks": [
+      "deixar o desligamento produzir efeitos antes de reunir provas",
+      "ignorar problemas de saude, estabilidade ou tratamento em andamento",
+      "nao questionar ausencia de motivacao ou falhas no procedimento",
+      "perder documentos funcionais apos sair da unidade"
+    ],
+    "whenToCall": [
+      "ao receber comunicado de licenciamento, exclusao ou desligamento",
+      "quando houver problema de saude nao considerado pela administracao",
+      "se o desligamento vier apos punicao, sindicancia ou processo disciplinar",
+      "quando o militar temporario acreditar que foi dispensado de forma irregular"
+    ],
+    "ctaTitle": "Antes de aceitar a exclusao, revise o procedimento",
+    "ctaText": "A decisao de desligamento deve ser comparada com historico funcional, laudos, notificacoes e fundamentos administrativos.",
+    "faqs": [
+      {
+        "question": "Militar temporario pode contestar licenciamento?",
+        "answer": "Pode haver discussao quando existirem falhas no procedimento, problemas de saude, ausencia de motivacao ou violacao de direitos."
+      },
+      {
+        "question": "E possivel pedir reintegracao?",
+        "answer": "Em alguns casos, sim. A viabilidade depende dos documentos, do motivo do desligamento e da urgencia da situacao."
+      },
+      {
+        "question": "Problema de saude impede licenciamento?",
+        "answer": "Depende da situacao medica, do nexo com o servico e das normas aplicaveis. Laudos e historico de tratamento sao essenciais."
+      }
+    ]
+  },
+  "licenciamento-indevido-militar": {
+    "deadline": "Quanto mais cedo o licenciamento for analisado, maior a chance de preservar documentos, comprovar tratamento medico e avaliar pedido urgente de reintegracao.",
+    "risks": [
+      "perder acesso a documentos medicos e funcionais mantidos pela unidade",
+      "nao comprovar incapacidade ou tratamento em andamento no momento do desligamento",
+      "confundir licenciamento regular com ato que pode ser contestado",
+      "demorar para buscar medida urgente quando a remuneracao foi interrompida"
+    ],
+    "whenToCall": [
+      "se o militar foi licenciado durante tratamento de saude",
+      "quando a inspecao de saude nao refletir as limitacoes reais",
+      "se o ato de licenciamento vier sem fundamentacao clara",
+      "quando houver necessidade de reintegracao, reforma ou indenizacao"
+    ],
+    "ctaTitle": "Licenciamento durante tratamento merece analise cuidadosa",
+    "ctaText": "Reuna ato de licenciamento, laudos, exames, prontuario e ficha funcional para avaliar se ha base para contestacao.",
+    "faqs": [
+      {
+        "question": "Licenciamento indevido sempre gera reintegracao?",
+        "answer": "Nao. A medida depende das provas, do tipo de vinculo, da situacao medica e das falhas identificadas no ato administrativo."
+      },
+      {
+        "question": "Quais provas medicas sao importantes?",
+        "answer": "Laudos, exames, atestados, prontuario, atas de inspecao de saude e documentos que mostrem evolucao da incapacidade ou tratamento."
+      },
+      {
+        "question": "Posso contestar depois de ja ter sido desligado?",
+        "answer": "Pode ser possivel, mas a demora pode dificultar prova e urgencia. O ideal e agir assim que receber o ato."
+      }
+    ]
+  },
+  "reforma-militar-por-invalidez": {
+    "deadline": "Casos de reforma exigem atencao a inspecoes de saude, comunicacoes oficiais e recursos administrativos. Laudos recentes e historico medico devem ser organizados antes da decisao final.",
+    "risks": [
+      "aceitar conclusao de aptidao sem confrontar laudos particulares e limitacoes reais",
+      "nao demonstrar nexo entre doenca, acidente e servico militar",
+      "ser licenciado apesar de incapacidade ainda existente",
+      "deixar de registrar agravamento, tratamento continuo ou restricoes funcionais"
+    ],
+    "whenToCall": [
+      "antes ou logo apos inspecao de saude decisiva",
+      "quando a junta medica negar incapacidade ou nexo com o servico",
+      "se houver risco de licenciamento durante tratamento",
+      "quando a remuneracao ou permanencia depender da conclusao medica"
+    ],
+    "ctaTitle": "Reforma militar depende de prova medica bem organizada",
+    "ctaText": "Separe laudos, exames, atas de inspecao e documentos do servico para avaliar incapacidade, nexo e medida cabivel.",
+    "faqs": [
+      {
+        "question": "Toda doenca gera direito a reforma?",
+        "answer": "Nao. E preciso analisar incapacidade, extensao das limitacoes, nexo com o servico e normas aplicaveis ao caso."
+      },
+      {
+        "question": "Laudo particular ajuda contra decisao da junta?",
+        "answer": "Pode ajudar, principalmente quando descreve limitacoes funcionais, diagnostico, tratamento e incompatibilidade com o servico."
+      },
+      {
+        "question": "Militar temporario pode discutir reforma?",
+        "answer": "Dependendo da incapacidade, do nexo e das circunstancias do desligamento, pode haver discussao administrativa ou judicial."
+      }
+    ]
+  },
+  "pensao-militar": {
+    "deadline": "A habilitacao de pensao deve ser acompanhada desde o obito ou da primeira negativa administrativa. A demora pode afetar recebimento, divisao de cotas e revisoes futuras.",
+    "risks": [
+      "entregar documentacao incompleta e atrasar a concessao",
+      "nao contestar divisao de cotas ou exclusao de dependente",
+      "aceitar desconto ou revisao sem compreender a base de calculo",
+      "perder comunicacoes importantes do processo de habilitacao"
+    ],
+    "whenToCall": [
+      "apos o falecimento do militar, antes de protocolar a habilitacao",
+      "quando houver negativa, demora ou exigencia documental confusa",
+      "se existir disputa entre dependentes ou duvida sobre cotas",
+      "quando surgirem descontos, revisoes ou abate-teto no beneficio"
+    ],
+    "ctaTitle": "Pensao militar exige documentacao correta",
+    "ctaText": "A analise dos documentos civis, militares e financeiros ajuda a evitar indeferimento, atraso ou reducao indevida do beneficio.",
+    "faqs": [
+      {
+        "question": "Quem pode ter direito a pensao militar?",
+        "answer": "A resposta depende da legislacao aplicavel, da data do fato, da condicao do militar e da situacao do dependente."
+      },
+      {
+        "question": "Demora na pensao pode ser contestada?",
+        "answer": "Pode haver medidas administrativas ou judiciais quando a demora for injustificada ou houver risco financeiro relevante."
+      },
+      {
+        "question": "E possivel revisar valor de pensao militar?",
+        "answer": "Sim, quando houver erro de calculo, desconto questionavel, cota incorreta ou aplicacao inadequada da norma."
+      }
+    ]
+  },
+  "abate-teto-pensao-militar": {
+    "deadline": "O desconto deve ser analisado assim que aparecer no contracheque. Comparar meses anteriores e posteriores ajuda a identificar a origem, a base de calculo e possiveis valores a recuperar.",
+    "risks": [
+      "confundir abate-teto com desconto comum de folha",
+      "nao pedir memoria de calculo ou fundamento administrativo",
+      "perder historico de contracheques antigos",
+      "deixar descontos indevidos se repetirem por meses"
+    ],
+    "whenToCall": [
+      "quando o contracheque mostrar reducao relevante e inesperada",
+      "se a administracao nao explicar a base do abate-teto",
+      "quando houver acumulacao de pensao, aposentadoria ou outro beneficio",
+      "se a pensionista precisar revisar valores ja descontados"
+    ],
+    "ctaTitle": "Desconto na pensao precisa de memoria de calculo",
+    "ctaText": "Envie contracheques, ato de concessao e comunicacoes administrativas para conferir se o abate-teto foi aplicado corretamente.",
+    "faqs": [
+      {
+        "question": "Abate-teto na pensao militar sempre e correto?",
+        "answer": "Nao necessariamente. E preciso verificar acumulacao de beneficios, base de calculo, fundamento usado e documentos do caso."
+      },
+      {
+        "question": "Posso recuperar valores descontados?",
+        "answer": "Pode ser possivel quando o desconto for indevido ou calculado de forma incorreta, respeitados prazos e provas."
+      },
+      {
+        "question": "Quais contracheques devo separar?",
+        "answer": "Separe meses anteriores ao desconto, meses posteriores, comunicacoes administrativas e qualquer memoria de calculo recebida."
+      }
+    ]
+  },
+  "promocao-militar-preterida": {
+    "deadline": "A pretericao deve ser analisada logo apos a publicacao do quadro, boletim ou ato de promocao. Prazos administrativos podem correr da ciencia ou da divulgacao oficial.",
+    "risks": [
+      "nao guardar o quadro de acesso ou boletim que mostra a pretericao",
+      "deixar de comparar criterios objetivos com colegas promovidos",
+      "aceitar anotacao, punicao ou conceito usado de forma irregular",
+      "perder reflexos financeiros e de antiguidade por demora na contestacao"
+    ],
+    "whenToCall": [
+      "quando o militar for ultrapassado por colega em situacao semelhante",
+      "ao identificar erro em pontuacao, conceito, antiguidade ou avaliacao",
+      "se punicao antiga for usada de forma desproporcional",
+      "quando a decisao nao explicar claramente o motivo da nao promocao"
+    ],
+    "ctaTitle": "Pretericao exige comparacao objetiva",
+    "ctaText": "Quadros de acesso, boletins, ficha funcional e avaliacoes ajudam a verificar se houve erro, nulidade ou tratamento desigual.",
+    "faqs": [
+      {
+        "question": "Ser preterido sempre significa ilegalidade?",
+        "answer": "Nao. A ilegalidade depende da regra de promocao, dos criterios aplicados e da comparacao com a situacao funcional do militar."
+      },
+      {
+        "question": "Punicao disciplinar pode impedir promocao?",
+        "answer": "Pode influenciar, mas e preciso verificar se foi aplicada e considerada de forma regular, proporcional e fundamentada."
+      },
+      {
+        "question": "A revisao pode gerar efeitos financeiros?",
+        "answer": "Em alguns casos, o reconhecimento de pretericao indevida pode envolver antiguidade, promocao e diferencas remuneratorias."
+      }
+    ]
+  },
+  "processo-administrativo-militar": {
+    "deadline": "A defesa administrativa depende de prazos fixados na notificacao, regulamento ou despacho. Antes de responder, e essencial obter acesso aos autos e montar a linha do tempo.",
+    "risks": [
+      "apresentar defesa sem ler todo o procedimento",
+      "nao pedir diligencias, documentos ou testemunhas no momento adequado",
+      "tratar sindicancia, PAD ou conselho como mera formalidade",
+      "subestimar risco de punicao, exclusao, licenciamento ou reflexo penal"
+    ],
+    "whenToCall": [
+      "assim que receber portaria, notificacao ou citacao administrativa",
+      "quando houver prazo para defesa previa, alegacoes finais ou recurso",
+      "se houver negativa de acesso a documentos e provas",
+      "quando o procedimento puder afetar carreira, permanencia ou remuneracao"
+    ],
+    "ctaTitle": "Defesa administrativa precisa de autos completos",
+    "ctaText": "Antes de responder, organize notificacao, portaria, provas e nomes de testemunhas para uma estrategia coerente.",
+    "faqs": [
+      {
+        "question": "Sindicancia pode gerar punicao?",
+        "answer": "Dependendo do regulamento e do resultado, pode subsidiar punicao, processo administrativo ou outras medidas."
+      },
+      {
+        "question": "Posso pedir testemunhas?",
+        "answer": "Em muitos procedimentos, a defesa pode requerer provas e testemunhas. O momento e a forma dependem da norma aplicavel."
+      },
+      {
+        "question": "Quando judicializar um processo administrativo?",
+        "answer": "A judicializacao pode ser avaliada diante de nulidades, violacao de direitos, urgencia ou decisao administrativa ilegal."
+      }
+    ]
+  }
+}

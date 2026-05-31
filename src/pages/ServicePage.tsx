@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, CheckCircle2, FileText, Phone } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getServicePageBySlug } from "@/data/servicePages";
 import { blogPosts } from "@/data/blogPosts";
+import servicePageGuides from "@/data/servicePageGuides.json";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
@@ -25,6 +26,7 @@ type ServicePageProps = {
 const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
   const { slug } = useParams();
   const page = getServicePageBySlug(fixedSlug || slug);
+  const guide = page ? servicePageGuides[page.slug as keyof typeof servicePageGuides] : null;
   const relatedPosts = (page ? relatedBlogByService[page.slug] || [] : [])
     .map((postSlug) => blogPosts.find((post) => post.slug === postSlug))
     .filter(Boolean);
@@ -80,7 +82,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
       document.head.appendChild(script);
     }
 
-    script.textContent = JSON.stringify({
+    const legalServiceSchema = {
       "@context": "https://schema.org",
       "@type": "LegalService",
       name: "Aguiar Filgueiras Advocacia",
@@ -95,8 +97,25 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
         addressRegion: "DF",
         addressCountry: "BR",
       },
-    });
-  }, [page]);
+    };
+
+    const faqSchema = guide?.faqs?.length
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: guide.faqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.answer,
+            },
+          })),
+        }
+      : null;
+
+    script.textContent = JSON.stringify(faqSchema ? [legalServiceSchema, faqSchema] : legalServiceSchema);
+  }, [page, guide]);
 
   if (!page) {
     return (
@@ -169,6 +188,77 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                   </div>
                 ))}
               </div>
+
+              {guide && (
+                <>
+                  <div className="mt-12 grid gap-6 md:grid-cols-2">
+                    <section className="rounded-sm border border-border bg-card p-6">
+                      <div className="flex items-center gap-3">
+                        <Clock className="h-5 w-5 text-accent" />
+                        <h2 className="font-heading text-xl font-bold text-primary">Prazos e primeiros passos</h2>
+                      </div>
+                      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{guide.deadline}</p>
+                    </section>
+
+                    <section className="rounded-sm border border-border bg-card p-6">
+                      <div className="flex items-center gap-3">
+                        <Phone className="h-5 w-5 text-accent" />
+                        <h2 className="font-heading text-xl font-bold text-primary">Quando falar com advogado</h2>
+                      </div>
+                      <ul className="mt-4 space-y-3">
+                        {guide.whenToCall.map((item) => (
+                          <li key={item} className="text-sm leading-relaxed text-muted-foreground">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  </div>
+
+                  <section className="mt-12">
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle className="h-5 w-5 text-accent" />
+                      <h2 className="font-heading text-2xl font-bold text-primary">Riscos de agir sem orientacao</h2>
+                    </div>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      {guide.risks.map((item) => (
+                        <div key={item} className="rounded-sm border border-border bg-card p-4">
+                          <p className="text-sm leading-relaxed text-muted-foreground">{item}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section className="mt-12 rounded-sm bg-primary p-6 text-primary-foreground sm:p-8">
+                    <h2 className="font-heading text-2xl font-bold">{guide.ctaTitle}</h2>
+                    <p className="mt-4 max-w-2xl text-sm leading-relaxed text-gold-light/85">{guide.ctaText}</p>
+                    <a
+                      href="https://wa.me/5561981833328"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-6 inline-flex items-center gap-2 rounded-sm bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
+                    >
+                      <Phone className="h-4 w-4" />
+                      Enviar documentos para analise
+                    </a>
+                  </section>
+
+                  <section className="mt-12">
+                    <div className="flex items-center gap-3">
+                      <HelpCircle className="h-5 w-5 text-accent" />
+                      <h2 className="font-heading text-2xl font-bold text-primary">Duvidas frequentes</h2>
+                    </div>
+                    <div className="mt-6 space-y-4">
+                      {guide.faqs.map((faq) => (
+                        <article key={faq.question} className="rounded-sm border border-border bg-card p-5">
+                          <h3 className="font-heading text-lg font-bold text-primary">{faq.question}</h3>
+                          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                </>
+              )}
             </div>
 
             <aside className="h-fit rounded-sm border border-border bg-cream p-6">
