@@ -18,6 +18,21 @@ const escapeHtml = (value = "") =>
 const stripAccents = (value = "") =>
   String(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+const relatedServicesByPost = {
+  "reforma-codigo-penal-militar": ["direito-penal-militar", "defesa-em-ipm", "processo-administrativo-militar"],
+  "pensao-militar-direitos-dependentes": ["pensao-militar", "abate-teto-pensao-militar", "advogado-direito-militar"],
+  "transgressoes-disciplinares-ampla-defesa": ["punicao-disciplinar-militar", "processo-administrativo-militar", "exclusao-das-forcas-armadas"],
+};
+
+const relatedPostsByService = {
+  "direito-penal-militar": ["reforma-codigo-penal-militar"],
+  "defesa-em-ipm": ["reforma-codigo-penal-militar"],
+  "punicao-disciplinar-militar": ["transgressoes-disciplinares-ampla-defesa"],
+  "processo-administrativo-militar": ["transgressoes-disciplinares-ampla-defesa"],
+  "pensao-militar": ["pensao-militar-direitos-dependentes"],
+  "abate-teto-pensao-militar": ["pensao-militar-direitos-dependentes"],
+};
+
 const readServicePages = () => {
   const filePath = path.join(rootDir, "src", "data", "servicePages.ts");
   const source = fs.readFileSync(filePath, "utf8");
@@ -63,7 +78,12 @@ const applySeo = (template, route) => {
   return html;
 };
 
-const serviceBody = (page) => `
+const serviceBody = (page, blogPosts) => {
+  const relatedPosts = (relatedPostsByService[page.slug] || [])
+    .map((slug) => blogPosts.find((post) => post.slug === slug))
+    .filter(Boolean);
+
+  return `
   <main>
     <section>
       <p>${escapeHtml(page.eyebrow)}</p>
@@ -78,10 +98,17 @@ const serviceBody = (page) => `
       <ol>${page.approach.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
       <h2>Documentos uteis</h2>
       <ul>${page.documents.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      ${relatedPosts.length ? `<h2>Artigos relacionados</h2><ul>${relatedPosts.map((post) => `<li><a href="/blog/${post.slug}">${escapeHtml(post.title)}</a></li>`).join("")}</ul>` : ""}
     </section>
   </main>`;
+};
 
-const blogBody = (post) => `
+const blogBody = (post, servicePages) => {
+  const relatedServices = (relatedServicesByPost[post.slug] || ["advogado-direito-militar"])
+    .map((slug) => servicePages.find((page) => page.slug === slug))
+    .filter(Boolean);
+
+  return `
   <main>
     <article>
       <p>${escapeHtml(post.category)} - ${escapeHtml(post.date)}</p>
@@ -89,8 +116,10 @@ const blogBody = (post) => `
       <p>${escapeHtml(post.excerpt)}</p>
       <blockquote>${escapeHtml(post.carlosComment)}</blockquote>
       ${post.content.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
+      ${relatedServices.length ? `<h2>Orientacoes relacionadas</h2><ul>${relatedServices.map((page) => `<li><a href="/${page.slug}">${escapeHtml(page.title)}</a></li>`).join("")}</ul>` : ""}
     </article>
   </main>`;
+};
 
 const writeRoute = (route) => {
   const template = fs.readFileSync(path.join(distDir, "index.html"), "utf8");
@@ -109,7 +138,7 @@ for (const page of servicePages) {
     title: page.seoTitle,
     description: page.seoDescription,
     keywords: page.keywords,
-    body: serviceBody(page),
+    body: serviceBody(page, blogPosts),
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "LegalService",
@@ -130,7 +159,7 @@ for (const post of blogPosts) {
     description: post.seoDescription || post.excerpt,
     keywords: post.keywords || [post.category, "direito militar", "advogado militar"],
     ogType: "article",
-    body: blogBody(post),
+    body: blogBody(post, servicePages),
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "Article",
