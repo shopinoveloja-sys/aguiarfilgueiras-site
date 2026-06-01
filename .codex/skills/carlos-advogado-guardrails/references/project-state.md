@@ -68,6 +68,7 @@ Service/problem pages currently include:
 - Previous errors included referencing n8n nodes by unstable internal IDs. Prefer `$input` or stable node outputs over direct internal ID references in Code nodes.
 - Avoid writing `$http.request` inside Code nodes when native HTTP Request nodes are more robust.
 - On-demand blog workflow: `TPfNEftwHTNnV2La`.
+  - 2026-06-01: fixed `Seleciona Modelo` Code node syntax error caused by multiline strings inside single quotes. Prefer array `.join('\n')` strings in n8n Code nodes.
 - Weekly blog workflow: `d09huQvHqjs99i8S`.
 - Email notification workflow: `RA3JTFLzEEX28G0L` / `E-mail Carlos - Aviso Telegram`.
   - Active with Zoho IMAP credential attached.
