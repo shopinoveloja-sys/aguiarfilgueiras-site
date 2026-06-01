@@ -75,6 +75,12 @@ Service/problem pages currently include:
   - It must not auto-reply, delete, forward, or mark email as handled without a later explicit decision.
   - IMAP should use Zoho: `imappro.zoho.com`, port `993`, SSL, user `contato@aguiarfilgueiras.com.br`.
   - Test email triggered successful execution `168` on 2026-06-01.
+  - Ignores subjects containing `[FORMULARIO SITE]` to avoid duplicate alerts from the site form copy.
+- Site contact form workflow: `b06pXMfomFnX59II` / `Site Carlos - Formulario Contato`.
+  - Active webhook: `https://n8n.aguiarfilgueiras.com.br/webhook/carlos-site-contact`.
+  - Receives the site contact form, notifies Carlos on Telegram, and sends a Zoho email copy.
+  - Test webhook triggered successful execution `170` on 2026-06-01.
+  - The frontend pushes GTM event `form_submit_contact` after submission.
 
 ## Tracking
 
