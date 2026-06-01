@@ -23,7 +23,7 @@
 - `src/data/blogPosts.json`: only approved/public blog posts belong here.
 - `src/pages/BlogPost.tsx` and `src/pages/ServicePage.tsx`: contain SEO/meta/interlinking behavior.
 - `public/favicon*`, `src/assets/aguiar-filgueiras-logo.jpeg`, `src/assets/founder.jpg`: brand assets tied to user requests.
-- n8n workflow `E-mail Carlos - Aviso Telegram` is intentionally inactive until the Zoho IMAP credential is attached and tested.
+- n8n workflow `E-mail Carlos - Aviso Telegram` is active and should remain notification-only unless the user explicitly approves reply/delete/forward actions later.
 
 ## Branch And Deploy Safety
 

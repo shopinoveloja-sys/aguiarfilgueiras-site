@@ -4,8 +4,9 @@
 
 - Workflow criado no n8n: `E-mail Carlos - Aviso Telegram`
 - Workflow ID: `RA3JTFLzEEX28G0L`
-- Status atual: inativo
-- Motivo: aguardando credencial IMAP do Zoho ser cadastrada/anexada no n8n.
+- Status atual: ativo
+- Credencial IMAP Zoho anexada no n8n.
+- Teste controlado executado em 2026-06-01: e-mail enviado para `contato@aguiarfilgueiras.com.br`, workflow disparou com sucesso na execucao `168`.
 
 ## Objetivo
 
@@ -39,15 +40,12 @@ SMTP, para uma etapa futura de resposta assistida:
 - Usuario: `contato@aguiarfilgueiras.com.br`
 - Senha: cadastrar diretamente na credencial do n8n. Nao registrar em arquivo.
 
-## Como ativar
+## Como validar
 
-1. Entrar no n8n.
-2. Criar uma credencial IMAP para o Zoho com os dados acima.
-3. Abrir o workflow `E-mail Carlos - Aviso Telegram`.
-4. Anexar a credencial IMAP no no `Zoho IMAP - Novos Emails`.
-5. Executar teste com um e-mail enviado para `contato@aguiarfilgueiras.com.br`.
-6. Confirmar se o Telegram do Carlos recebeu a notificacao correta.
-7. So entao ativar o workflow.
+1. Enviar um e-mail simples para `contato@aguiarfilgueiras.com.br`.
+2. Aguardar o ciclo do IMAP.
+3. Confirmar se o Telegram do Carlos recebeu a notificacao.
+4. No n8n, conferir execucoes do workflow `E-mail Carlos - Aviso Telegram`.
 
 ## Evolucao Futura
 

@@ -70,10 +70,11 @@ Service/problem pages currently include:
 - On-demand blog workflow: `TPfNEftwHTNnV2La`.
 - Weekly blog workflow: `d09huQvHqjs99i8S`.
 - Email notification workflow: `RA3JTFLzEEX28G0L` / `E-mail Carlos - Aviso Telegram`.
-  - Created inactive and waiting for Zoho IMAP credential.
+  - Active with Zoho IMAP credential attached.
   - Intended only to notify Carlos in Telegram when `contato@aguiarfilgueiras.com.br` receives email.
   - It must not auto-reply, delete, forward, or mark email as handled without a later explicit decision.
   - IMAP should use Zoho: `imappro.zoho.com`, port `993`, SSL, user `contato@aguiarfilgueiras.com.br`.
+  - Test email triggered successful execution `168` on 2026-06-01.
 
 ## Tracking
 
