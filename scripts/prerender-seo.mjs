@@ -24,6 +24,47 @@ const relatedServicesByPost = {
   "transgressoes-disciplinares-ampla-defesa": ["punicao-disciplinar-militar", "processo-administrativo-militar", "exclusao-das-forcas-armadas"],
 };
 
+const relatedServiceRules = [
+  { slug: "punicao-disciplinar-militar", terms: ["punicao", "disciplinar", "transgressao", "tac", "termo de ajuste", "pmmg"] },
+  { slug: "processo-administrativo-militar", terms: ["processo administrativo", "sindicancia", "conselho", "defesa administrativa", "tac", "pmmg"] },
+  { slug: "defesa-em-ipm", terms: ["ipm", "inquerito", "oitiva", "depoimento", "investigacao"] },
+  { slug: "direito-penal-militar", terms: ["penal", "crime", "codigo penal", "desercao", "acusado"] },
+  { slug: "exclusao-das-forcas-armadas", terms: ["exclusao", "desligamento", "forcas armadas"] },
+  { slug: "licenciamento-indevido-militar", terms: ["licenciamento", "reintegracao", "temporario"] },
+  { slug: "reforma-militar-por-invalidez", terms: ["reforma", "invalidez", "incapacidade", "junta medica", "saude"] },
+  { slug: "pensao-militar", terms: ["pensao", "dependente", "previdenciario", "beneficio"] },
+  { slug: "abate-teto-pensao-militar", terms: ["abate-teto", "desconto", "teto constitucional"] },
+  { slug: "promocao-militar-preterida", terms: ["promocao", "preterida", "pretericao", "antiguidade"] },
+  { slug: "advogado-direito-militar", terms: ["advogado militar", "direito militar", "defesa militar", "pmmg", "policial militar", "bombeiro"] },
+];
+
+const getRelatedServiceSlugsForPost = (post) => {
+  if (relatedServicesByPost[post.slug]) return relatedServicesByPost[post.slug];
+
+  const text = stripAccents(
+    [
+      post.slug,
+      post.category,
+      post.title,
+      post.excerpt,
+      post.seoTitle || "",
+      post.seoDescription || "",
+      ...(post.keywords || []),
+    ].join(" ").toLowerCase(),
+  );
+
+  const matches = relatedServiceRules
+    .map((rule) => ({
+      slug: rule.slug,
+      score: rule.terms.filter((term) => text.includes(stripAccents(term.toLowerCase()))).length,
+    }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((item) => item.slug);
+
+  return Array.from(new Set([...matches, "advogado-direito-militar", "advogado-militar-brasilia"])).slice(0, 3);
+};
+
 const relatedPostsByService = {
   "direito-penal-militar": ["reforma-codigo-penal-militar"],
   "defesa-em-ipm": ["reforma-codigo-penal-militar"],
@@ -121,7 +162,7 @@ const serviceBody = (page, blogPosts, serviceGuides) => {
 };
 
 const blogBody = (post, servicePages) => {
-  const relatedServices = (relatedServicesByPost[post.slug] || ["advogado-direito-militar"])
+  const relatedServices = getRelatedServiceSlugsForPost(post)
     .map((slug) => servicePages.find((page) => page.slug === slug))
     .filter(Boolean);
 
