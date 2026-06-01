@@ -11,6 +11,8 @@
 - Do not expose tokens, GitHub credentials, Coolify tokens, n8n keys, OpenRouter keys, Mercado Pago credentials, or environment secrets.
 - Do not publish any blog article without explicit Carlos approval.
 - Do not publish AI metadata: `Modelo`, `modelUsed`, `provider`, `OpenRouter`, `gpt-oss`, prompt text, logs, raw JSON debug, n8n internal implementation details.
+- Do not make the Zoho email workflow answer, delete, archive, forward, or mark emails as handled automatically unless the user explicitly asks for that later.
+- Do not paste Zoho, n8n, Coolify, GitHub, OpenRouter, or Mercado Pago secrets into repo docs, workflow notes, prompts, screenshots, or final reports.
 
 ## Fragile Areas
 
@@ -21,6 +23,7 @@
 - `src/data/blogPosts.json`: only approved/public blog posts belong here.
 - `src/pages/BlogPost.tsx` and `src/pages/ServicePage.tsx`: contain SEO/meta/interlinking behavior.
 - `public/favicon*`, `src/assets/aguiar-filgueiras-logo.jpeg`, `src/assets/founder.jpg`: brand assets tied to user requests.
+- n8n workflow `E-mail Carlos - Aviso Telegram` is intentionally inactive until the Zoho IMAP credential is attached and tested.
 
 ## Branch And Deploy Safety
 

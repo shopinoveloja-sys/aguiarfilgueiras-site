@@ -60,12 +60,20 @@ Service/problem pages currently include:
 ## n8n And Automation Notes
 
 - There are n8n workflows for on-demand and weekly blog generation.
+- Blog/editorial communication with Carlos is through Telegram. Do not describe it as WhatsApp. WhatsApp/Evolution is reserved for a later customer-service assistant flow.
 - The intended flow is:
   1. Generate draft from approved editorial queue or user prompt.
-  2. Send WhatsApp preview for Carlos approval.
+  2. Send Telegram preview for Carlos approval.
   3. Only after approval, update `src/data/blogPosts.json`, update `public/sitemap.xml`, then deploy.
 - Previous errors included referencing n8n nodes by unstable internal IDs. Prefer `$input` or stable node outputs over direct internal ID references in Code nodes.
 - Avoid writing `$http.request` inside Code nodes when native HTTP Request nodes are more robust.
+- On-demand blog workflow: `TPfNEftwHTNnV2La`.
+- Weekly blog workflow: `d09huQvHqjs99i8S`.
+- Email notification workflow: `RA3JTFLzEEX28G0L` / `E-mail Carlos - Aviso Telegram`.
+  - Created inactive and waiting for Zoho IMAP credential.
+  - Intended only to notify Carlos in Telegram when `contato@aguiarfilgueiras.com.br` receives email.
+  - It must not auto-reply, delete, forward, or mark email as handled without a later explicit decision.
+  - IMAP should use Zoho: `imappro.zoho.com`, port `993`, SSL, user `contato@aguiarfilgueiras.com.br`.
 
 ## Tracking
 
