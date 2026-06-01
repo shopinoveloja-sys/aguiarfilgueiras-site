@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Menu, X } from "lucide-react";
-import logoAf from "@/assets/aguiar-filgueiras-logo.jpeg";
+import logoAf from "@/assets/aguiar-filgueiras-logo.png";
 
 const navItems = [
   { label: "Inicio", href: "/#inicio" },

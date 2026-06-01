@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import founderImg from "@/assets/founder.jpg";
-import logoImg from "@/assets/aguiar-filgueiras-logo.jpeg";
+import logoImg from "@/assets/aguiar-filgueiras-logo.png";
 import { blogPosts } from "@/data/blogPosts";
 
 const latestArticle = blogPosts[0];

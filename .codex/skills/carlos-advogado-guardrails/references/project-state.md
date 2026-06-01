@@ -81,7 +81,8 @@ Service/problem pages currently include:
   - Active webhook: `https://n8n.aguiarfilgueiras.com.br/webhook/carlos-site-contact`.
   - Receives the site contact form, notifies Carlos on Telegram, and sends a Zoho email copy.
   - Test webhook triggered successful execution `170` on 2026-06-01.
-  - The frontend pushes GTM event `form_submit_contact` after submission.
+- The frontend pushes GTM event `form_submit_contact` after submission.
+- 2026-06-01: replaced site logo/favicon assets with the circular Aguiar Filgueiras mark from Carlos's family logo. Source image background was removed and transparent PNG/ICO variants were generated.
 
 ## Tracking
 
