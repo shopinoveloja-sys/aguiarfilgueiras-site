@@ -78,6 +78,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - A memoria Postgres usa a chave do node `Normalizar Entrada`; apos registro de mensagem, o node `Restaurar Contexto` devolve `telefone` e `mensagem` para o agente.
 - Prompt calibrado para respostas curtas, praticas e juridicamente conservadoras, com orientacao inicial antes de pedir dados.
 - Prompt humanizado: acolher em uma frase curta, orientar de forma pratica e terminar com uma pergunta simples por vez.
+- Linguagem de encaminhamento: nao usar "avaliacao humana"; usar "setor responsavel" ou "Dr. Carlos, caso esteja com agenda livre".
 
 ## Ordem Recomendada
 
@@ -104,6 +105,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - O webhook/Evolution ja esta ativo para teste controlado; nao remover a whitelist ate concluir validacao ponta a ponta.
 - Evoluir a skill/prompt da Laura para manter o mesmo comportamento mesmo quando o OpenRouter alternar modelos gratuitos.
 - Testar se a Laura evita questionarios longos e conduz a conversa em etapas.
+- Testar casos reais de alta sensibilidade: PAD, exclusao, sindicancia, recurso nao conhecido, transito em julgado, acao rescisoria, nulidade e erro de advogado.
 
 ## Limites
 

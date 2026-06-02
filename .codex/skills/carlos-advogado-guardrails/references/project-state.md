@@ -107,6 +107,7 @@ Service/problem pages currently include:
   - OpenRouter free model testing: `meta-llama/llama-3.3-70b-instruct:free` hit rate limit at execution `186`; `openrouter/free` succeeded at execution `187`.
   - Prompt tuning added so free/rotating LLMs answer as Laura: short WhatsApp blocks, practical initial guidance, conservative legal wording, and no overpromising.
   - Humanization rule added: assume the person may be anxious, avoid questionnaire-style first replies, answer in stages, and end with one simple question whenever possible.
+  - Escalation wording rule: do not say "human evaluation" or "human"; say "setor responsavel" or "Dr. Carlos, caso esteja com agenda livre". Trigger especially for PAD, exclusion, sindicancia, appeal not known, transito em julgado, acao rescisoria, nulidade, lawyer error, assedio, IPM, arrest, hearing, or short deadline.
   - The secretary should be referred to as Laura when it is natural in the conversation.
   - Do not remove the whitelist or open the secretary to public traffic until controlled tests pass.
   - Remaining setup before execution: confirm the internal WhatsApp escalation number, Google Calendar agenda/rules, payment policy/values, and final prompt behavior on sensitive cases.
