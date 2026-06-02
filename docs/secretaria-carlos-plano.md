@@ -67,7 +67,8 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Numero conectado da Laura/Evolution: `5511988250996` (`11 98825-0996`).
 - A Evolution esta com o celular do projeto e apenas dois celulares liberados para teste.
 - O core agent esta com whitelist de teste configurada no node `Normalizar Entrada`.
-- Numeros de contatos liberados para resposta: `556183806070`, `5527992891634`.
+- Numero de contato liberado para resposta agora: `5527992891634`.
+- Numero `556183806070` fica reservado para teste futuro do Carlos, quando o fluxo estiver mais avancado.
 - O numero `5511988250996` e o numero operacional conectado da Laura/Evolution, nao um contato atendido.
 - Enquanto estiver em teste, numeros fora da whitelist, grupos, mensagens enviadas pelo proprio WhatsApp ou mensagens vazias devem ser ignorados.
 - A secretaria virtual deve se identificar como Laura quando for natural no atendimento.

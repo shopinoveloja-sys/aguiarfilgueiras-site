@@ -100,7 +100,8 @@ Service/problem pages currently include:
   - `Carlos Secretaria - Core Agent LangChain` / `V8vhO8WWD0MdOpXT`: LangChain core agent with OpenRouter `openrouter/free`, Postgres memory, Mercado Pago tool, WhatsApp escalation tool, lead registration tool, agenda-pending tool, and whitelist gate; published/active for controlled testing.
   - Evolution webhook is configured for `MESSAGES_UPSERT`, `webhookByEvents=false`, pointing to `https://n8n.aguiarfilgueiras.com.br/webhook/secretaria-carlos-core-agent`.
   - The connected Laura/Evolution number `5511988250996` is operational/sender-side only.
-  - The core agent contact whitelist in `Normalizar Entrada` currently allows only `556183806070` and `5527992891634` for controlled testing.
+  - The core agent contact whitelist in `Normalizar Entrada` currently allows only `5527992891634` for controlled testing.
+  - `556183806070` is reserved for a later Carlos test, but should remain outside the whitelist until explicitly authorized.
   - A non-whitelisted webhook test completed successfully at execution `179`, stopping at `Normalizar Entrada` without AI/database/WhatsApp calls.
   - First whitelisted end-to-end test completed successfully at execution `184`: Evolution webhook -> normalizer -> Postgres message insert -> memory -> AI agent -> Evolution send.
   - Previous failures fixed: execution `182` lost context after Postgres insert and failed memory key; fixed with `Restaurar Contexto`. Execution `183` failed OpenRouter payment; model was temporarily switched to OpenAI `gpt-4.1-mini`.
