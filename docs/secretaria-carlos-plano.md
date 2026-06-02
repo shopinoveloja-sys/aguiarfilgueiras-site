@@ -11,10 +11,12 @@ O modelo original da Secretaria v3 deve ser tratado como referencia, nao como im
 - Entrada WhatsApp: Evolution API.
 - Cerebro: agente LangChain no n8n.
 - Memoria/status: Postgres.
-- Alertas internos: Telegram do Carlos/equipe.
+- Alertas internos da secretaria: WhatsApp via Evolution.
 - Email: Zoho, ja conectado em workflows auxiliares.
 - Agenda: Google Calendar, pendente de credencial/agenda final.
 - Pagamento: Mercado Pago.
+
+Observacao importante: Telegram deve continuar reservado aos fluxos ja existentes de blog/artigos e avisos de e-mail. A secretaria do Carlos deve funcionar exclusivamente via WhatsApp/Evolution.
 
 ## Subworkflow Mercado Pago
 
@@ -40,15 +42,15 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
   - ID: `WzJTlAKhSqjLw0mn`
   - Status: criado e inativo.
   - Envia texto via Evolution para a instancia `Carlos_Advogado`.
-- `Carlos Secretaria - Escalar Telegram`
-  - ID: `KLQzd8lxzgI53Jjv`
+- `Carlos Secretaria - Escalar WhatsApp`
+  - ID: `4bKFjjnhPk1gaFof`
   - Status: criado e inativo.
-  - Ferramenta para avisar Carlos/equipe no Telegram quando o agente identificar urgencia ou necessidade humana.
+  - Ferramenta para avisar Carlos/equipe pelo WhatsApp quando o agente identificar urgencia ou necessidade humana.
 - `Carlos Secretaria - Core Agent LangChain`
   - ID: `V8vhO8WWD0MdOpXT`
   - Status: criado e inativo.
   - Entrada teste: webhook `secretaria-carlos-core-agent`.
-  - Usa OpenRouter + memoria Postgres + ferramentas de escalacao e Mercado Pago.
+  - Usa OpenRouter + memoria Postgres + ferramentas de escalacao por WhatsApp e Mercado Pago.
 
 ## Evolution E Whitelist
 
@@ -64,7 +66,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 1. [x] Criar tabelas Postgres especificas da secretaria sem Chatwoot/Asaas.
 2. [x] Criar envio Evolution para texto simples.
 3. [x] Criar subworkflow Mercado Pago.
-4. [x] Criar ferramenta de escalacao humana por Telegram.
+4. [x] Criar ferramenta de escalacao humana por WhatsApp/Evolution.
 5. [x] Criar core agent LangChain em modo inativo.
 6. [ ] Adicionar os dois numeros de teste na whitelist.
 7. [ ] Testar ponta a ponta com numeros liberados no Evolution.

@@ -14,6 +14,7 @@
 - Do not make the Zoho email workflow answer, delete, archive, forward, or mark emails as handled automatically unless the user explicitly asks for that later.
 - Do not paste Zoho, n8n, Coolify, GitHub, OpenRouter, or Mercado Pago secrets into repo docs, workflow notes, prompts, screenshots, or final reports.
 - Do not open the Evolution/WhatsApp secretary to all contacts while the project is in test mode. Keep the whitelist explicit and conservative.
+- Do not route the customer-service secretary through Telegram. Telegram remains for blog/editorial and current email alerts; the secretary flow is WhatsApp/Evolution.
 
 ## Fragile Areas
 
