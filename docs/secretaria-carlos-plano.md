@@ -79,6 +79,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Prompt calibrado para respostas curtas, praticas e juridicamente conservadoras, com orientacao inicial antes de pedir dados.
 - Prompt humanizado: acolher em uma frase curta, orientar de forma pratica e terminar com uma pergunta simples por vez.
 - Linguagem de encaminhamento: nao usar "avaliacao humana"; usar "setor responsavel" ou "Dr. Carlos, caso esteja com agenda livre".
+- Se o contato pedir para falar diretamente com o Dr. Carlos, a Laura deve oferecer possibilidade de agendamento, coletar uma preferencia simples de horario e usar agenda pendente enquanto o Google Calendar nao estiver conectado.
 
 ## Ordem Recomendada
 
@@ -100,6 +101,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 
 - Confirmar se o alerta humano da secretaria deve ir para o mesmo WhatsApp conectado na Evolution (`11 98825-0996`) ou para outro numero interno da equipe.
 - Definir agenda oficial do Carlos/equipe no Google Calendar, horarios de atendimento, duracao padrao e regras de disponibilidade.
+- Definir se o atendimento com Dr. Carlos sera consulta, triagem, retorno ou avaliacao inicial, e quais valores/politica de pagamento se aplicam.
 - Definir quando a secretaria pode gerar link Mercado Pago, valores possiveis e texto de cobranca.
 - Validar prompt final com casos reais: assedio, IPM, punicao disciplinar, exclusao/licenciamento, pensao/reforma e urgencia com prazo.
 - O webhook/Evolution ja esta ativo para teste controlado; nao remover a whitelist ate concluir validacao ponta a ponta.

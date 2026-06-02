@@ -108,6 +108,7 @@ Service/problem pages currently include:
   - Prompt tuning added so free/rotating LLMs answer as Laura: short WhatsApp blocks, practical initial guidance, conservative legal wording, and no overpromising.
   - Humanization rule added: assume the person may be anxious, avoid questionnaire-style first replies, answer in stages, and end with one simple question whenever possible.
   - Escalation wording rule: do not say "human evaluation" or "human"; say "setor responsavel" or "Dr. Carlos, caso esteja com agenda livre". Trigger especially for PAD, exclusion, sindicancia, appeal not known, transito em julgado, acao rescisoria, nulidade, lawyer error, assedio, IPM, arrest, hearing, or short deadline.
+  - If the contact asks to speak directly with Dr. Carlos, Laura should offer the possibility of scheduling a time, ask one simple time-preference question, and use the agenda-pending tool until Google Calendar is connected. Do not promise immediate availability.
   - The secretary should be referred to as Laura when it is natural in the conversation.
   - Do not remove the whitelist or open the secretary to public traffic until controlled tests pass.
   - Remaining setup before execution: confirm the internal WhatsApp escalation number, Google Calendar agenda/rules, payment policy/values, and final prompt behavior on sensitive cases.
