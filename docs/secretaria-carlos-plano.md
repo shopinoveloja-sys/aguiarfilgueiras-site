@@ -46,20 +46,29 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
   - ID: `4bKFjjnhPk1gaFof`
   - Status: criado e inativo.
   - Ferramenta para avisar Carlos/equipe pelo WhatsApp quando o agente identificar urgencia ou necessidade humana.
+- `Carlos Secretaria - Registrar Lead`
+  - ID: `bhn81kSond3XddTr`
+  - Status: criado e inativo.
+  - Ferramenta para registrar/atualizar telefone, nome, cidade/UF, corporacao, vinculo, tema, resumo, prazo, urgencia e documentos.
+- `Carlos Secretaria - Agenda Pendente`
+  - ID: `JrpW6QwBM2HDXd6F`
+  - Status: criado e inativo.
+  - Ferramenta temporaria para pedidos de agendamento enquanto a agenda oficial nao estiver conectada.
 - `Carlos Secretaria - Core Agent LangChain`
   - ID: `V8vhO8WWD0MdOpXT`
   - Status: criado e inativo.
   - Entrada teste: webhook `secretaria-carlos-core-agent`.
-  - Usa OpenRouter + memoria Postgres + ferramentas de escalacao por WhatsApp e Mercado Pago.
+  - Usa OpenRouter + memoria Postgres + ferramentas de registro de lead, escalacao por WhatsApp, agenda pendente e Mercado Pago.
 
 ## Evolution E Whitelist
 
 - Instancia Evolution: `Carlos_Advogado`.
 - Status observado: conectada/open.
 - A Evolution esta com o celular do projeto e apenas dois celulares liberados para teste.
-- O core agent foi criado com whitelist conservadora contendo apenas o numero principal conhecido.
-- Antes de ativar qualquer entrada publica, adicionar os dois numeros de teste no node `Normalizar Entrada`.
+- O core agent esta com whitelist de teste configurada no node `Normalizar Entrada`.
+- Numeros de teste liberados: `5511988250996`, `556183806070`, `5527992891634`.
 - Enquanto estiver em teste, numeros fora da whitelist, grupos, mensagens enviadas pelo proprio WhatsApp ou mensagens vazias devem ser ignorados.
+- A secretaria virtual deve se identificar como Laura quando for natural no atendimento.
 
 ## Ordem Recomendada
 
@@ -68,11 +77,22 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 3. [x] Criar subworkflow Mercado Pago.
 4. [x] Criar ferramenta de escalacao humana por WhatsApp/Evolution.
 5. [x] Criar core agent LangChain em modo inativo.
-6. [ ] Adicionar os dois numeros de teste na whitelist.
-7. [ ] Testar ponta a ponta com numeros liberados no Evolution.
-8. [ ] Conectar agenda Google Calendar apos confirmar agenda/horarios.
-9. [ ] Ativar entrada Evolution somente depois dos testes controlados.
-10. [ ] So depois ativar lembretes, recuperacao de leads e ligacoes.
+6. [x] Criar ferramenta de registro/atualizacao de lead.
+7. [x] Criar ferramenta temporaria de agenda pendente.
+8. [x] Adicionar os dois numeros de teste na whitelist.
+9. [ ] Testar ponta a ponta com numeros liberados no Evolution.
+10. [ ] Conectar agenda Google Calendar apos confirmar agenda/horarios.
+11. [ ] Definir politica de pagamento: quando gerar link e qual valor usar.
+12. [ ] Ativar entrada Evolution somente depois dos testes controlados.
+13. [ ] So depois ativar lembretes, recuperacao de leads e ligacoes.
+
+## Pendencias Para Execucao Controlada
+
+- Confirmar se o alerta humano da secretaria deve ir para o mesmo WhatsApp conectado na Evolution ou para outro numero interno da equipe.
+- Definir agenda oficial do Carlos/equipe no Google Calendar, horarios de atendimento, duracao padrao e regras de disponibilidade.
+- Definir quando a secretaria pode gerar link Mercado Pago, valores possiveis e texto de cobranca.
+- Validar prompt final com casos reais: assedio, IPM, punicao disciplinar, exclusao/licenciamento, pensao/reforma e urgencia com prazo.
+- So ativar webhook/Evolution depois que os testes com whitelist passarem sem resposta indevida.
 
 ## Limites
 

@@ -94,9 +94,13 @@ Service/problem pages currently include:
   - `Carlos Secretaria - Configurar Tabelas` / `Ci9tQeImV1ymye5o`: setup workflow, executed once and inactive.
   - `Carlos Secretaria - Enviar Evolution` / `WzJTlAKhSqjLw0mn`: sends text via Evolution, created and inactive.
   - `Carlos Secretaria - Escalar WhatsApp` / `4bKFjjnhPk1gaFof`: internal human escalation through WhatsApp/Evolution, created and inactive.
-  - `Carlos Secretaria - Core Agent LangChain` / `V8vhO8WWD0MdOpXT`: LangChain core agent with Postgres memory, Mercado Pago tool, WhatsApp escalation tool, and whitelist gate; created and inactive.
-  - The core agent currently allows only the known main/test number in `Normalizar Entrada`. Add the other two Evolution test numbers before activating any test webhook.
+  - `Carlos Secretaria - Registrar Lead` / `bhn81kSond3XddTr`: Postgres upsert tool for qualified lead/contact data, created and inactive.
+  - `Carlos Secretaria - Agenda Pendente` / `JrpW6QwBM2HDXd6F`: temporary agenda placeholder tool until Google Calendar rules are confirmed, created and inactive.
+  - `Carlos Secretaria - Core Agent LangChain` / `V8vhO8WWD0MdOpXT`: LangChain core agent with Postgres memory, Mercado Pago tool, WhatsApp escalation tool, lead registration tool, agenda-pending tool, and whitelist gate; created and inactive.
+  - The core agent whitelist in `Normalizar Entrada` currently allows `5511988250996`, `556183806070`, and `5527992891634` for controlled testing.
+  - The secretary should be referred to as Laura when it is natural in the conversation.
   - Do not activate the public Evolution secretary until controlled whitelist tests pass.
+  - Remaining setup before execution: confirm the internal WhatsApp escalation number, Google Calendar agenda/rules, payment policy/values, and final prompt behavior on sensitive cases.
 
 ## Tracking
 
