@@ -106,6 +106,7 @@ Service/problem pages currently include:
   - Previous failures fixed: execution `182` lost context after Postgres insert and failed memory key; fixed with `Restaurar Contexto`. Execution `183` failed OpenRouter payment; model was temporarily switched to OpenAI `gpt-4.1-mini`.
   - OpenRouter free model testing: `meta-llama/llama-3.3-70b-instruct:free` hit rate limit at execution `186`; `openrouter/free` succeeded at execution `187`.
   - Prompt tuning added so free/rotating LLMs answer as Laura: short WhatsApp blocks, practical initial guidance, conservative legal wording, and no overpromising.
+  - Humanization rule added: assume the person may be anxious, avoid questionnaire-style first replies, answer in stages, and end with one simple question whenever possible.
   - The secretary should be referred to as Laura when it is natural in the conversation.
   - Do not remove the whitelist or open the secretary to public traffic until controlled tests pass.
   - Remaining setup before execution: confirm the internal WhatsApp escalation number, Google Calendar agenda/rules, payment policy/values, and final prompt behavior on sensitive cases.
