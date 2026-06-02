@@ -80,6 +80,9 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Prompt humanizado: acolher em uma frase curta, orientar de forma pratica e terminar com uma pergunta simples por vez.
 - Linguagem de encaminhamento: nao usar "avaliacao humana"; usar "setor responsavel" ou "Dr. Carlos, caso esteja com agenda livre".
 - Se o contato pedir para falar diretamente com o Dr. Carlos, a Laura deve oferecer possibilidade de agendamento, coletar uma preferencia simples de horario e usar agenda pendente enquanto o Google Calendar nao estiver conectado.
+- Equilibrio de resposta: nao enviar questionarios longos, mas tambem nao responder apenas com pergunta seca; usar acolhimento/orientacao curta + uma pergunta final.
+- Envio WhatsApp agora quebra mensagens longas em blocos de ate aproximadamente 650 caracteres.
+- Ao escalar para o setor responsavel, o contato fica com `lock_humano=true` em `secretaria_carlos_status`; mensagens seguintes sao registradas, mas nao respondidas pela Laura ate liberar o atendimento.
 
 ## Ordem Recomendada
 
@@ -107,6 +110,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - O webhook/Evolution ja esta ativo para teste controlado; nao remover a whitelist ate concluir validacao ponta a ponta.
 - Evoluir a skill/prompt da Laura para manter o mesmo comportamento mesmo quando o OpenRouter alternar modelos gratuitos.
 - Testar se a Laura evita questionarios longos e conduz a conversa em etapas.
+- Testar bloqueio do setor responsavel e rotina de desbloqueio/retomada de atendimento.
 - Testar casos reais de alta sensibilidade: PAD, exclusao, sindicancia, recurso nao conhecido, transito em julgado, acao rescisoria, nulidade e erro de advogado.
 
 ## Limites
