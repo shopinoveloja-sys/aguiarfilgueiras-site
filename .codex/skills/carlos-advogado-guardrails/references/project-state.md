@@ -88,6 +88,15 @@ Service/problem pages currently include:
   - Do not paste or document Mercado Pago tokens.
   - Later replace the n8n credential with Carlos's production credential without changing the workflow contract.
   - Intended contract: inputs `valor`, `descricao`, `nome`, `email`, `telefone`, `external_reference`; outputs `preference_id`, `init_point`, `sandbox_init_point`, `external_reference`.
+- Secretaria/WhatsApp automation is being adapted from the old `Secretaria v3` templates, but should not import Chatwoot/Asaas assumptions.
+  - WhatsApp transport: Evolution API instance `Carlos_Advogado`.
+  - Communication channel for blog/editorial remains Telegram; Evolution is only for the customer-service secretary.
+  - `Carlos Secretaria - Configurar Tabelas` / `Ci9tQeImV1ymye5o`: setup workflow, executed once and inactive.
+  - `Carlos Secretaria - Enviar Evolution` / `WzJTlAKhSqjLw0mn`: sends text via Evolution, created and inactive.
+  - `Carlos Secretaria - Escalar Telegram` / `KLQzd8lxzgI53Jjv`: internal human escalation tool, created and inactive.
+  - `Carlos Secretaria - Core Agent LangChain` / `V8vhO8WWD0MdOpXT`: LangChain core agent with Postgres memory, Mercado Pago tool, Telegram escalation tool, and whitelist gate; created and inactive.
+  - The core agent currently allows only the known main/test number in `Normalizar Entrada`. Add the other two Evolution test numbers before activating any test webhook.
+  - Do not activate the public Evolution secretary until controlled whitelist tests pass.
 
 ## Tracking
 

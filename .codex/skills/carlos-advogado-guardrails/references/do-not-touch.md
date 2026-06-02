@@ -13,6 +13,7 @@
 - Do not publish AI metadata: `Modelo`, `modelUsed`, `provider`, `OpenRouter`, `gpt-oss`, prompt text, logs, raw JSON debug, n8n internal implementation details.
 - Do not make the Zoho email workflow answer, delete, archive, forward, or mark emails as handled automatically unless the user explicitly asks for that later.
 - Do not paste Zoho, n8n, Coolify, GitHub, OpenRouter, or Mercado Pago secrets into repo docs, workflow notes, prompts, screenshots, or final reports.
+- Do not open the Evolution/WhatsApp secretary to all contacts while the project is in test mode. Keep the whitelist explicit and conservative.
 
 ## Fragile Areas
 
@@ -25,6 +26,7 @@
 - `public/favicon*`, `src/assets/aguiar-filgueiras-logo.jpeg`, `src/assets/founder.jpg`: brand assets tied to user requests.
 - n8n workflow `E-mail Carlos - Aviso Telegram` is active and should remain notification-only unless the user explicitly approves reply/delete/forward actions later.
 - n8n workflow `Site Carlos - Formulario Contato` is active and should keep the form conservative: notify Telegram, send Zoho copy, and avoid automatic legal replies.
+- n8n workflow `Carlos Secretaria - Core Agent LangChain` exists but is intentionally inactive during secretary setup. Do not activate it until the Evolution test numbers are confirmed and recorded in the whitelist.
 
 ## Branch And Deploy Safety
 

@@ -30,15 +30,47 @@ Contrato:
 
 Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial no n8n.
 
+## Workflows Criados Para A Secretaria
+
+- `Carlos Secretaria - Configurar Tabelas`
+  - ID: `Ci9tQeImV1ymye5o`
+  - Status: executado uma vez e depois desativado.
+  - Criou as tabelas Postgres da secretaria.
+- `Carlos Secretaria - Enviar Evolution`
+  - ID: `WzJTlAKhSqjLw0mn`
+  - Status: criado e inativo.
+  - Envia texto via Evolution para a instancia `Carlos_Advogado`.
+- `Carlos Secretaria - Escalar Telegram`
+  - ID: `KLQzd8lxzgI53Jjv`
+  - Status: criado e inativo.
+  - Ferramenta para avisar Carlos/equipe no Telegram quando o agente identificar urgencia ou necessidade humana.
+- `Carlos Secretaria - Core Agent LangChain`
+  - ID: `V8vhO8WWD0MdOpXT`
+  - Status: criado e inativo.
+  - Entrada teste: webhook `secretaria-carlos-core-agent`.
+  - Usa OpenRouter + memoria Postgres + ferramentas de escalacao e Mercado Pago.
+
+## Evolution E Whitelist
+
+- Instancia Evolution: `Carlos_Advogado`.
+- Status observado: conectada/open.
+- A Evolution esta com o celular do projeto e apenas dois celulares liberados para teste.
+- O core agent foi criado com whitelist conservadora contendo apenas o numero principal conhecido.
+- Antes de ativar qualquer entrada publica, adicionar os dois numeros de teste no node `Normalizar Entrada`.
+- Enquanto estiver em teste, numeros fora da whitelist, grupos, mensagens enviadas pelo proprio WhatsApp ou mensagens vazias devem ser ignorados.
+
 ## Ordem Recomendada
 
-1. Criar tabelas Postgres especificas da secretaria sem Chatwoot/Asaas.
-2. Criar entrada Evolution para mensagens recebidas.
-3. Criar envio Evolution para texto quebrado.
-4. Criar agente LangChain com prompt juridico do Carlos.
-5. Conectar ferramentas: escalar humano, agenda, pagamento, registrar lead.
-6. Testar com numeros liberados no Evolution.
-7. So depois ativar lembretes, recuperacao de leads e ligacoes.
+1. [x] Criar tabelas Postgres especificas da secretaria sem Chatwoot/Asaas.
+2. [x] Criar envio Evolution para texto simples.
+3. [x] Criar subworkflow Mercado Pago.
+4. [x] Criar ferramenta de escalacao humana por Telegram.
+5. [x] Criar core agent LangChain em modo inativo.
+6. [ ] Adicionar os dois numeros de teste na whitelist.
+7. [ ] Testar ponta a ponta com numeros liberados no Evolution.
+8. [ ] Conectar agenda Google Calendar apos confirmar agenda/horarios.
+9. [ ] Ativar entrada Evolution somente depois dos testes controlados.
+10. [ ] So depois ativar lembretes, recuperacao de leads e ligacoes.
 
 ## Limites
 
