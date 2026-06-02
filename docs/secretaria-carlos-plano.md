@@ -58,7 +58,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
   - ID: `V8vhO8WWD0MdOpXT`
   - Status: publicado/ativo para teste controlado por whitelist.
   - Entrada Evolution: `https://n8n.aguiarfilgueiras.com.br/webhook/secretaria-carlos-core-agent`.
-  - Usa OpenRouter + memoria Postgres + ferramentas de registro de lead, escalacao por WhatsApp, agenda pendente e Mercado Pago.
+  - Usa OpenAI `gpt-4.1-mini` + memoria Postgres + ferramentas de registro de lead, escalacao por WhatsApp, agenda pendente e Mercado Pago.
 
 ## Evolution E Whitelist
 
@@ -73,6 +73,8 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - A secretaria virtual deve se identificar como Laura quando for natural no atendimento.
 - Webhook da Evolution configurado para `MESSAGES_UPSERT`, `webhookByEvents=false`, apontando para o core agent.
 - Teste seguro fora da whitelist validado: execucao `179` terminou com sucesso no node `Normalizar Entrada`, sem chamar IA, banco ou envio WhatsApp.
+- Primeiro teste ponta a ponta com numero liberado validado: execucao `184` recebeu mensagem, registrou, chamou IA e enviou resposta pela Evolution.
+- A memoria Postgres usa a chave do node `Normalizar Entrada`; apos registro de mensagem, o node `Restaurar Contexto` devolve `telefone` e `mensagem` para o agente.
 
 ## Ordem Recomendada
 
@@ -84,7 +86,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 6. [x] Criar ferramenta de registro/atualizacao de lead.
 7. [x] Criar ferramenta temporaria de agenda pendente.
 8. [x] Adicionar os dois numeros de teste na whitelist.
-9. [ ] Testar ponta a ponta com numeros liberados no Evolution.
+9. [x] Testar ponta a ponta com numeros liberados no Evolution.
 10. [ ] Conectar agenda Google Calendar apos confirmar agenda/horarios.
 11. [ ] Definir politica de pagamento: quando gerar link e qual valor usar.
 12. [ ] Ativar entrada Evolution somente depois dos testes controlados.
@@ -97,6 +99,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Definir quando a secretaria pode gerar link Mercado Pago, valores possiveis e texto de cobranca.
 - Validar prompt final com casos reais: assedio, IPM, punicao disciplinar, exclusao/licenciamento, pensao/reforma e urgencia com prazo.
 - O webhook/Evolution ja esta ativo para teste controlado; nao remover a whitelist ate concluir validacao ponta a ponta.
+- Ajustar o tom da Laura para responder um pouco mais utilmente antes de pedir todos os dados, sem prometer resultado juridico.
 
 ## Limites
 
