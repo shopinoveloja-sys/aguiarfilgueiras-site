@@ -99,7 +99,8 @@ Service/problem pages currently include:
   - `Carlos Secretaria - Agenda Pendente` / `JrpW6QwBM2HDXd6F`: temporary agenda placeholder tool until Google Calendar rules are confirmed, published/active.
   - `Carlos Secretaria - Core Agent LangChain` / `V8vhO8WWD0MdOpXT`: LangChain core agent with Postgres memory, Mercado Pago tool, WhatsApp escalation tool, lead registration tool, agenda-pending tool, and whitelist gate; published/active for controlled testing.
   - Evolution webhook is configured for `MESSAGES_UPSERT`, `webhookByEvents=false`, pointing to `https://n8n.aguiarfilgueiras.com.br/webhook/secretaria-carlos-core-agent`.
-  - The core agent whitelist in `Normalizar Entrada` currently allows `5511988250996`, `556183806070`, and `5527992891634` for controlled testing.
+  - The connected Laura/Evolution number `5511988250996` is operational/sender-side only.
+  - The core agent contact whitelist in `Normalizar Entrada` currently allows only `556183806070` and `5527992891634` for controlled testing.
   - A non-whitelisted webhook test completed successfully at execution `179`, stopping at `Normalizar Entrada` without AI/database/WhatsApp calls.
   - The secretary should be referred to as Laura when it is natural in the conversation.
   - Do not remove the whitelist or open the secretary to public traffic until controlled tests pass.
