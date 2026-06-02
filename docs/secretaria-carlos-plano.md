@@ -56,9 +56,9 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
   - Ferramenta temporaria para pedidos de agendamento enquanto a agenda oficial nao estiver conectada.
 - `Carlos Secretaria - Core Agent LangChain`
   - ID: `V8vhO8WWD0MdOpXT`
-  - Status: publicado/ativo para teste controlado por whitelist.
-  - Entrada Evolution: `https://n8n.aguiarfilgueiras.com.br/webhook/secretaria-carlos-core-agent`.
-  - Usa OpenAI `gpt-4.1-mini` + memoria Postgres + ferramentas de registro de lead, escalacao por WhatsApp, agenda pendente e Mercado Pago.
+- Status: publicado/ativo para teste controlado por whitelist.
+- Entrada Evolution: `https://n8n.aguiarfilgueiras.com.br/webhook/secretaria-carlos-core-agent`.
+- Usa OpenRouter `openrouter/free` + memoria Postgres + ferramentas de registro de lead, escalacao por WhatsApp, agenda pendente e Mercado Pago.
 
 ## Evolution E Whitelist
 
@@ -74,7 +74,9 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Webhook da Evolution configurado para `MESSAGES_UPSERT`, `webhookByEvents=false`, apontando para o core agent.
 - Teste seguro fora da whitelist validado: execucao `179` terminou com sucesso no node `Normalizar Entrada`, sem chamar IA, banco ou envio WhatsApp.
 - Primeiro teste ponta a ponta com numero liberado validado: execucao `184` recebeu mensagem, registrou, chamou IA e enviou resposta pela Evolution.
+- Teste com OpenRouter `openrouter/free` validado: execucao `187` concluiu com envio pela Evolution.
 - A memoria Postgres usa a chave do node `Normalizar Entrada`; apos registro de mensagem, o node `Restaurar Contexto` devolve `telefone` e `mensagem` para o agente.
+- Prompt calibrado para respostas curtas, praticas e juridicamente conservadoras, com orientacao inicial antes de pedir dados.
 
 ## Ordem Recomendada
 
@@ -99,7 +101,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Definir quando a secretaria pode gerar link Mercado Pago, valores possiveis e texto de cobranca.
 - Validar prompt final com casos reais: assedio, IPM, punicao disciplinar, exclusao/licenciamento, pensao/reforma e urgencia com prazo.
 - O webhook/Evolution ja esta ativo para teste controlado; nao remover a whitelist ate concluir validacao ponta a ponta.
-- Ajustar o tom da Laura para responder um pouco mais utilmente antes de pedir todos os dados, sem prometer resultado juridico.
+- Evoluir a skill/prompt da Laura para manter o mesmo comportamento mesmo quando o OpenRouter alternar modelos gratuitos.
 
 ## Limites
 
