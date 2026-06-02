@@ -40,24 +40,24 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
   - Criou as tabelas Postgres da secretaria.
 - `Carlos Secretaria - Enviar Evolution`
   - ID: `WzJTlAKhSqjLw0mn`
-  - Status: criado e inativo.
+  - Status: publicado/ativo.
   - Envia texto via Evolution para a instancia `Carlos_Advogado`.
 - `Carlos Secretaria - Escalar WhatsApp`
   - ID: `4bKFjjnhPk1gaFof`
-  - Status: criado e inativo.
+  - Status: publicado/ativo.
   - Ferramenta para avisar Carlos/equipe pelo WhatsApp quando o agente identificar urgencia ou necessidade humana.
 - `Carlos Secretaria - Registrar Lead`
   - ID: `bhn81kSond3XddTr`
-  - Status: criado e inativo.
-  - Ferramenta para registrar/atualizar telefone, nome, cidade/UF, corporacao, vinculo, tema, resumo, prazo, urgencia e documentos.
+  - Status: publicado/ativo.
+  - Ferramenta para registrar/atualizar telefone, nome e dados qualificados em `dados` JSONB: cidade/UF, corporacao, vinculo, tema, resumo, prazo, urgencia e documentos.
 - `Carlos Secretaria - Agenda Pendente`
   - ID: `JrpW6QwBM2HDXd6F`
-  - Status: criado e inativo.
+  - Status: publicado/ativo.
   - Ferramenta temporaria para pedidos de agendamento enquanto a agenda oficial nao estiver conectada.
 - `Carlos Secretaria - Core Agent LangChain`
   - ID: `V8vhO8WWD0MdOpXT`
-  - Status: criado e inativo.
-  - Entrada teste: webhook `secretaria-carlos-core-agent`.
+  - Status: publicado/ativo para teste controlado por whitelist.
+  - Entrada Evolution: `https://n8n.aguiarfilgueiras.com.br/webhook/secretaria-carlos-core-agent`.
   - Usa OpenRouter + memoria Postgres + ferramentas de registro de lead, escalacao por WhatsApp, agenda pendente e Mercado Pago.
 
 ## Evolution E Whitelist
@@ -70,6 +70,8 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Numeros de teste liberados: `5511988250996`, `556183806070`, `5527992891634`.
 - Enquanto estiver em teste, numeros fora da whitelist, grupos, mensagens enviadas pelo proprio WhatsApp ou mensagens vazias devem ser ignorados.
 - A secretaria virtual deve se identificar como Laura quando for natural no atendimento.
+- Webhook da Evolution configurado para `MESSAGES_UPSERT`, `webhookByEvents=false`, apontando para o core agent.
+- Teste seguro fora da whitelist validado: execucao `179` terminou com sucesso no node `Normalizar Entrada`, sem chamar IA, banco ou envio WhatsApp.
 
 ## Ordem Recomendada
 
@@ -93,7 +95,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Definir agenda oficial do Carlos/equipe no Google Calendar, horarios de atendimento, duracao padrao e regras de disponibilidade.
 - Definir quando a secretaria pode gerar link Mercado Pago, valores possiveis e texto de cobranca.
 - Validar prompt final com casos reais: assedio, IPM, punicao disciplinar, exclusao/licenciamento, pensao/reforma e urgencia com prazo.
-- So ativar webhook/Evolution depois que os testes com whitelist passarem sem resposta indevida.
+- O webhook/Evolution ja esta ativo para teste controlado; nao remover a whitelist ate concluir validacao ponta a ponta.
 
 ## Limites
 
