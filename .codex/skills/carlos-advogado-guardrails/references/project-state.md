@@ -119,7 +119,9 @@ Service/problem pages currently include:
   - `Carlos Secretaria - Escalar WhatsApp` sets `secretaria_carlos_status.lock_humano=true`; the core agent checks status before AI and should stop auto-replying to locked contacts.
   - Audio intake is scaffolded in the core: detects audio messages, fetches media from Evolution, transcribes, then continues with the transcript.
   - Agenda pending now records scheduling interest in `secretaria_carlos_agendamentos` with status `pendente_confirmacao`.
+  - Agenda fallback is deterministic in the core: if the incoming text mentions scheduling, meeting, consultation, time, or Teams, `Registrar Agenda Detectada` records a pending agenda row even when the rotating free LLM does not call the agenda tool. Execution `223` validated this path.
   - GTM cannot see WhatsApp conversation steps directly. Use GTM for site CTAs (`click_whatsapp`, `click_agendar_whatsapp`, `click_falar_carlos`, blog/service CTA clicks) and n8n/Postgres for conversation funnel stages (`whatsapp_message_received`, `lead_qualified_partial`, `sector_escalated`, `schedule_interest`, `schedule_pending_confirmation`, `payment_link_created`, `appointment_confirmed`).
+  - Site CTA tracking added through `src/lib/analytics.ts`: contact form, top WhatsApp link, contact panel, `/bio`, service page CTAs, and blog article CTA push events into GTM/dataLayer.
   - The secretary should be referred to as Laura when it is natural in the conversation.
   - Do not remove the whitelist or open the secretary to public traffic until controlled tests pass.
   - Remaining setup before execution: confirm the internal WhatsApp escalation number, Google Calendar agenda/rules, payment policy/values, and final prompt behavior on sensitive cases.

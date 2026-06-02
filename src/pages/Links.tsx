@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import founderImg from "@/assets/founder.jpg";
 import logoImg from "@/assets/aguiar-filgueiras-logo.png";
 import { blogPosts } from "@/data/blogPosts";
+import { trackEvent } from "@/lib/analytics";
 
 const latestArticle = blogPosts[0];
 
@@ -174,6 +175,7 @@ const Links = () => {
                 href={card.to}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("click_whatsapp", { cta_location: "bio_links", cta_label: card.label })}
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.08, duration: 0.45 }}

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Clock, Mail, MapPin, Phone, Send } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 const CONTACT_WEBHOOK_URL = "https://n8n.aguiarfilgueiras.com.br/webhook/carlos-site-contact";
 
@@ -53,12 +54,7 @@ const ContactSection = () => {
         body: payload,
       });
 
-      const dataLayerWindow = window as Window & {
-        dataLayer?: Array<Record<string, unknown>>;
-      };
-      dataLayerWindow.dataLayer = dataLayerWindow.dataLayer || [];
-      dataLayerWindow.dataLayer.push({
-        event: "form_submit_contact",
+      trackEvent("form_submit_contact", {
         form_location: "contact_section",
         contact_area: String(formData.get("area") || "nao_informada"),
       });
@@ -106,6 +102,11 @@ const ContactSection = () => {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    if (item.desc === "WhatsApp") {
+                      trackEvent("click_whatsapp", { cta_location: "contact_cards" });
+                    }
+                  }}
                   className="font-heading text-sm font-semibold text-primary hover:text-accent"
                 >
                   {item.title}
@@ -147,6 +148,7 @@ const ContactSection = () => {
               href="https://wa.me/5561981833328"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackEvent("click_agendar_whatsapp", { cta_location: "contact_panel" })}
               className="mt-8 inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
             >
               <Phone className="h-4 w-4" />

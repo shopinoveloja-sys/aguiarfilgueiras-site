@@ -89,6 +89,8 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Ao escalar para o setor responsavel, o contato fica com `lock_humano=true` em `secretaria_carlos_status`; mensagens seguintes sao registradas, mas nao respondidas pela Laura ate liberar o atendimento.
 - Audio recebido: o core detecta audio, tenta buscar a midia pela Evolution, transcreve e segue o atendimento com a transcricao.
 - Agenda pendente grava interesse em `secretaria_carlos_agendamentos` com status `pendente_confirmacao`.
+- O core tambem tem registro deterministico de agenda: se a mensagem mencionar agendamento, reuniao, consulta, horario ou Teams, grava agenda pendente mesmo que a LLM gratuita nao chame a ferramenta.
+- Teste de agenda deterministica validado: execucao `223` registrou uma linha de agenda pendente e respondeu com Microsoft Teams + uma pergunta objetiva.
 
 ## Funil E GTM
 
@@ -102,6 +104,14 @@ Eventos recomendados no site:
 - `form_submit_contact`: formulario do site enviado.
 - `blog_cta_whatsapp`: clique em CTA vindo de artigo do blog.
 - `service_cta_whatsapp`: clique em CTA vindo de pagina de servico.
+
+Status no site:
+
+- [x] `form_submit_contact` no formulario de contato.
+- [x] `click_whatsapp` no topo, cards de contato e pagina `/bio`.
+- [x] `click_agendar_whatsapp` no painel de contato.
+- [x] `service_cta_whatsapp` nas paginas fixas de servico.
+- [x] `blog_cta_whatsapp` no CTA final dos artigos.
 
 Etapas recomendadas no n8n/Postgres:
 

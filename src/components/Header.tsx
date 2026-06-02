@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Menu, X } from "lucide-react";
 import logoAf from "@/assets/aguiar-filgueiras-logo.png";
+import { trackEvent } from "@/lib/analytics";
 
 const navItems = [
   { label: "Inicio", href: "/#inicio" },
@@ -22,6 +23,7 @@ const Header = () => {
           <span>Atendimento virtual para todo Brasil</span>
           <a
             href="https://wa.me/5561981833328"
+            onClick={() => trackEvent("click_whatsapp", { cta_location: "top_bar" })}
             className="flex items-center gap-1 text-gold hover:underline"
           >
             <Phone className="h-3 w-3" />

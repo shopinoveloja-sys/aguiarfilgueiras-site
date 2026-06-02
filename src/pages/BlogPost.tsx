@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import founderImg from "@/assets/founder.jpg";
 import { getBlogPostBySlug, getRelatedServiceSlugsForPost } from "@/data/blogPosts";
 import { getServicePageBySlug } from "@/data/servicePages";
+import { trackEvent } from "@/lib/analytics";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
@@ -197,6 +198,14 @@ const BlogPost = () => {
           <div className="mt-12 border-t border-border pt-8">
             <Link
               to="/#contato"
+              onClick={() =>
+                post &&
+                trackEvent("blog_cta_whatsapp", {
+                  cta_location: "blog_post_footer",
+                  article_slug: post.slug,
+                  article_category: post.category,
+                })
+              }
               className="inline-flex items-center rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
             >
               Falar com o escritorio

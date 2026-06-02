@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getServicePageBySlug } from "@/data/servicePages";
 import { blogPosts } from "@/data/blogPosts";
+import { trackEvent } from "@/lib/analytics";
 import servicePageGuides from "@/data/servicePageGuides.json";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
@@ -156,6 +157,12 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
               href="https://wa.me/5561981833328"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackEvent("service_cta_whatsapp", {
+                  cta_location: "service_hero",
+                  service_slug: page.slug,
+                })
+              }
               className="mt-8 inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
             >
               <Phone className="h-4 w-4" />
@@ -236,6 +243,12 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                       href="https://wa.me/5561981833328"
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() =>
+                        trackEvent("service_cta_whatsapp", {
+                          cta_location: "service_guide",
+                          service_slug: page.slug,
+                        })
+                      }
                       className="mt-6 inline-flex items-center gap-2 rounded-sm bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
                     >
                       <Phone className="h-4 w-4" />
