@@ -108,11 +108,18 @@ Service/problem pages currently include:
   - OpenRouter free model testing: `meta-llama/llama-3.3-70b-instruct:free` hit rate limit at execution `186`; `openrouter/free` succeeded at execution `187`.
   - Prompt tuning added so free/rotating LLMs answer as Laura: short WhatsApp blocks, practical initial guidance, conservative legal wording, and no overpromising.
   - Humanization rule added: assume the person may be anxious, avoid questionnaire-style first replies, answer in stages, and end with one simple question whenever possible.
+  - Response safety rule added: because `openrouter/free` can rotate models, the post-processor must replace any mixed-language, CJK, mojibake, or incoherent output with a clean formal-Portuguese fallback.
+  - Question limit rule: Laura must ask at most two questions per interaction, preferably one principal question.
+  - Response control validation: execution `210` succeeded after the post-processor was rebuilt without fragile regex escaping; it returned clean Portuguese, at most two questions, and Microsoft Teams wording for virtual meeting.
   - Escalation wording rule: do not say "human evaluation" or "human"; say "setor responsavel" or "Dr. Carlos, caso esteja com agenda livre". Trigger especially for PAD, exclusion, sindicancia, appeal not known, transito em julgado, acao rescisoria, nulidade, lawyer error, assedio, IPM, arrest, hearing, or short deadline.
   - If the contact asks to speak directly with Dr. Carlos, Laura should offer the possibility of scheduling a time, ask one simple time-preference question, and use the agenda-pending tool until Google Calendar is connected. Do not promise immediate availability.
+  - Virtual meetings with Dr. Carlos should be treated as Microsoft Teams meetings. Do not promise Google Meet.
   - Response balance rule: avoid questionnaire-style replies, but also avoid dry one-question-only replies; use brief acknowledgement/practical guidance plus one final question.
   - `Carlos Secretaria - Enviar Evolution` now splits long WhatsApp messages into chunks around 650 characters and sends via explicit JSON body.
   - `Carlos Secretaria - Escalar WhatsApp` sets `secretaria_carlos_status.lock_humano=true`; the core agent checks status before AI and should stop auto-replying to locked contacts.
+  - Audio intake is scaffolded in the core: detects audio messages, fetches media from Evolution, transcribes, then continues with the transcript.
+  - Agenda pending now records scheduling interest in `secretaria_carlos_agendamentos` with status `pendente_confirmacao`.
+  - GTM cannot see WhatsApp conversation steps directly. Use GTM for site CTAs (`click_whatsapp`, `click_agendar_whatsapp`, `click_falar_carlos`, blog/service CTA clicks) and n8n/Postgres for conversation funnel stages (`whatsapp_message_received`, `lead_qualified_partial`, `sector_escalated`, `schedule_interest`, `schedule_pending_confirmation`, `payment_link_created`, `appointment_confirmed`).
   - The secretary should be referred to as Laura when it is natural in the conversation.
   - Do not remove the whitelist or open the secretary to public traffic until controlled tests pass.
   - Remaining setup before execution: confirm the internal WhatsApp escalation number, Google Calendar agenda/rules, payment policy/values, and final prompt behavior on sensitive cases.

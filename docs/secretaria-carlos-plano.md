@@ -76,14 +76,42 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 - Teste seguro fora da whitelist validado: execucao `179` terminou com sucesso no node `Normalizar Entrada`, sem chamar IA, banco ou envio WhatsApp.
 - Primeiro teste ponta a ponta com numero liberado validado: execucao `184` recebeu mensagem, registrou, chamou IA e enviou resposta pela Evolution.
 - Teste com OpenRouter `openrouter/free` validado: execucao `187` concluiu com envio pela Evolution.
+- Teste de controle de resposta validado: execucao `210` concluiu sem erro, com portugues limpo, limite de duas perguntas e regra de Microsoft Teams para reuniao virtual.
 - A memoria Postgres usa a chave do node `Normalizar Entrada`; apos registro de mensagem, o node `Restaurar Contexto` devolve `telefone` e `mensagem` para o agente.
 - Prompt calibrado para respostas curtas, praticas e juridicamente conservadoras, com orientacao inicial antes de pedir dados.
-- Prompt humanizado: acolher em uma frase curta, orientar de forma pratica e terminar com uma pergunta simples por vez.
+- Prompt humanizado: acolher em uma frase curta, orientar de forma pratica e terminar com uma pergunta simples por vez; no maximo duas perguntas por interacao.
+- Pos-processador obrigatorio: se o OpenRouter/free devolver idioma estranho, caracteres quebrados/mojibake ou texto incoerente, substituir por fallback limpo em portugues formal.
 - Linguagem de encaminhamento: nao usar "avaliacao humana"; usar "setor responsavel" ou "Dr. Carlos, caso esteja com agenda livre".
-- Se o contato pedir para falar diretamente com o Dr. Carlos, a Laura deve oferecer possibilidade de agendamento, coletar uma preferencia simples de horario e usar agenda pendente enquanto o Google Calendar nao estiver conectado.
+- Se o contato pedir para falar diretamente com o Dr. Carlos, a Laura deve oferecer possibilidade de agendamento, coletar uma preferencia simples de horario e usar agenda pendente enquanto a agenda oficial nao estiver conectada.
+- Reunioes virtuais do Dr. Carlos devem ser tratadas como Microsoft Teams. Nao prometer Google Meet.
 - Equilibrio de resposta: nao enviar questionarios longos, mas tambem nao responder apenas com pergunta seca; usar acolhimento/orientacao curta + uma pergunta final.
 - Envio WhatsApp agora quebra mensagens longas em blocos de ate aproximadamente 650 caracteres.
 - Ao escalar para o setor responsavel, o contato fica com `lock_humano=true` em `secretaria_carlos_status`; mensagens seguintes sao registradas, mas nao respondidas pela Laura ate liberar o atendimento.
+- Audio recebido: o core detecta audio, tenta buscar a midia pela Evolution, transcreve e segue o atendimento com a transcricao.
+- Agenda pendente grava interesse em `secretaria_carlos_agendamentos` com status `pendente_confirmacao`.
+
+## Funil E GTM
+
+O GTM mede melhor as acoes feitas no site. Conversas dentro do WhatsApp nao disparam GTM diretamente, entao o n8n deve registrar as etapas no banco e usar UTMs/origem quando o contato vier de links do site.
+
+Eventos recomendados no site:
+
+- `click_whatsapp`: clique no botao/link de WhatsApp.
+- `click_agendar_whatsapp`: clique em CTA de agendamento pelo WhatsApp.
+- `click_falar_carlos`: clique em CTA para falar com Dr. Carlos.
+- `form_submit_contact`: formulario do site enviado.
+- `blog_cta_whatsapp`: clique em CTA vindo de artigo do blog.
+- `service_cta_whatsapp`: clique em CTA vindo de pagina de servico.
+
+Etapas recomendadas no n8n/Postgres:
+
+- `whatsapp_message_received`: primeira mensagem recebida.
+- `lead_qualified_partial`: Laura coletou pelo menos tema e prazo/documento.
+- `sector_escalated`: contato encaminhado ao setor responsavel.
+- `schedule_interest`: contato pediu horario com Dr. Carlos.
+- `schedule_pending_confirmation`: preferencia de horario registrada.
+- `payment_link_created`: link Mercado Pago criado.
+- `appointment_confirmed`: agendamento confirmado quando Google Calendar estiver conectado.
 
 ## Ordem Recomendada
 
@@ -91,12 +119,12 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 2. [x] Criar envio Evolution para texto simples.
 3. [x] Criar subworkflow Mercado Pago.
 4. [x] Criar ferramenta de escalacao humana por WhatsApp/Evolution.
-5. [x] Criar core agent LangChain em modo inativo.
+5. [x] Criar core agent LangChain em teste controlado por whitelist.
 6. [x] Criar ferramenta de registro/atualizacao de lead.
 7. [x] Criar ferramenta temporaria de agenda pendente.
 8. [x] Adicionar os dois numeros de teste na whitelist.
 9. [x] Testar ponta a ponta com numeros liberados no Evolution.
-10. [ ] Conectar agenda Google Calendar apos confirmar agenda/horarios.
+10. [ ] Conectar agenda oficial do Dr. Carlos apos confirmar agenda/horarios; reunioes virtuais devem usar Microsoft Teams.
 11. [ ] Definir politica de pagamento: quando gerar link e qual valor usar.
 12. [ ] Ativar entrada Evolution somente depois dos testes controlados.
 13. [ ] So depois ativar lembretes, recuperacao de leads e ligacoes.
@@ -104,8 +132,9 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 ## Pendencias Para Execucao Controlada
 
 - Confirmar se o alerta humano da secretaria deve ir para o mesmo WhatsApp conectado na Evolution (`11 98825-0996`) ou para outro numero interno da equipe.
-- Definir agenda oficial do Carlos/equipe no Google Calendar, horarios de atendimento, duracao padrao e regras de disponibilidade.
+- Definir agenda oficial do Carlos/equipe, horarios de atendimento, duracao padrao e regras de disponibilidade; reunioes virtuais devem ser Microsoft Teams.
 - Definir se o atendimento com Dr. Carlos sera consulta, triagem, retorno ou avaliacao inicial, e quais valores/politica de pagamento se aplicam.
+- Adicionar/validar eventos GTM nos CTAs do site para conectar origem da visita com clique para WhatsApp/agendamento.
 - Definir quando a secretaria pode gerar link Mercado Pago, valores possiveis e texto de cobranca.
 - Validar prompt final com casos reais: assedio, IPM, punicao disciplinar, exclusao/licenciamento, pensao/reforma e urgencia com prazo.
 - O webhook/Evolution ja esta ativo para teste controlado; nao remover a whitelist ate concluir validacao ponta a ponta.
