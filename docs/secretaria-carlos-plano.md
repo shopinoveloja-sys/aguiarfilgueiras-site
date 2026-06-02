@@ -64,6 +64,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 
 - Instancia Evolution: `Carlos_Advogado`.
 - Status observado: conectada/open.
+- Numero conectado da Laura/Evolution: `5511988250996` (`11 98825-0996`).
 - A Evolution esta com o celular do projeto e apenas dois celulares liberados para teste.
 - O core agent esta com whitelist de teste configurada no node `Normalizar Entrada`.
 - Numeros de teste liberados: `5511988250996`, `556183806070`, `5527992891634`.
@@ -88,7 +89,7 @@ Quando a conta Mercado Pago do Carlos estiver pronta, trocar apenas a credencial
 
 ## Pendencias Para Execucao Controlada
 
-- Confirmar se o alerta humano da secretaria deve ir para o mesmo WhatsApp conectado na Evolution ou para outro numero interno da equipe.
+- Confirmar se o alerta humano da secretaria deve ir para o mesmo WhatsApp conectado na Evolution (`11 98825-0996`) ou para outro numero interno da equipe.
 - Definir agenda oficial do Carlos/equipe no Google Calendar, horarios de atendimento, duracao padrao e regras de disponibilidade.
 - Definir quando a secretaria pode gerar link Mercado Pago, valores possiveis e texto de cobranca.
 - Validar prompt final com casos reais: assedio, IPM, punicao disciplinar, exclusao/licenciamento, pensao/reforma e urgencia com prazo.

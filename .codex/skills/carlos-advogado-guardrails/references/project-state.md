@@ -90,6 +90,7 @@ Service/problem pages currently include:
   - Intended contract: inputs `valor`, `descricao`, `nome`, `email`, `telefone`, `external_reference`; outputs `preference_id`, `init_point`, `sandbox_init_point`, `external_reference`.
 - Secretaria/WhatsApp automation is being adapted from the old `Secretaria v3` templates, but should not import Chatwoot/Asaas assumptions.
   - WhatsApp transport: Evolution API instance `Carlos_Advogado`.
+  - Connected Laura/Evolution number: `5511988250996` (`11 98825-0996`).
   - Communication channel for blog/editorial remains Telegram; email alerts may still use Telegram. The customer-service secretary itself must work exclusively through WhatsApp/Evolution.
   - `Carlos Secretaria - Configurar Tabelas` / `Ci9tQeImV1ymye5o`: setup workflow, executed once and inactive.
   - `Carlos Secretaria - Enviar Evolution` / `WzJTlAKhSqjLw0mn`: sends text via Evolution, created and inactive.
