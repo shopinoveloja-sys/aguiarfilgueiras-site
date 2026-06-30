@@ -8,8 +8,8 @@ const CONTACT_WEBHOOK_URL = "https://n8n.aguiarfilgueiras.com.br/webhook/carlos-
 const contactInfo = [
   { icon: Phone, title: "(61) 98183-3328", desc: "WhatsApp", href: "https://wa.me/5561981833328" },
   { icon: Mail, title: "contato@aguiarfilgueiras.com.br", desc: "E-mail", href: "mailto:contato@aguiarfilgueiras.com.br" },
-  { icon: Clock, title: "Seg. a Sex. 13h as 19h", desc: "Horario de atendimento" },
-  { icon: MapPin, title: "CNB 3 - Taguatinga Norte", desc: "Brasilia/DF - CEP 72.115-035" },
+  { icon: Clock, title: "Seg. a Sab. 9h as 12h e 14h as 19h", desc: "Horario de atendimento" },
+  { icon: MapPin, title: "CNB 3, Lote 12 - Taguatinga", desc: "Brasilia/DF - CEP 72.115-035" },
 ];
 
 const supportItems = [
@@ -54,7 +54,8 @@ const ContactSection = () => {
         body: payload,
       });
 
-      trackEvent("form_submit_contact", {
+      trackEvent("generate_lead", {
+        lead_type: "contact_form",
         form_location: "contact_section",
         contact_area: String(formData.get("area") || "nao_informada"),
       });
@@ -104,7 +105,7 @@ const ContactSection = () => {
                   rel="noopener noreferrer"
                   onClick={() => {
                     if (item.desc === "WhatsApp") {
-                      trackEvent("click_whatsapp", { cta_location: "contact_cards" });
+                      trackEvent("whatsapp_click", { cta_location: "contact_cards" });
                     }
                   }}
                   className="font-heading text-sm font-semibold text-primary hover:text-accent"
@@ -148,7 +149,7 @@ const ContactSection = () => {
               href="https://wa.me/5561981833328"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => trackEvent("click_agendar_whatsapp", { cta_location: "contact_panel" })}
+              onClick={() => trackEvent("whatsapp_click", { cta_location: "contact_panel" })}
               className="mt-8 inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
             >
               <Phone className="h-4 w-4" />

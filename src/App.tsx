@@ -3,37 +3,48 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
 import Index from "./pages/Index";
-import Links from "./pages/Links";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import ServicePage from "./pages/ServicePage";
-import NotFound from "./pages/NotFound";
 import { servicePages } from "./data/servicePages";
+import { installEmbeddedVideoTracking } from "./lib/analytics";
+
+const Links = lazy(() => import("./pages/Links"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const ServicePage = lazy(() => import("./pages/ServicePage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/links" element={<Links />} />
-          <Route path="/bio" element={<Links />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          {servicePages.map((page) => (
-            <Route key={page.slug} path={`/${page.slug}`} element={<ServicePage slug={page.slug} />} />
-          ))}
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    installEmbeddedVideoTracking();
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Suspense fallback={<div className="min-h-screen bg-background" aria-hidden="true" />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/links" element={<Links />} />
+              <Route path="/bio" element={<Links />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              {servicePages.map((page) => (
+                <Route key={page.slug} path={`/${page.slug}`} element={<ServicePage slug={page.slug} />} />
+              ))}
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

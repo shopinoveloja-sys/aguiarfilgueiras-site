@@ -43,7 +43,7 @@
       "email": "contato@aguiarfilgueiras.com.br",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "CNB 3 - Taguatinga Norte",
+        "streetAddress": "Setor B Norte, CNB 3, Lote 12",
         "addressLocality": "Brasilia",
         "addressRegion": "DF",
         "postalCode": "72115-035",
@@ -54,12 +54,20 @@
         "latitude": -15.8267,
         "longitude": -48.0619
       },
-      "openingHoursSpecification": {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "13:00",
-        "closes": "19:00"
-      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          "opens": "09:00",
+          "closes": "12:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          "opens": "14:00",
+          "closes": "19:00"
+        }
+      ],
       "founder": {
         "@type": "Person",
         "name": "Carlos Filgueiras",

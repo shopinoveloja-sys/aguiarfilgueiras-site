@@ -225,6 +225,18 @@ const writeRoute = (route) => {
   fs.writeFileSync(path.join(outDir, "index.html"), html);
 };
 
+const writeSitemap = (routes) => {
+  const lastmod = new Date().toISOString().slice(0, 10);
+  const entries = routes.map(({ path, changefreq, priority }) => {
+    const canonicalPath = path === "/" || path.endsWith("/") ? path : `${path}/`;
+    return `  <url>\n    <loc>${siteUrl}${canonicalPath}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+  });
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`;
+
+  fs.writeFileSync(path.join(distDir, "sitemap.xml"), sitemap);
+  fs.writeFileSync(path.join(rootDir, "public", "sitemap.xml"), sitemap);
+};
+
 const servicePages = readServicePages();
 const blogPosts = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "blogPosts.json"), "utf8"));
 const serviceGuides = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "servicePageGuides.json"), "utf8"));
@@ -240,6 +252,33 @@ for (const page of servicePages) {
     areaServed: "Brasil",
     serviceType: stripAccents(page.title),
     telephone: "+55-61-98183-3328",
+    founder: {
+      "@type": "Person",
+      name: "Carlos Filgueiras",
+      url: `${siteUrl}/#fundador`,
+      jobTitle: "Advogado especializado em Direito Militar",
+      sameAs: [
+        "https://www.instagram.com/carlosfilgueiras.adv",
+        "https://www.linkedin.com/in/carlos-filgueiras-992396154/",
+        "https://www.facebook.com/carlosfilgueiras.adv",
+      ],
+    },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Setor B Norte, CNB 3, Lote 12",
+      addressLocality: "Brasilia",
+      addressRegion: "DF",
+      postalCode: "72115-035",
+      addressCountry: "BR",
+    },
+  };
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: page.title, item: `${siteUrl}/${page.slug}/` },
+    ],
   };
   const faqSchema = guide?.faqs?.length
     ? {
@@ -262,7 +301,7 @@ for (const page of servicePages) {
     description: page.seoDescription,
     keywords: page.keywords,
     body: serviceBody(page, blogPosts, serviceGuides),
-    jsonLd: faqSchema ? [legalServiceSchema, faqSchema] : legalServiceSchema,
+    jsonLd: faqSchema ? [legalServiceSchema, breadcrumbSchema, faqSchema] : [legalServiceSchema, breadcrumbSchema],
   });
 }
 
@@ -317,6 +356,13 @@ for (const post of blogPosts) {
       author: {
         "@type": "Person",
         name: "Carlos Filgueiras",
+        url: `${siteUrl}/#fundador`,
+        jobTitle: "Advogado especializado em Direito Militar",
+        sameAs: [
+          "https://www.instagram.com/carlosfilgueiras.adv",
+          "https://www.linkedin.com/in/carlos-filgueiras-992396154/",
+          "https://www.facebook.com/carlosfilgueiras.adv",
+        ],
       },
       publisher: {
         "@type": "LegalService",
@@ -326,5 +372,12 @@ for (const post of blogPosts) {
     },
   });
 }
+
+writeSitemap([
+  { path: "/", changefreq: "weekly", priority: "1.0" },
+  { path: "/blog", changefreq: "weekly", priority: "0.8" },
+  ...servicePages.map((page) => ({ path: `/${page.slug}`, changefreq: "monthly", priority: "0.9" })),
+  ...blogPosts.map((post) => ({ path: `/blog/${post.slug}`, changefreq: "monthly", priority: "0.8" })),
+]);
 
 console.log(`Pre-render SEO concluido: ${servicePages.length + blogPosts.length + 1} rotas.`);

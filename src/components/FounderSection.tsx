@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import founderImg from "@/assets/founder.jpg";
+import { trackSocialClick } from "@/lib/analytics";
 
 const FounderSection = () => {
   return (
@@ -55,6 +56,14 @@ const FounderSection = () => {
                 href="https://www.instagram.com/carlosfilgueiras.adv"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackSocialClick({
+                    socialNetwork: "instagram",
+                    linkUrl: "https://www.instagram.com/carlosfilgueiras.adv",
+                    buttonText: "Instagram",
+                    placement: "founder_section",
+                  })
+                }
                 className="text-sm text-gold hover:underline"
               >
                 Instagram
@@ -63,6 +72,14 @@ const FounderSection = () => {
                 href="https://www.linkedin.com/in/carlos-filgueiras-992396154/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackSocialClick({
+                    socialNetwork: "linkedin",
+                    linkUrl: "https://www.linkedin.com/in/carlos-filgueiras-992396154/",
+                    buttonText: "LinkedIn",
+                    placement: "founder_section",
+                  })
+                }
                 className="text-sm text-gold hover:underline"
               >
                 LinkedIn
@@ -71,6 +88,14 @@ const FounderSection = () => {
                 href="https://www.facebook.com/carlosfilgueiras.adv"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackSocialClick({
+                    socialNetwork: "facebook",
+                    linkUrl: "https://www.facebook.com/carlosfilgueiras.adv",
+                    buttonText: "Facebook",
+                    placement: "founder_section",
+                  })
+                }
                 className="text-sm text-gold hover:underline"
               >
                 Facebook

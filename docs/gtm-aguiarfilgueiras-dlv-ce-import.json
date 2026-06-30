@@ -1,0 +1,821 @@
+{
+  "exportFormatVersion": 2,
+  "exportTime": "2026-06-08T00:00:00.000Z",
+  "containerVersion": {
+    "path": "accounts/6337027111/containers/242319165/versions/0",
+    "accountId": "6337027111",
+    "containerId": "242319165",
+    "containerVersionId": "0",
+    "name": "Aguiar Filgueiras - DLV e CE organico/social",
+    "container": {
+      "path": "accounts/6337027111/containers/242319165",
+      "accountId": "6337027111",
+      "containerId": "242319165",
+      "name": "Site - aguiarfilgueiras.com.br",
+      "publicId": "GTM-MPXN6L4L",
+      "usageContext": [
+        "WEB"
+      ]
+    },
+    "tag": [],
+    "trigger": [
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "201",
+        "name": "CE - instagram_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "instagram_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "202",
+        "name": "CE - facebook_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "facebook_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "203",
+        "name": "CE - youtube_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "youtube_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "204",
+        "name": "CE - x_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "x_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "205",
+        "name": "CE - linkedin_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "linkedin_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "206",
+        "name": "CE - social_profile_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "social_profile_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "207",
+        "name": "CE - embedded_video_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "embedded_video_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "208",
+        "name": "CE - video_cta_click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "video_cta_click"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "209",
+        "name": "CE - form_submit_contact",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "form_submit_contact"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "210",
+        "name": "CE - click_whatsapp",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "click_whatsapp"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "211",
+        "name": "CE - click_agendar_whatsapp",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "click_agendar_whatsapp"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "212",
+        "name": "CE - service_cta_whatsapp",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "service_cta_whatsapp"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "triggerId": "213",
+        "name": "CE - blog_cta_whatsapp",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "blog_cta_whatsapp"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "generated"
+      }
+    ],
+    "variable": [
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "101",
+        "name": "DLV - event_id",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "event_id"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "102",
+        "name": "DLV - page_title",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "page_title"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "103",
+        "name": "DLV - page_path",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "page_path"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "104",
+        "name": "DLV - page_location",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "page_location"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "105",
+        "name": "DLV - button_text",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "button_text"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "106",
+        "name": "DLV - link_url",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "link_url"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "107",
+        "name": "DLV - social_network",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "social_network"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "108",
+        "name": "DLV - content_type",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "content_type"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "109",
+        "name": "DLV - article_title",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "article_title"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "110",
+        "name": "DLV - traffic_source",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "traffic_source"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "111",
+        "name": "DLV - traffic_medium",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "traffic_medium"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "112",
+        "name": "DLV - utm_source",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "utm_source"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "113",
+        "name": "DLV - utm_medium",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "utm_medium"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "114",
+        "name": "DLV - utm_campaign",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "utm_campaign"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "115",
+        "name": "DLV - utm_content",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "utm_content"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "116",
+        "name": "DLV - utm_term",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "utm_term"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "variableId": "117",
+        "name": "DLV - placement",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "placement"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
+          }
+        ],
+        "fingerprint": "generated"
+      }
+    ],
+    "builtInVariable": [
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "type": "PAGE_URL",
+        "name": "Page URL"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "type": "PAGE_PATH",
+        "name": "Page Path"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "type": "PAGE_HOSTNAME",
+        "name": "Page Hostname"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "type": "REFERRER",
+        "name": "Referrer"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "type": "EVENT",
+        "name": "Event"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "type": "CLICK_TEXT",
+        "name": "Click Text"
+      },
+      {
+        "accountId": "6337027111",
+        "containerId": "242319165",
+        "type": "CLICK_URL",
+        "name": "Click URL"
+      }
+    ],
+    "description": "Importa somente variaveis Data Layer e acionadores Custom Event para tracking organico/social."
+  }
+}

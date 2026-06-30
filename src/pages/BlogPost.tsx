@@ -42,7 +42,13 @@ const BlogPost = () => {
       author: {
         "@type": "Person",
         name: "Carlos Filgueiras",
+        url: `${SITE_URL}/#fundador`,
         jobTitle: "Advogado especializado em Direito Militar",
+        sameAs: [
+          "https://www.instagram.com/carlosfilgueiras.adv",
+          "https://www.linkedin.com/in/carlos-filgueiras-992396154/",
+          "https://www.facebook.com/carlosfilgueiras.adv",
+        ],
       },
       publisher: {
         "@type": "LegalService",

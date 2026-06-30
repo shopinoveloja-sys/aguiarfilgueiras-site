@@ -175,7 +175,7 @@ const Links = () => {
                 href={card.to}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackEvent("click_whatsapp", { cta_location: "bio_links", cta_label: card.label })}
+                onClick={() => trackEvent("whatsapp_click", { cta_location: "bio_links", cta_label: card.label })}
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.08, duration: 0.45 }}

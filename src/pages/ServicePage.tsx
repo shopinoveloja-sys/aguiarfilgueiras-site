@@ -92,12 +92,44 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
       areaServed: "Brasil",
       serviceType: page.title,
       telephone: "+55-61-98183-3328",
+      founder: {
+        "@type": "Person",
+        name: "Carlos Filgueiras",
+        url: `${SITE_URL}/#fundador`,
+        jobTitle: "Advogado especializado em Direito Militar",
+        sameAs: [
+          "https://www.instagram.com/carlosfilgueiras.adv",
+          "https://www.linkedin.com/in/carlos-filgueiras-992396154/",
+          "https://www.facebook.com/carlosfilgueiras.adv",
+        ],
+      },
       address: {
         "@type": "PostalAddress",
+        streetAddress: "Setor B Norte, CNB 3, Lote 12",
         addressLocality: "Brasilia",
         addressRegion: "DF",
+        postalCode: "72115-035",
         addressCountry: "BR",
       },
+    };
+
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Inicio",
+          item: `${SITE_URL}/`,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: page.title,
+          item: canonicalUrl,
+        },
+      ],
     };
 
     const faqSchema = guide?.faqs?.length
@@ -115,7 +147,9 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
         }
       : null;
 
-    script.textContent = JSON.stringify(faqSchema ? [legalServiceSchema, faqSchema] : legalServiceSchema);
+    script.textContent = JSON.stringify(
+      faqSchema ? [legalServiceSchema, breadcrumbSchema, faqSchema] : [legalServiceSchema, breadcrumbSchema],
+    );
   }, [page, guide]);
 
   if (!page) {
@@ -158,7 +192,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() =>
-                trackEvent("service_cta_whatsapp", {
+                trackEvent("whatsapp_click", {
                   cta_location: "service_hero",
                   service_slug: page.slug,
                 })
@@ -244,7 +278,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() =>
-                        trackEvent("service_cta_whatsapp", {
+                        trackEvent("whatsapp_click", {
                           cta_location: "service_guide",
                           service_slug: page.slug,
                         })

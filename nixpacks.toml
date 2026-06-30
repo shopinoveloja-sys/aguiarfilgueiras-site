@@ -18,6 +18,17 @@ Caddyfile = '''
 	}
 
 	rewrite /health /*
+
+	# Preserve the authority of URLs from the former WordPress site.
+	redir /areas-de-atuacao/direito-penal-militar /direito-penal-militar/ permanent
+	redir /areas-de-atuacao/direito-penal-militar/ /direito-penal-militar/ permanent
+	redir /o-escritorio /#fundador permanent
+	redir /o-escritorio/ /#fundador permanent
+
+	# Keep one canonical URL format for every HTML route.
+	@missingSlash path_regexp missingSlash ^/[^.?]*[^/]$
+	redir @missingSlash {path}/ permanent
+
 	root * ../app/{$NIXPACKS_SPA_OUTPUT_DIR}
 	encode gzip
 	file_server

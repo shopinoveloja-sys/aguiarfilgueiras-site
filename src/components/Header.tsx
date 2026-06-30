@@ -23,7 +23,7 @@ const Header = () => {
           <span>Atendimento virtual para todo Brasil</span>
           <a
             href="https://wa.me/5561981833328"
-            onClick={() => trackEvent("click_whatsapp", { cta_location: "top_bar" })}
+            onClick={() => trackEvent("whatsapp_click", { cta_location: "top_bar" })}
             className="flex items-center gap-1 text-gold hover:underline"
           >
             <Phone className="h-3 w-3" />
