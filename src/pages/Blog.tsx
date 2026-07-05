@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { blogPosts } from "@/data/blogPosts";
 import { servicePages } from "@/data/servicePages";
+import { applySeo, setJsonLd } from "@/lib/seo";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 
@@ -139,40 +140,30 @@ const Blog = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const canonicalUrl = `${SITE_URL}/blog/`;
-    document.title = "Blog de Direito Militar | Aguiar Filgueiras Advocacia";
-
-    const setMeta = (selector: string, attribute: "content" | "href", value: string) => {
-      let element = document.head.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
-
-      if (!element) {
-        element = selector.startsWith("link")
-          ? document.createElement("link")
-          : document.createElement("meta");
-
-        if (selector.includes("canonical")) element.setAttribute("rel", "canonical");
-        if (selector.includes("description")) element.setAttribute("name", "description");
-        if (selector.includes("og:")) element.setAttribute("property", selector.match(/og:[^'"]+/)?.[0] || "");
-        if (selector.includes("twitter:")) element.setAttribute("name", selector.match(/twitter:[^'"]+/)?.[0] || "");
-
-        document.head.appendChild(element);
-      }
-
-      element.setAttribute(attribute, value);
-    };
-
     const description =
       "Artigos, guias e analises sobre Direito Militar, IPM, punicoes disciplinares, carreira, pensao e beneficios militares.";
+    const canonicalUrl = `${SITE_URL}/blog/`;
 
-    setMeta("meta[name='description']", "content", description);
-    setMeta("link[rel='canonical']", "href", canonicalUrl);
-    setMeta("meta[property='og:type']", "content", "website");
-    setMeta("meta[property='og:title']", "content", "Blog de Direito Militar | Aguiar Filgueiras Advocacia");
-    setMeta("meta[property='og:description']", "content", description);
-    setMeta("meta[property='og:url']", "content", canonicalUrl);
-    setMeta("meta[name='twitter:card']", "content", "summary_large_image");
-    setMeta("meta[name='twitter:title']", "content", "Blog de Direito Militar | Aguiar Filgueiras Advocacia");
-    setMeta("meta[name='twitter:description']", "content", description);
+    applySeo({
+      title: "Blog de Direito Militar | Aguiar Filgueiras Advocacia",
+      description,
+      canonicalUrl,
+      keywords:
+        "blog direito militar, IPM, punicao disciplinar militar, pensao militar, processo administrativo militar, advogado militar",
+    });
+
+    setJsonLd("blog-page-jsonld", {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Blog de Direito Militar",
+      url: canonicalUrl,
+      description,
+      hasPart: blogPosts.map((post) => ({
+        "@type": "Article",
+        headline: post.title,
+        url: `${SITE_URL}/blog/${post.slug}/`,
+      })),
+    });
   }, []);
 
   const filteredPosts = useMemo(() => {

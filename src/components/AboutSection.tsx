@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { Shield, Scale, Award } from "lucide-react";
 
 const stats = [
-  { icon: Shield, value: "35+", label: "Anos de vivência militar" },
+  { icon: Shield, value: "35+", label: "Anos de vivencia militar" },
   { icon: Scale, value: "20+", label: "Anos de advocacia" },
-  { icon: Award, value: "100%", label: "Dedicação ao cliente" },
+  { icon: Award, value: "Brasil", label: "Atendimento virtual nacional" },
 ];
 
 const AboutSection = () => {
@@ -22,22 +22,24 @@ const AboutSection = () => {
               Quem Somos
             </span>
             <h2 className="mt-3 font-heading text-3xl font-bold text-primary sm:text-4xl">
-              Escritório de Advocacia Militar
+              Escritorio de advocacia militar em Brasilia
             </h2>
             <div className="mt-2 h-[2px] w-16 bg-accent" />
 
             <p className="mt-8 text-base leading-relaxed text-muted-foreground">
-              Bem-vindo ao Aguiar Filgueiras Advocacia, onde a expertise em Direito Militar
-              encontra-se com mais de 35 anos de vivência na caserna das FFAA.
+              O Aguiar Filgueiras Advocacia atua com foco em Direito Militar, reunindo
+              experiencia pratica na caserna e conhecimento juridico para casos que exigem
+              rapidez, leitura tecnica dos regulamentos e estrategia de defesa.
             </p>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Nosso compromisso é oferecer advocacia e consultoria especializadas nas áreas de
-              Direito Penal Militar, Direito Administrativo Militar, Direito Disciplinar Militar e
-              Direito Previdenciário Militar.
+              O escritorio atende demandas de Direito Penal Militar, Direito Administrativo
+              Militar, Direito Disciplinar Militar e Direito Previdenciario Militar, tanto para
+              militares da ativa quanto para familiares e pensionistas.
             </p>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Realizamos atendimento virtualmente para todo Brasil. Conte conosco para soluções
-              jurídicas sólidas e dedicadas às necessidades específicas de nosso público.
+              A base presencial fica em Taguatinga, Brasilia/DF, com atendimento virtual para
+              todo o Brasil em casos de IPM, sindicancia, licenciamento indevido, reforma por
+              invalidez, pensao militar, punicoes disciplinares e questoes de carreira.
             </p>
           </motion.div>
 

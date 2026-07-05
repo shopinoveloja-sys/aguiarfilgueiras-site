@@ -1,50 +1,46 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  ArrowUpRight,
-  BookOpenText,
-  FileText,
-  MessageCircle,
-  Scale,
-  UserRound,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowUpRight, BookOpenText, FileText, MessageCircle, Scale, UserRound } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import founderImg from "@/assets/founder.jpg";
 import logoImg from "@/assets/aguiar-filgueiras-logo.png";
 import { blogPosts } from "@/data/blogPosts";
 import { trackEvent } from "@/lib/analytics";
+import { applySeo, setJsonLd } from "@/lib/seo";
 
+const SITE_URL = "https://aguiarfilgueiras.com.br";
 const latestArticle = blogPosts[0];
 
 const cards = [
   {
     icon: UserRound,
-    label: "Quem sou eu",
+    label: "Quem e o Dr. Carlos",
     eyebrow: "Fundador",
-    text: "Conheça a trajetória de Carlos Filgueiras e a atuação dedicada ao Direito Militar.",
+    text: "Conheca a trajetoria de Carlos Filgueiras e a atuacao dedicada ao Direito Militar.",
     to: "/#fundador",
     variant: "light",
   },
   {
     icon: BookOpenText,
     label: "Blog",
-    eyebrow: "Análises",
-    text: "Artigos sobre Direito Penal Militar, previdência militar e defesa disciplinar.",
-    to: "/#blog",
+    eyebrow: "Analises",
+    text: "Artigos sobre Direito Penal Militar, previdencia militar e defesa disciplinar.",
+    to: "/blog",
     variant: "light",
   },
   {
     icon: FileText,
-    label: "Último artigo",
-    eyebrow: latestArticle?.category ?? "Publicação",
-    text: latestArticle?.title ?? "Leia a publicação mais recente do escritório.",
-    to: latestArticle ? `/blog/${latestArticle.slug}` : "/#blog",
+    label: "Ultimo artigo",
+    eyebrow: latestArticle?.category ?? "Publicacao",
+    text: latestArticle?.title ?? "Leia a publicacao mais recente do escritorio.",
+    to: latestArticle ? `/blog/${latestArticle.slug}` : "/blog",
     variant: "light",
   },
   {
     icon: MessageCircle,
     label: "Contato",
     eyebrow: "Atendimento",
-    text: "Fale pelo WhatsApp para orientação jurídica especializada.",
+    text: "Fale pelo WhatsApp para orientacao juridica especializada.",
     to: "https://wa.me/5561981833328",
     variant: "dark",
     external: true,
@@ -52,6 +48,36 @@ const cards = [
 ];
 
 const Links = () => {
+  const location = useLocation();
+  const isBioRoute = location.pathname === "/bio";
+
+  useEffect(() => {
+    applySeo({
+      title: "Carlos Filgueiras | Bio e Contatos do Escritorio",
+      description:
+        "Conheca Carlos Filgueiras, advogado militar em Brasilia, e acesse os principais canais do Aguiar Filgueiras Advocacia.",
+      canonicalUrl: `${SITE_URL}/bio/`,
+      robots: isBioRoute ? "index, follow" : "noindex, follow",
+      image: `${SITE_URL}/og-image.jpg`,
+    });
+
+    setJsonLd("bio-page-jsonld", {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      url: `${SITE_URL}/bio/`,
+      mainEntity: {
+        "@type": "Person",
+        name: "Carlos Filgueiras",
+        jobTitle: "Advogado militar",
+        worksFor: {
+          "@type": "LegalService",
+          name: "Aguiar Filgueiras Advocacia",
+          url: SITE_URL,
+        },
+      },
+    });
+  }, [isBioRoute]);
+
   return (
     <main className="min-h-screen overflow-hidden bg-cream text-primary">
       <div className="absolute inset-x-0 top-0 h-[330px] bg-gradient-to-br from-primary via-navy to-navy-light" />
@@ -78,14 +104,12 @@ const Links = () => {
               />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light">
-                Aguiar Filgueiras
-              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light">Aguiar Filgueiras</p>
               <h1 className="mt-1 font-heading text-xl font-semibold leading-tight text-primary-foreground sm:text-2xl">
-                Advocacia Militar
+                Carlos Filgueiras - Advocacia Militar
               </h1>
               <p className="mt-1 max-w-[250px] break-words text-xs leading-relaxed text-gold-light/75 sm:max-w-none">
-                Defesa técnica, estratégia e experiência para militares.
+                Defesa tecnica, estrategia e experiencia para militares, pensionistas e familiares.
               </p>
             </div>
           </div>
@@ -97,14 +121,12 @@ const Links = () => {
           transition={{ delay: 0.12, duration: 0.55 }}
           className="mt-7 rounded-sm border border-border bg-card px-5 py-6 shadow-[var(--shadow-card)]"
         >
-          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-            Acesso rápido
-          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">Acesso rapido</span>
           <p className="mt-2 max-w-full break-words font-heading text-2xl font-semibold leading-tight text-primary sm:text-4xl">
-            O essencial em um só lugar.
+            O essencial em um so lugar.
           </p>
           <p className="mt-3 max-w-lg break-words text-sm leading-relaxed text-muted-foreground">
-            Conheça o escritório, leia conteúdos recentes ou fale com a equipe sem perder tempo.
+            Conheca o escritorio, leia conteudos recentes ou fale com a equipe sem perder tempo.
           </p>
         </motion.div>
 

@@ -18,7 +18,7 @@ const FounderSection = () => {
             <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-gradient-to-br from-primary via-navy to-gold/20 shadow-[0_30px_80px_-45px_hsl(0_0%_0%/.9)]">
               <img
                 src={founderImg}
-                alt="Carlos Filgueiras - Advogado Militar e Sócio Fundador do escritório Aguiar Filgueiras Advocacia"
+                alt="Carlos Filgueiras - advogado militar e socio fundador do escritorio Aguiar Filgueiras Advocacia"
                 className="h-full w-full object-cover object-[52%_45%]"
                 loading="lazy"
               />
@@ -33,22 +33,25 @@ const FounderSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
-              Sócio Fundador
-            </span>
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">Socio Fundador</span>
             <h2 className="mt-3 font-heading text-3xl font-bold text-primary-foreground sm:text-4xl">
               Carlos Filgueiras
             </h2>
             <div className="mt-2 h-[2px] w-16 bg-gold" />
 
             <p className="mt-8 text-base leading-relaxed text-gold-light/70">
-              Na ativa do Exército era conhecido como Capitão Aguiar. Graduado em Direito desde
-              2002, aprovado na OAB desde 2003, com especializações em Direito Militar,
-              Administração Pública e Direito Público.
+              Na ativa do Exercito era conhecido como Capitao Aguiar. Graduado em Direito desde
+              2002 e inscrito na OAB desde 2003, construiu uma atuacao concentrada em Direito
+              Militar, Administracao Publica e Direito Publico.
             </p>
             <p className="mt-4 text-base leading-relaxed text-gold-light/70">
-              Na ativa, foi responsável por seções de inativos e pensionistas civis e militares, de
-              pagamento de pessoal, de fundo de saúde e seções de pessoal.
+              Reune experiencia pratica em secoes de inativos e pensionistas civis e militares,
+              pagamento de pessoal, fundo de saude e gestao de pessoal, o que ajuda a ler casos
+              militares com profundidade tecnica e contexto funcional real.
+            </p>
+            <p className="mt-4 text-base leading-relaxed text-gold-light/70">
+              Essa vivencia e usada hoje para orientar militares, familiares e pensionistas em
+              casos disciplinares, administrativos, previdenciarios e penais militares.
             </p>
 
             <div className="mt-8 flex gap-4">

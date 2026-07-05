@@ -7,6 +7,7 @@ import founderImg from "@/assets/founder.jpg";
 import { getBlogPostBySlug, getRelatedServiceSlugsForPost } from "@/data/blogPosts";
 import { getServicePageBySlug } from "@/data/servicePages";
 import { trackEvent } from "@/lib/analytics";
+import { applySeo, setJsonLd } from "@/lib/seo";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
@@ -20,7 +21,12 @@ const BlogPost = () => {
 
   useEffect(() => {
     if (!post) {
-      document.title = "Artigo nao encontrado | Aguiar Filgueiras Advocacia";
+      applySeo({
+        title: "Artigo nao encontrado | Aguiar Filgueiras Advocacia",
+        description: "O artigo solicitado nao foi encontrado.",
+        canonicalUrl: `${SITE_URL}/blog/`,
+        robots: "noindex, nofollow",
+      });
       return;
     }
 
@@ -57,59 +63,16 @@ const BlogPost = () => {
       },
     };
 
-    const setMeta = (selector: string, attribute: "content" | "href", value: string) => {
-      let element = document.head.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
+    applySeo({
+      title: seoTitle,
+      description: seoDescription,
+      canonicalUrl,
+      keywords,
+      ogType: "article",
+      image: DEFAULT_IMAGE,
+    });
 
-      if (!element) {
-        element = selector.startsWith("link")
-          ? document.createElement("link")
-          : document.createElement("meta");
-
-        if (selector.includes("canonical")) {
-          element.setAttribute("rel", "canonical");
-        }
-        if (selector.includes("description")) {
-          element.setAttribute("name", "description");
-        }
-        if (selector.includes("keywords")) {
-          element.setAttribute("name", "keywords");
-        }
-        if (selector.includes("og:")) {
-          element.setAttribute("property", selector.match(/og:[^'"]+/)?.[0] || "");
-        }
-        if (selector.includes("twitter:")) {
-          element.setAttribute("name", selector.match(/twitter:[^'"]+/)?.[0] || "");
-        }
-
-        document.head.appendChild(element);
-      }
-
-      element.setAttribute(attribute, value);
-    };
-
-    document.title = seoTitle;
-    setMeta("meta[name='description']", "content", seoDescription);
-    setMeta("meta[name='keywords']", "content", keywords);
-    setMeta("link[rel='canonical']", "href", canonicalUrl);
-    setMeta("meta[property='og:type']", "content", "article");
-    setMeta("meta[property='og:title']", "content", seoTitle);
-    setMeta("meta[property='og:description']", "content", seoDescription);
-    setMeta("meta[property='og:url']", "content", canonicalUrl);
-    setMeta("meta[property='og:image']", "content", DEFAULT_IMAGE);
-    setMeta("meta[name='twitter:card']", "content", "summary_large_image");
-    setMeta("meta[name='twitter:title']", "content", seoTitle);
-    setMeta("meta[name='twitter:description']", "content", seoDescription);
-    setMeta("meta[name='twitter:image']", "content", DEFAULT_IMAGE);
-
-    const scriptId = "blog-article-jsonld";
-    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
-    if (!script) {
-      script = document.createElement("script");
-      script.id = scriptId;
-      script.type = "application/ld+json";
-      document.head.appendChild(script);
-    }
-    script.textContent = JSON.stringify(articleJsonLd);
+    setJsonLd("blog-article-jsonld", articleJsonLd);
   }, [post]);
 
   if (!post) {

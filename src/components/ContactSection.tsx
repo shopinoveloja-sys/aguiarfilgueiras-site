@@ -9,7 +9,7 @@ const contactInfo = [
   { icon: Phone, title: "(61) 98183-3328", desc: "WhatsApp", href: "https://wa.me/5561981833328" },
   { icon: Mail, title: "contato@aguiarfilgueiras.com.br", desc: "E-mail", href: "mailto:contato@aguiarfilgueiras.com.br" },
   { icon: Clock, title: "Seg. a Sab. 9h as 12h e 14h as 19h", desc: "Horario de atendimento" },
-  { icon: MapPin, title: "CNB 3, Lote 12 - Taguatinga", desc: "Brasilia/DF - CEP 72.115-035" },
+  { icon: MapPin, title: "CNB 3 - Taguatinga", desc: "Brasilia/DF - CEP 72115-035" },
 ];
 
 const supportItems = [
@@ -82,7 +82,7 @@ const ContactSection = () => {
             Fale Conosco
           </span>
           <h2 className="mt-3 font-heading text-3xl font-bold text-primary sm:text-4xl">
-            Contato - Advogado Militar em Brasilia
+            Contato com advogado militar em Brasilia
           </h2>
           <div className="mx-auto mt-2 h-[2px] w-16 bg-accent" />
         </motion.div>
@@ -135,7 +135,7 @@ const ContactSection = () => {
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-gold-light/85">
               O formulario encaminha sua mensagem ao escritorio e avisa a equipe no canal interno de atendimento.
-              Para casos com prazo em andamento, informe a data da notificacao ou audiencia.
+              Para casos com prazo em andamento, informe a data da notificacao, audiencia ou recurso.
             </p>
             <div className="mt-8 space-y-4">
               {supportItems.map((item) => (

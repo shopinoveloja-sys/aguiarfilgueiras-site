@@ -7,6 +7,7 @@ import { getServicePageBySlug } from "@/data/servicePages";
 import { blogPosts } from "@/data/blogPosts";
 import { trackEvent } from "@/lib/analytics";
 import servicePageGuides from "@/data/servicePageGuides.json";
+import { applySeo, setJsonLd } from "@/lib/seo";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
@@ -34,54 +35,23 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
 
   useEffect(() => {
     if (!page) {
-      document.title = "Pagina nao encontrada | Aguiar Filgueiras Advocacia";
+      applySeo({
+        title: "Pagina nao encontrada | Aguiar Filgueiras Advocacia",
+        description: "A pagina solicitada nao foi encontrada.",
+        canonicalUrl: `${SITE_URL}/`,
+        robots: "noindex, nofollow",
+      });
       return;
     }
 
     const canonicalUrl = `${SITE_URL}/${page.slug}/`;
-    document.title = page.seoTitle;
-
-    const setMeta = (selector: string, attribute: "content" | "href", value: string) => {
-      let element = document.head.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
-
-      if (!element) {
-        element = selector.startsWith("link")
-          ? document.createElement("link")
-          : document.createElement("meta");
-
-        if (selector.includes("canonical")) element.setAttribute("rel", "canonical");
-        if (selector.includes("description")) element.setAttribute("name", "description");
-        if (selector.includes("keywords")) element.setAttribute("name", "keywords");
-        if (selector.includes("og:")) element.setAttribute("property", selector.match(/og:[^'"]+/)?.[0] || "");
-        if (selector.includes("twitter:")) element.setAttribute("name", selector.match(/twitter:[^'"]+/)?.[0] || "");
-
-        document.head.appendChild(element);
-      }
-
-      element.setAttribute(attribute, value);
-    };
-
-    setMeta("meta[name='description']", "content", page.seoDescription);
-    setMeta("meta[name='keywords']", "content", page.keywords.join(", "));
-    setMeta("link[rel='canonical']", "href", canonicalUrl);
-    setMeta("meta[property='og:type']", "content", "website");
-    setMeta("meta[property='og:title']", "content", page.seoTitle);
-    setMeta("meta[property='og:description']", "content", page.seoDescription);
-    setMeta("meta[property='og:url']", "content", canonicalUrl);
-    setMeta("meta[property='og:image']", "content", DEFAULT_IMAGE);
-    setMeta("meta[name='twitter:card']", "content", "summary_large_image");
-    setMeta("meta[name='twitter:title']", "content", page.seoTitle);
-    setMeta("meta[name='twitter:description']", "content", page.seoDescription);
-    setMeta("meta[name='twitter:image']", "content", DEFAULT_IMAGE);
-
-    const scriptId = "service-page-jsonld";
-    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
-    if (!script) {
-      script = document.createElement("script");
-      script.id = scriptId;
-      script.type = "application/ld+json";
-      document.head.appendChild(script);
-    }
+    applySeo({
+      title: page.seoTitle,
+      description: page.seoDescription,
+      canonicalUrl,
+      keywords: page.keywords.join(", "),
+      image: DEFAULT_IMAGE,
+    });
 
     const legalServiceSchema = {
       "@context": "https://schema.org",
@@ -147,7 +117,8 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
         }
       : null;
 
-    script.textContent = JSON.stringify(
+    setJsonLd(
+      "service-page-jsonld",
       faqSchema ? [legalServiceSchema, breadcrumbSchema, faqSchema] : [legalServiceSchema, breadcrumbSchema],
     );
   }, [page, guide]);
@@ -327,7 +298,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                       to={`/${relatedSlug}`}
                       className="flex items-center justify-between text-sm font-semibold text-accent hover:underline"
                     >
-                      {relatedSlug.replace(/-/g, " ")}
+                      {getServicePageBySlug(relatedSlug)?.title || relatedSlug.replace(/-/g, " ")}
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   ))}
