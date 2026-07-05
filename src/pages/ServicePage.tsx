@@ -13,6 +13,17 @@ const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 const relatedBlogByService: Record<string, string[]> = {
+  "advogado-criminal-militar": ["advogado-criminal-militar-como-atuar"],
+  "reintegracao-militar": ["reintegracao-militar-quando-buscar"],
+  "policial-militar-punicao-disciplinar": ["policial-militar-punicao-disciplinar-recurso"],
+  "bombeiro-militar-punicao-disciplinar": ["bombeiro-militar-punicao-disciplinar-defesa"],
+  "conselho-de-justificacao": ["conselho-de-justificacao-como-funciona"],
+  "concurso-militar-eliminacao": ["concurso-militar-exame-medico-investigacao-social"],
+  "militar-temporario-licenciado": ["militar-temporario-licenciado-tratamento-saude"],
+  "sindicancia-militar": ["sindicancia-militar-prazo-defesa-documentos"],
+  "conselho-de-disciplina-militar": ["conselho-de-disciplina-militar-como-se-defender"],
+  "junta-medica-militar": ["junta-medica-militar-como-contestar"],
+  "desercao-militar": ["desercao-militar-consequencias-direitos"],
   "direito-penal-militar": ["reforma-codigo-penal-militar"],
   "defesa-em-ipm": ["reforma-codigo-penal-militar"],
   "punicao-disciplinar-militar": ["transgressoes-disciplinares-ampla-defesa"],

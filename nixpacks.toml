@@ -22,8 +22,18 @@ Caddyfile = '''
 	# Preserve the authority of URLs from the former WordPress site.
 	redir /areas-de-atuacao/direito-penal-militar /direito-penal-militar/ permanent
 	redir /areas-de-atuacao/direito-penal-militar/ /direito-penal-militar/ permanent
+	redir /areas-de-atuacao/direito-administrativo-militar /processo-administrativo-militar/ permanent
+	redir /areas-de-atuacao/direito-administrativo-militar/ /processo-administrativo-militar/ permanent
+	redir /areas-de-atuacao/direito-disciplinar-militar /punicao-disciplinar-militar/ permanent
+	redir /areas-de-atuacao/direito-disciplinar-militar/ /punicao-disciplinar-militar/ permanent
+	redir /areas-de-atuacao/saude-incapacidade-reforma-militar /reforma-militar-por-invalidez/ permanent
+	redir /areas-de-atuacao/saude-incapacidade-reforma-militar/ /reforma-militar-por-invalidez/ permanent
+	redir /areas-de-atuacao/pensao-militar-familiares /pensao-militar/ permanent
+	redir /areas-de-atuacao/pensao-militar-familiares/ /pensao-militar/ permanent
 	redir /o-escritorio /#fundador permanent
 	redir /o-escritorio/ /#fundador permanent
+	redir /404 / permanent
+	redir /404/ / permanent
 
 	# Keep one canonical URL format for every HTML route.
 	@missingSlash path_regexp missingSlash ^/[^.?]*[^/]$
@@ -43,10 +53,18 @@ Caddyfile = '''
 		path /
 		path /blog*
 		path /advogado*
+		path /abate*
+		path /conselho*
+		path /desercao*
 		path /defesa*
 		path /direito*
+		path /exclusao*
+		path /junta*
+		path /links*
 		path /processo*
+		path /promocao*
 		path /reforma*
+		path /sindicancia*
 		path /licenciamento*
 		path /pensao*
 		path /bio*
