@@ -313,6 +313,281 @@ export const servicePages: ServicePage[] = [
     documents: ["notificacao", "portaria de instauracao", "autos do procedimento", "provas e nomes de testemunhas"],
     related: ["punicao-disciplinar-militar", "defesa-em-ipm", "exclusao-das-forcas-armadas"],
   },
+  {
+    slug: "sindicancia-militar",
+    eyebrow: "Apuracao preliminar",
+    title: "Sindicancia militar: prazo, documentos e estrategia de defesa",
+    seoTitle: "Sindicancia Militar | Prazo, Defesa e Documentos",
+    seoDescription:
+      "Recebeu notificacao de sindicancia militar? Entenda prazo, documentos importantes, riscos para a carreira e como organizar a defesa.",
+    keywords: ["sindicancia militar", "defesa em sindicancia militar", "prazo sindicancia militar", "advogado militar"],
+    intro:
+      "A sindicancia militar costuma ser tratada como fase preliminar, mas pode produzir provas, sustentar punicoes e influenciar processos administrativos ou penais posteriores.",
+    problems: [
+      "notificacao com prazo curto para apresentar manifestacao",
+      "fatos narrados de forma vaga ou sem acesso completo aos documentos",
+      "duvida sobre testemunhas, mensagens e provas que devem ser guardadas",
+      "receio de que a sindicancia evolua para PAD, conselho ou punicao disciplinar",
+    ],
+    approach: [
+      "conferencia da portaria, da finalidade da sindicancia e da data de ciencia",
+      "organizacao imediata de documentos, mensagens, boletins e nomes de testemunhas",
+      "definicao de estrategia para defesa escrita, pedido de diligencias e acesso aos autos",
+      "avaliacao dos reflexos da apuracao na carreira e em procedimentos futuros",
+    ],
+    documents: ["notificacao ou portaria", "boletim interno", "mensagens e e-mails", "nomes de testemunhas e documentos funcionais"],
+    related: ["processo-administrativo-militar", "punicao-disciplinar-militar", "advogado-direito-militar"],
+  },
+  {
+    slug: "conselho-de-disciplina-militar",
+    eyebrow: "Permanencia na carreira",
+    title: "Conselho de disciplina militar: como funciona e quando se defender",
+    seoTitle: "Conselho de Disciplina Militar | Como se Defender",
+    seoDescription:
+      "Entenda como funciona o conselho de disciplina militar, quais provas reunir e quando agir para proteger a permanencia na carreira.",
+    keywords: ["conselho de disciplina militar", "defesa conselho de disciplina", "processo disciplinar militar", "advogado militar"],
+    intro:
+      "O conselho de disciplina pode comprometer a permanencia do militar na carreira. Por isso, a defesa precisa ser tecnica, documentada e alinhada aos riscos funcionais do caso.",
+    problems: [
+      "instauracao de conselho apos punicao ou acusacao considerada grave",
+      "falta de clareza sobre provas, testemunhas e etapas do procedimento",
+      "risco de exclusao, licenciamento ou perda de estabilidade funcional",
+      "necessidade de responder rapidamente sem cometer contradicoes",
+    ],
+    approach: [
+      "leitura integral da portaria, das pecas ja juntadas e dos fundamentos do conselho",
+      "mapeamento de nulidades, contradicoes e provas favoraveis ao militar",
+      "preparacao de defesa escrita, testemunhas e atos do procedimento",
+      "avaliacao de medidas administrativas ou judiciais conforme a urgencia",
+    ],
+    documents: ["portaria de instauracao", "punicoes anteriores", "ficha funcional", "provas e nomes de testemunhas"],
+    related: ["processo-administrativo-militar", "exclusao-das-forcas-armadas", "punicao-disciplinar-militar"],
+  },
+  {
+    slug: "junta-medica-militar",
+    eyebrow: "Saude e capacidade",
+    title: "Junta medica militar: como contestar conclusao e proteger seus direitos",
+    seoTitle: "Junta Medica Militar | Como Contestar a Conclusao",
+    seoDescription:
+      "Saiba como contestar a conclusao da junta medica militar, quais laudos reunir e quando agir para proteger reforma, licenciamento e remuneracao.",
+    keywords: ["junta medica militar", "contestar junta medica militar", "laudo militar incapacidade", "reforma militar"],
+    intro:
+      "A conclusao da junta medica militar pode definir se o militar sera considerado apto, incapaz, reformado ou licenciado. Uma analise superficial nessa fase gera prejuizos duradouros.",
+    problems: [
+      "junta medica conclui aptidao apesar de limitacoes reais",
+      "duvida sobre nexo entre doenca, acidente e servico",
+      "risco de licenciamento durante tratamento ou recuperacao",
+      "falta de organizacao de laudos, exames e historico funcional",
+    ],
+    approach: [
+      "reuniao da documentacao medica e funcional antes da inspecao decisiva",
+      "comparacao entre laudos particulares, atas de inspecao e restricoes reais",
+      "avaliacao de pedido administrativo, recurso ou medida judicial urgente",
+      "estrategia para proteger remuneracao, permanencia ou direito a reforma",
+    ],
+    documents: ["ata de inspecao de saude", "laudos particulares", "exames", "atestados, prontuario e documentos do servico"],
+    related: ["reforma-militar-por-invalidez", "licenciamento-indevido-militar", "advogado-direito-militar"],
+  },
+  {
+    slug: "desercao-militar",
+    eyebrow: "Acusacao penal militar",
+    title: "Desercao militar: consequencias e direitos do acusado",
+    seoTitle: "Desercao Militar | Consequencias e Direitos do Acusado",
+    seoDescription:
+      "Entenda as consequencias da desercao militar, os riscos penais e disciplinares e quando buscar defesa tecnica para proteger seus direitos.",
+    keywords: ["desercao militar", "crime de desercao", "advogado penal militar", "direito penal militar"],
+    intro:
+      "A acusacao de desercao militar costuma gerar impacto imediato na carreira e exige orientacao tecnica para avaliar fato, prazo, justificativas e reflexos penais e administrativos.",
+    problems: [
+      "militar ou familiar sem clareza sobre o que caracteriza desercao",
+      "receio de prisao, punicao disciplinar e exclusao da carreira",
+      "necessidade de organizar rapidamente justificativas e documentos",
+      "duvida sobre apresentacao voluntaria, atestados e provas de impedimento",
+    ],
+    approach: [
+      "analise da cronologia dos fatos e da documentacao existente",
+      "avaliacao da configuracao juridica da desercao e de eventuais justificativas",
+      "organizacao de laudos, atestados, comprovantes e testemunhas",
+      "defesa integrada para os reflexos penais, administrativos e funcionais",
+    ],
+    documents: ["comunicacoes oficiais", "atestados e laudos", "comprovantes de deslocamento ou impedimento", "ficha funcional e boletins"],
+    related: ["direito-penal-militar", "defesa-em-ipm", "advogado-direito-militar"],
+  },
+  {
+    slug: "militar-temporario-licenciado",
+    eyebrow: "Temporario e saude",
+    title: "Militar temporario licenciado: quando o desligamento pode ser contestado",
+    seoTitle: "Militar Temporario Licenciado | Quando Contestar",
+    seoDescription:
+      "Saiba quando o licenciamento de militar temporario pode ser contestado, especialmente em casos de tratamento de saude, incapacidade e reintegracao.",
+    keywords: ["militar temporario licenciado", "militar temporario licenciamento", "reintegracao militar temporario", "licenciamento indevido militar"],
+    intro:
+      "O licenciamento de militar temporario exige analise tecnica do motivo do desligamento, da situacao de saude e da documentacao funcional. Nem todo encerramento do vinculo e automaticamente regular.",
+    problems: [
+      "licenciamento durante tratamento de saude ou recuperacao funcional",
+      "dificuldade de provar incapacidade ou nexo com o servico",
+      "ato de desligamento com motivacao insuficiente ou pouco clara",
+      "duvida sobre reintegracao, reforma ou indenizacao cabivel",
+    ],
+    approach: [
+      "reconstrucao da linha do tempo funcional e medica do militar temporario",
+      "analise do ato de licenciamento, das inspecoes de saude e dos laudos existentes",
+      "avaliacao de pedido administrativo, medida judicial ou tutela de urgencia",
+      "definicao da estrategia mais adequada para reintegracao, reforma ou reparacao",
+    ],
+    documents: ["ato de licenciamento", "ficha funcional", "laudos e exames", "prontuario, atestados e documentos do servico"],
+    related: ["licenciamento-indevido-militar", "reforma-militar-por-invalidez", "junta-medica-militar"],
+  },
+  {
+    slug: "concurso-militar-eliminacao",
+    eyebrow: "Ingresso na carreira",
+    title: "Concurso militar: eliminacao em exame medico ou investigacao social",
+    seoTitle: "Concurso Militar | Eliminacao em Exame Medico ou Investigacao Social",
+    seoDescription:
+      "Entenda quando a eliminacao em concurso militar por exame medico, teste ou investigacao social pode ser contestada com apoio juridico.",
+    keywords: ["concurso militar eliminacao", "eliminacao exame medico concurso militar", "investigacao social concurso militar", "advogado concurso militar"],
+    intro:
+      "A eliminacao em concurso militar precisa ser comparada com o edital, os exames, a justificativa da banca e o direito de recurso. Em muitos casos, a decisao merece revisao tecnica.",
+    problems: [
+      "eliminacao em exame medico, odontologico ou psicologico",
+      "investigacao social com fundamento generico ou sem clareza",
+      "restricao por laudo, tatuagem, visao, ortopedia ou antecedentes",
+      "prazo curto para recurso administrativo ou medida urgente",
+    ],
+    approach: [
+      "leitura do edital e dos criterios usados para a eliminacao",
+      "organizacao de exames, laudos e documentos pessoais relevantes",
+      "avaliacao do recurso administrativo e da urgencia judicial do caso",
+      "definicao de estrategia com foco em prazo, prova tecnica e legalidade do ato",
+    ],
+    documents: ["edital", "resultado da etapa", "laudos e exames", "documentos pessoais e comunicacoes da banca"],
+    related: ["advogado-direito-militar", "junta-medica-militar", "advogado-militar-brasilia"],
+  },
+  {
+    slug: "conselho-de-justificacao",
+    eyebrow: "Oficiais e permanencia",
+    title: "Conselho de justificacao: como funciona e quando agir",
+    seoTitle: "Conselho de Justificacao | Como Funciona e Quando Agir",
+    seoDescription:
+      "Veja como funciona o conselho de justificacao, quais documentos reunir e quando buscar defesa tecnica para proteger a carreira do oficial.",
+    keywords: ["conselho de justificacao", "defesa conselho de justificacao", "oficial conselho de justificacao", "advogado militar"],
+    intro:
+      "O conselho de justificacao exige defesa cuidadosa porque pode comprometer a permanencia do oficial na carreira e gerar efeitos profundos sobre sua vida funcional.",
+    problems: [
+      "oficial notificado para responder a conselho de justificacao",
+      "falta de clareza sobre os fatos, provas e etapas do procedimento",
+      "risco para permanencia, reputacao funcional e progressao na carreira",
+      "necessidade de reunir historico, documentos e estrategia em pouco tempo",
+    ],
+    approach: [
+      "analise completa da portaria e das pecas iniciais do procedimento",
+      "organizacao do historico funcional, elogios, punicoes e provas do caso",
+      "definicao da tese de defesa e preparo dos atos do conselho",
+      "avaliacao de medidas administrativas ou judiciais conforme a gravidade",
+    ],
+    documents: ["portaria", "ficha funcional", "boletins e atos anteriores", "provas e nomes de testemunhas"],
+    related: ["conselho-de-disciplina-militar", "processo-administrativo-militar", "advogado-direito-militar"],
+  },
+  {
+    slug: "advogado-criminal-militar",
+    eyebrow: "Defesa penal especializada",
+    title: "Advogado criminal militar para acusacoes e investigacoes sensiveis",
+    seoTitle: "Advogado Criminal Militar | Defesa Penal Militar",
+    seoDescription:
+      "Advogado criminal militar para IPM, acao penal militar, desercao, insubordinacao e demais acusacoes com reflexo na liberdade e na carreira.",
+    keywords: ["advogado criminal militar", "advogado penal militar", "defesa penal militar", "crime militar advogado"],
+    intro:
+      "Quando a acusacao envolve crime militar, a defesa precisa olhar ao mesmo tempo para prova, procedimento, liberdade e impactos funcionais. E uma area que nao admite improviso.",
+    problems: [
+      "acusacao penal militar com risco para liberdade e carreira",
+      "IPM ou oitiva sem preparacao adequada",
+      "desercao, insubordinacao, desacato, violencia ou abandono de posto",
+      "necessidade de alinhar defesa penal e reflexos administrativos",
+    ],
+    approach: [
+      "analise tecnica do enquadramento penal e dos autos existentes",
+      "preparacao para depoimentos, interrogatorios e atos do procedimento",
+      "organizacao da prova defensiva desde o inicio da apuracao",
+      "estrategia integrada para os reflexos penais e funcionais do caso",
+    ],
+    documents: ["portaria do IPM", "intimacoes", "denuncia ou acusacao", "mensagens, documentos e nomes de testemunhas"],
+    related: ["direito-penal-militar", "defesa-em-ipm", "desercao-militar"],
+  },
+  {
+    slug: "reintegracao-militar",
+    eyebrow: "Retorno ao servico",
+    title: "Reintegracao militar: quando o retorno pode ser buscado",
+    seoTitle: "Reintegracao Militar | Quando Pode Ser Buscada",
+    seoDescription:
+      "Saiba quando a reintegracao militar pode ser buscada em casos de licenciamento indevido, saude, nulidades e desligamento irregular.",
+    keywords: ["reintegracao militar", "reintegracao militar temporario", "retorno ao servico militar", "licenciamento indevido militar"],
+    intro:
+      "A reintegracao militar depende de analisar o motivo do desligamento, a prova medica ou funcional e a regularidade do procedimento administrativo que encerrou o vinculo.",
+    problems: [
+      "licenciamento ou exclusao com indicios de irregularidade",
+      "desligamento durante tratamento de saude ou incapacidade funcional",
+      "ato administrativo sem motivacao suficiente",
+      "duvida entre reintegracao, reforma ou pedido indenizatorio",
+    ],
+    approach: [
+      "reconstrucao da linha do tempo funcional e dos atos administrativos",
+      "avaliacao da base juridica para retorno ao servico ou medida alternativa",
+      "organizacao de laudos, historico funcional e documentos do caso",
+      "atuacao administrativa ou judicial conforme a urgencia da situacao",
+    ],
+    documents: ["ato de desligamento", "ficha funcional", "laudos e exames", "portarias, boletins e demais documentos do caso"],
+    related: ["licenciamento-indevido-militar", "militar-temporario-licenciado", "reforma-militar-por-invalidez"],
+  },
+  {
+    slug: "policial-militar-punicao-disciplinar",
+    eyebrow: "Policia Militar",
+    title: "Punicao disciplinar de policial militar: como organizar a defesa",
+    seoTitle: "Policial Militar Punicao Disciplinar | Como se Defender",
+    seoDescription:
+      "Entenda como agir em punicao disciplinar de policial militar, quais documentos reunir e quando recorrer para proteger a carreira.",
+    keywords: ["policial militar punicao disciplinar", "recurso punicao policial militar", "defesa disciplinar policial militar", "advogado policial militar"],
+    intro:
+      "Para o policial militar, uma punicao disciplinar pode repercutir em conceito, escala, curso, promocao e permanencia. A resposta precisa ser tecnica e proporcional ao caso.",
+    problems: [
+      "nota de punicao ou comunicacao recebida com prazo curto para defesa",
+      "fatos mal descritos ou sem documentacao completa",
+      "medo de agravamento funcional ou represalia interna",
+      "duvida sobre recurso, reconsideracao e prova util para o caso",
+    ],
+    approach: [
+      "leitura da nota de punicao e do regulamento aplicavel",
+      "organizacao de boletins, mensagens, escalas e testemunhas",
+      "avaliacao da tese de defesa e dos reflexos na carreira policial militar",
+      "elaboracao de recurso administrativo ou medida judicial quando cabivel",
+    ],
+    documents: ["nota de punicao", "boletim interno", "escalas, mensagens e ordens de servico", "nomes de testemunhas e ficha funcional"],
+    related: ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
+  },
+  {
+    slug: "bombeiro-militar-punicao-disciplinar",
+    eyebrow: "Corpo de Bombeiros Militar",
+    title: "Punicao disciplinar de bombeiro militar: o que fazer no inicio",
+    seoTitle: "Bombeiro Militar Punicao Disciplinar | O Que Fazer",
+    seoDescription:
+      "Veja como agir em punicao disciplinar de bombeiro militar, quais documentos separar e quando buscar defesa tecnica.",
+    keywords: ["bombeiro militar punicao disciplinar", "defesa disciplinar bombeiro militar", "recurso punicao bombeiro militar", "advogado bombeiro militar"],
+    intro:
+      "No Corpo de Bombeiros Militar, procedimentos disciplinares tambem podem afetar conceito, escala, promocao e estabilidade funcional. O inicio da defesa faz diferenca no resultado.",
+    problems: [
+      "punicao aplicada com descricao generica ou incompleta dos fatos",
+      "prazo curto para responder ou recorrer",
+      "dificuldade de reunir documentos operacionais e testemunhas",
+      "receio de prejuizo em cursos, funcao e progressao funcional",
+    ],
+    approach: [
+      "analise da comunicacao disciplinar e do regulamento aplicavel",
+      "mapeamento das provas operacionais e funcionais relevantes",
+      "organizacao da resposta defensiva dentro do prazo real do caso",
+      "avaliacao de recurso ou medida judicial conforme o risco funcional",
+    ],
+    documents: ["nota de punicao", "boletins", "ordens de servico, escalas e registros operacionais", "testemunhas e ficha funcional"],
+    related: ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
+  },
 ];
 
 export const getServicePageBySlug = (slug: string | undefined) =>

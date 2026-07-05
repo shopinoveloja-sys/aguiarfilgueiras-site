@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Building2, FileText, Gavel, HeartPulse, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import { servicePages } from "@/data/servicePages";
 
 const areas = [
   {
@@ -80,6 +81,37 @@ const AreasSection = () => {
               </Link>
             </motion.article>
           ))}
+        </div>
+
+        <div className="mt-14 rounded-sm border border-border bg-background p-6 sm:p-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h3 className="font-heading text-2xl font-bold text-primary">Casos e temas mais buscados</h3>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Esta malha de links ajuda o visitante a chegar mais rapido ao tema certo e reforca para o Google
+                quais assuntos o escritorio cobre com profundidade.
+              </p>
+            </div>
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-all hover:gap-3"
+            >
+              Ver biblioteca completa
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            {servicePages.map((page) => (
+              <Link
+                key={page.slug}
+                to={`/${page.slug}`}
+                className="rounded-sm border border-border bg-card px-3 py-2 text-sm font-medium text-primary transition-colors hover:border-accent hover:text-accent"
+              >
+                {page.title}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -370,5 +370,346 @@
         "answer": "A judicializacao pode ser avaliada diante de nulidades, violacao de direitos, urgencia ou decisao administrativa ilegal."
       }
     ]
+  },
+  "sindicancia-militar": {
+    "deadline": "A data de ciencia da notificacao costuma marcar o inicio do prazo para defesa, esclarecimentos ou apresentacao de documentos. Nao espere a fase final para organizar a prova.",
+    "risks": [
+      "tratar a sindicancia como etapa sem importancia e perder o melhor momento para reagir",
+      "entregar versao incompleta dos fatos sem reunir mensagens, documentos e testemunhas",
+      "deixar a apuracao evoluir para punicao ou PAD sem contraditorio efetivo",
+      "perder prazo por nao registrar corretamente a data em que recebeu a notificacao"
+    ],
+    "whenToCall": [
+      "assim que receber notificacao, portaria ou pedido formal de esclarecimentos",
+      "quando houver prazo curto para responder ou juntar documentos",
+      "se os fatos estiverem mal descritos ou sem acesso claro aos autos",
+      "quando a sindicancia puder gerar punicao, conselho ou licenciamento"
+    ],
+    "ctaTitle": "Recebeu notificacao de sindicancia?",
+    "ctaText": "Separe portaria, boletim, mensagens, nomes de testemunhas e data de ciencia. A defesa fica mais forte quando os documentos sao organizados cedo.",
+    "faqs": [
+      {
+        "question": "Sindicancia militar ja e punicao?",
+        "answer": "Nao. A sindicancia e uma apuracao, mas pode produzir elementos que sustentem punicao, PAD ou outras medidas posteriores."
+      },
+      {
+        "question": "Vale apresentar documentos logo no inicio?",
+        "answer": "Em muitos casos, sim. A estrategia depende do tipo de fato, do prazo e dos elementos ja existentes nos autos."
+      },
+      {
+        "question": "Posso indicar testemunhas na sindicancia?",
+        "answer": "Pode ser possivel, conforme a norma e a fase do procedimento. O ideal e avaliar o momento certo e a utilidade de cada testemunha."
+      }
+    ]
+  },
+  "conselho-de-disciplina-militar": {
+    "deadline": "No conselho de disciplina, prazos e atos do procedimento precisam ser acompanhados desde a instauracao. A demora pode comprometer prova, testemunhas e estrategia de defesa.",
+    "risks": [
+      "subestimar o impacto do conselho sobre permanencia e carreira",
+      "responder sem acesso integral aos fundamentos e documentos do procedimento",
+      "deixar de reunir provas favoraveis e historico funcional relevante",
+      "perder o momento de apontar nulidades, contradicoes e excesso de motivacao"
+    ],
+    "whenToCall": [
+      "ao receber a portaria de instauracao do conselho",
+      "quando houver risco de exclusao, licenciamento ou quebra de estabilidade funcional",
+      "se o procedimento estiver baseado em acusacao disciplinar ou penal grave",
+      "quando houver audiencias, oitivas ou prazo para defesa escrita"
+    ],
+    "ctaTitle": "Conselho de disciplina exige estrategia completa",
+    "ctaText": "Reuna a portaria, a ficha funcional, punicoes anteriores, provas e nomes de testemunhas para avaliar a melhor linha de defesa.",
+    "faqs": [
+      {
+        "question": "Conselho de disciplina sempre leva a exclusao?",
+        "answer": "Nao. O resultado depende dos fatos, das provas, da regularidade do procedimento e da qualidade da defesa apresentada."
+      },
+      {
+        "question": "A ficha funcional influencia o conselho?",
+        "answer": "Sim. Historico funcional, elogios, punicoes e contexto da carreira costumam ter peso relevante no procedimento."
+      },
+      {
+        "question": "Posso questionar irregularidades do conselho?",
+        "answer": "Sim. Falhas de contraditorio, motivacao, prova ou rito podem justificar questionamento administrativo ou judicial."
+      }
+    ]
+  },
+  "junta-medica-militar": {
+    "deadline": "Casos de junta medica exigem agir antes e logo depois da inspecao. Documentos medicos, restricoes funcionais e historico clinico precisam estar organizados em tempo util.",
+    "risks": [
+      "comparecer sem laudos atualizados e sem explicar corretamente as limitacoes reais",
+      "aceitar conclusao de aptidao sem confrontar documentos particulares e historico medico",
+      "perder o momento certo de contestar licenciamento ou negativa de reforma",
+      "nao demonstrar nexo entre a doenca, o acidente e o servico militar"
+    ],
+    "whenToCall": [
+      "antes de inspecao de saude importante para permanencia ou licenciamento",
+      "quando a conclusao da junta parecer incompativel com a realidade clinica",
+      "se houver discussao sobre reforma, readaptacao ou incapacidade",
+      "quando a remuneracao ou o vinculo funcional dependerem do laudo final"
+    ],
+    "ctaTitle": "Laudo medico mal organizado custa caro",
+    "ctaText": "Junte atas de inspecao, laudos particulares, exames e documentos de servico para comparar a conclusao da junta com a situacao real.",
+    "faqs": [
+      {
+        "question": "A junta medica militar e definitiva?",
+        "answer": "Nem sempre. Dependendo do caso, pode haver revisao administrativa ou judicial, especialmente quando a conclusao contraria a prova medica consistente."
+      },
+      {
+        "question": "Laudo particular pode ser usado?",
+        "answer": "Sim. Ele pode ajudar a demonstrar limitacoes, diagnostico, tratamento e divergencias em relacao a conclusao oficial."
+      },
+      {
+        "question": "Junta medica e reforma militar sao a mesma coisa?",
+        "answer": "Nao. A junta produz conclusao tecnica sobre saude e capacidade, enquanto a reforma depende da aplicacao juridica dessa conclusao ao caso concreto."
+      }
+    ]
+  },
+  "desercao-militar": {
+    "deadline": "Em acusacoes de desercao, o tempo importa para reunir justificativas, atestados, comprovantes e entender os reflexos penais e disciplinares do caso.",
+    "risks": [
+      "apresentar explicacao apressada sem apoio documental",
+      "ignorar reflexos penais, administrativos e funcionais da acusacao",
+      "deixar de guardar provas de impedimento, tratamento medico ou circunstancias excepcionais",
+      "tomar decisoes sem avaliar a cronologia exata dos fatos e da ausencia"
+    ],
+    "whenToCall": [
+      "ao perceber risco de configuracao de desercao ou logo apos a comunicacao oficial",
+      "quando houver necessidade de reunir atestados e comprovantes urgentes",
+      "se a acusacao puder gerar IPM, processo penal militar ou exclusao",
+      "quando familiares precisarem entender o que fazer imediatamente"
+    ],
+    "ctaTitle": "Desercao militar exige defesa sem improviso",
+    "ctaText": "Envie a cronologia dos fatos, atestados, comprovantes e comunicacoes oficiais para avaliar o enquadramento juridico e os proximos passos.",
+    "faqs": [
+      {
+        "question": "Toda ausencia configura desercao militar?",
+        "answer": "Nao. E preciso analisar prazo, contexto, justificativas, formalidades do caso e documentos que comprovem eventual impedimento."
+      },
+      {
+        "question": "Desercao afeta apenas a parte penal?",
+        "answer": "Nao. O caso pode gerar reflexos penais, disciplinares e funcionais, com impacto direto na carreira."
+      },
+      {
+        "question": "Familiares podem ajudar na organizacao da defesa?",
+        "answer": "Sim. Em muitos casos, familiares ajudam a localizar documentos, atestados, comprovantes e a reconstruir a linha do tempo dos fatos."
+      }
+    ]
+  },
+  "militar-temporario-licenciado": {
+    "deadline": "Quando o licenciamento do militar temporario ocorre em contexto de saude ou incapacidade, agir cedo ajuda a preservar documentos, remuneracao e prova medica do caso.",
+    "risks": [
+      "deixar o desligamento produzir efeitos sem analisar a situacao medica real",
+      "nao reunir exames, laudos e atas de inspecao no momento certo",
+      "confundir encerramento regular de vinculo com licenciamento que pode ser contestado",
+      "demorar para buscar reintegracao, reforma ou tutela urgente"
+    ],
+    "whenToCall": [
+      "ao receber o ato de licenciamento ou comunicado de desligamento",
+      "quando o militar estiver em tratamento de saude ou com restricoes funcionais",
+      "se houver divergencia entre a conclusao medica e a realidade clinica",
+      "quando a remuneracao for interrompida e houver necessidade de medida rapida"
+    ],
+    "ctaTitle": "Militar temporario em tratamento merece analise imediata",
+    "ctaText": "Separe o ato de licenciamento, laudos, exames, atas de inspecao e documentos do servico para avaliar reintegracao, reforma ou outra medida cabivel.",
+    "faqs": [
+      {
+        "question": "Militar temporario pode contestar licenciamento?",
+        "answer": "Pode, dependendo das provas, da situacao de saude, do nexo com o servico e da regularidade do procedimento adotado pela administracao."
+      },
+      {
+        "question": "Tratamento de saude impede desligamento?",
+        "answer": "Depende do caso concreto. A analise envolve incapacidade, laudos, regras aplicaveis e documentos funcionais."
+      },
+      {
+        "question": "Sempre o caminho sera reintegracao?",
+        "answer": "Nao. Em alguns casos, a estrategia pode envolver reforma, indenizacao ou outra providencia mais adequada."
+      }
+    ]
+  },
+  "concurso-militar-eliminacao": {
+    "deadline": "Recursos em concurso militar costumam ter prazo muito curto. Quanto antes a eliminacao for analisada com o edital e os exames em maos, melhor.",
+    "risks": [
+      "perder o prazo do recurso administrativo por demora na reuniao dos documentos",
+      "aceitar fundamento generico da banca sem confrontar edital e prova tecnica",
+      "nao obter laudo complementar ou exame particular em tempo util",
+      "deixar de pedir medida urgente quando a etapa seguinte estiver proxima"
+    ],
+    "whenToCall": [
+      "assim que sair o resultado da eliminacao",
+      "quando o motivo envolver exame medico, psicologico ou investigacao social",
+      "se a justificativa parecer vaga, desproporcional ou sem base clara no edital",
+      "quando houver necessidade de recurso rapido ou acao judicial urgente"
+    ],
+    "ctaTitle": "Eliminacao em concurso militar tem prazo curto",
+    "ctaText": "Junte edital, resultado da etapa, laudos, exames e comunicacoes da banca para avaliar recurso e urgencia do caso.",
+    "faqs": [
+      {
+        "question": "Toda eliminacao em concurso militar pode ser revertida?",
+        "answer": "Nao. A reversao depende do edital, da prova tecnica, da legalidade do ato e do tempo disponivel para reagir."
+      },
+      {
+        "question": "Laudo particular ajuda em exame medico?",
+        "answer": "Pode ajudar bastante, principalmente quando esclarece diagnosticos, limitacoes ou divergencias em relacao ao resultado oficial."
+      },
+      {
+        "question": "Investigacao social tambem pode ser contestada?",
+        "answer": "Sim, especialmente quando houver fundamento generico, erro de informacao ou falta de proporcionalidade."
+      }
+    ]
+  },
+  "conselho-de-justificacao": {
+    "deadline": "No conselho de justificacao, a defesa deve acompanhar a instauracao desde o inicio. A demora dificulta organizar historico funcional, provas e linha estrategica.",
+    "risks": [
+      "subestimar o impacto do procedimento sobre a permanencia do oficial",
+      "responder sem consolidar historico funcional e documentos relevantes",
+      "deixar de apontar falhas no procedimento, nos fatos ou na motivacao",
+      "nao alinhar defesa administrativa e reflexos institucionais do caso"
+    ],
+    "whenToCall": [
+      "ao receber a notificacao ou portaria do conselho de justificacao",
+      "quando o procedimento puder afetar permanencia e reputacao funcional",
+      "se houver necessidade de reunir elogios, punicoes e documentos de carreira",
+      "quando surgirem audiencias, prazos ou atos relevantes do conselho"
+    ],
+    "ctaTitle": "Conselho de justificacao exige defesa sob medida",
+    "ctaText": "Reuna portaria, ficha funcional, boletins, documentos do caso e nomes de testemunhas para construir a linha de defesa com antecedencia.",
+    "faqs": [
+      {
+        "question": "Conselho de justificacao e o mesmo que conselho de disciplina?",
+        "answer": "Nao. Embora ambos sejam procedimentos sensiveis, eles possuem finalidade, publico e regramento que precisam ser analisados no caso concreto."
+      },
+      {
+        "question": "A carreira anterior do oficial importa no conselho?",
+        "answer": "Sim. Historico funcional, elogios, cursos, exercicios e punicoes costumam ter relevancia na composicao da defesa."
+      },
+      {
+        "question": "Cabe questionar o conselho judicialmente?",
+        "answer": "Dependendo das nulidades, da urgencia e da gravidade dos efeitos, pode haver espaco para avaliacao judicial."
+      }
+    ]
+  },
+  "advogado-criminal-militar": {
+    "deadline": "Quando a acusacao envolve crime militar, cada ato importa. O ideal e agir antes da oitiva, do interrogatorio ou de qualquer manifestacao formal relevante.",
+    "risks": [
+      "depor sem conhecer os fatos, documentos e riscos reais da acusacao",
+      "ignorar reflexos administrativos e funcionais do caso penal",
+      "nao organizar mensagens, laudos, boletins e testemunhas a tempo",
+      "subestimar a gravidade da investigacao por ainda nao existir denuncia"
+    ],
+    "whenToCall": [
+      "ao ser intimado para depor em IPM ou procedimento correlato",
+      "quando houver acusacao de desercao, insubordinacao, desacato ou abandono",
+      "se a apuracao puder atingir liberdade, imagem funcional ou permanencia na carreira",
+      "antes de qualquer depoimento ou versao formal relevante"
+    ],
+    "ctaTitle": "Acusacao penal militar pede defesa cedo",
+    "ctaText": "Separe intimacoes, portaria, mensagens, boletins e nomes de testemunhas. A defesa penal fica mais forte quando comeca antes do primeiro grande erro.",
+    "faqs": [
+      {
+        "question": "Advogado criminal militar e diferente de defesa disciplinar?",
+        "answer": "Sim. A defesa penal militar exige leitura do enquadramento criminal, embora muitas vezes tambem precise considerar reflexos disciplinares e administrativos."
+      },
+      {
+        "question": "IPM ja significa condenacao?",
+        "answer": "Nao. O IPM e fase de apuracao, mas pode influenciar denuncia, medidas disciplinares e a estrategia de defesa desde o inicio."
+      },
+      {
+        "question": "Posso ser prejudicado por falar cedo demais?",
+        "answer": "Dependendo do caso, sim. Declaracoes apressadas e sem estrategia podem criar contradicoes ou reforcar elementos desfavoraveis."
+      }
+    ]
+  },
+  "reintegracao-militar": {
+    "deadline": "Quanto antes o caso for analisado, maior a chance de preservar prova funcional, medica e remuneratoria para um pedido de reintegracao ou medida equivalente.",
+    "risks": [
+      "deixar o desligamento se consolidar sem reunir prova util",
+      "perder acesso a documentos internos importantes para reconstruir o caso",
+      "nao diferenciar reintegracao de reforma ou reparacao indenizatoria",
+      "demorar para agir quando a urgencia envolve retorno, tratamento ou remuneracao"
+    ],
+    "whenToCall": [
+      "assim que o militar receber o ato de desligamento ou exclusao",
+      "quando houver indicio de nulidade ou falta de motivacao no procedimento",
+      "se o caso envolver saude, tratamento ou incapacidade ainda nao resolvida",
+      "quando houver necessidade de medida urgente para proteger o vinculo ou a renda"
+    ],
+    "ctaTitle": "Reintegracao depende de prova bem organizada",
+    "ctaText": "Junte o ato de desligamento, laudos, boletins e historico funcional para avaliar se existe base para retorno ao servico ou outra medida cabivel.",
+    "faqs": [
+      {
+        "question": "Todo desligamento irregular gera reintegracao?",
+        "answer": "Nao. A medida adequada depende do tipo de vinculo, da prova do caso e do objetivo juridico mais viavel."
+      },
+      {
+        "question": "Reintegracao e reforma sao a mesma coisa?",
+        "answer": "Nao. Em alguns casos o foco e retorno ao servico; em outros, protecao remuneratoria por incapacidade ou outro efeito juridico."
+      },
+      {
+        "question": "Preciso agir logo apos o desligamento?",
+        "answer": "Sim. O tempo costuma influenciar prova, urgencia e estrategia para reverter ou mitigar os efeitos do ato."
+      }
+    ]
+  },
+  "policial-militar-punicao-disciplinar": {
+    "deadline": "Para o policial militar, o prazo de resposta ou recurso pode correr rapidamente a partir da ciencia da punicao. Guarde a notificacao e registre a data.",
+    "risks": [
+      "aceitar punicao sem avaliar contraditorio, prova e regulamento aplicavel",
+      "responder emocionalmente e sem organizacao documental",
+      "perder prazo de reconsideracao ou recurso administrativo",
+      "deixar a punicao afetar conceito, promocao e historico funcional sem reagir"
+    ],
+    "whenToCall": [
+      "no mesmo dia em que a punicao for comunicada",
+      "quando o fato estiver mal descrito ou incompleto",
+      "se a penalidade parecer desproporcional ou mal fundamentada",
+      "quando houver risco de reflexo em escala, curso, promocao ou permanencia"
+    ],
+    "ctaTitle": "Punicao de policial militar nao deve ser tratada no improviso",
+    "ctaText": "Separe nota de punicao, boletim, mensagens, escalas e nomes de testemunhas para avaliar recurso e riscos funcionais.",
+    "faqs": [
+      {
+        "question": "Toda punicao de policial militar pode ser recorrida?",
+        "answer": "A possibilidade depende do regulamento, do prazo e da forma como os fatos foram apurados e motivados."
+      },
+      {
+        "question": "Punicao pequena tambem pode prejudicar a carreira?",
+        "answer": "Pode. Mesmo sancoes leves podem influenciar conceito, progressao e leitura funcional futura."
+      },
+      {
+        "question": "Vale juntar mensagens e escalas de servico?",
+        "answer": "Sim. Em muitos casos, esses elementos ajudam a contextualizar o fato e a mostrar falhas na narrativa administrativa."
+      }
+    ]
+  },
+  "bombeiro-militar-punicao-disciplinar": {
+    "deadline": "Procedimentos disciplinares de bombeiro militar tambem costumam ter prazo curto para resposta ou recurso. O ideal e agir assim que a comunicacao formal chegar.",
+    "risks": [
+      "perder o prazo por subestimar a gravidade da punicao",
+      "nao reunir documentos operacionais, escalas e ordens de servico relevantes",
+      "aceitar descricao generica do fato sem pedir esclarecimento ou confronto de prova",
+      "permitir reflexo funcional em escala, cursos e progressao sem contestacao"
+    ],
+    "whenToCall": [
+      "ao receber nota de punicao ou comunicacao formal",
+      "quando o caso envolver ocorrencia operacional, escala ou ordem de servico",
+      "se a penalidade parecer desproporcional ou pouco fundamentada",
+      "quando houver risco funcional para curso, promocao ou permanencia"
+    ],
+    "ctaTitle": "Punicao disciplinar de bombeiro tambem exige tecnica",
+    "ctaText": "Junte boletins, escalas, registros operacionais, comunicacoes e testemunhas para avaliar o melhor caminho de defesa.",
+    "faqs": [
+      {
+        "question": "Bombeiro militar pode contestar punicao disciplinar?",
+        "answer": "Sim, conforme o caso, o regulamento, o prazo e a forma como a administracao apurou e motivou a sancao."
+      },
+      {
+        "question": "Documentos operacionais ajudam na defesa?",
+        "answer": "Muitas vezes ajudam bastante, porque mostram contexto da ocorrencia, ordens recebidas, escala e realidade do servico."
+      },
+      {
+        "question": "Punicao administrativa pode ter efeito futuro relevante?",
+        "answer": "Sim. Mesmo quando parece pequena, ela pode influenciar conceito, historico funcional e progressao na carreira."
+      }
+    ]
   }
 }
