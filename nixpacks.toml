@@ -61,6 +61,9 @@ Caddyfile = '''
 		path /exclusao*
 		path /junta*
 		path /links*
+		path /intimado*
+		path /militar*
+		path /policial*
 		path /processo*
 		path /promocao*
 		path /reforma*
