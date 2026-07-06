@@ -16,11 +16,11 @@ const audiences = [
     description: "Exercito, Marinha, Aeronautica, Policia Federal, Policia Rodoviaria Federal e outros servidores federais.",
     terms: ["militar", "forcas armadas", "exercito", "marinha", "aeronautica", "federal", "prf", "policia federal"],
     groups: [
-      { label: "Exercito", query: "militar" },
-      { label: "Marinha", query: "militar" },
-      { label: "Aeronautica", query: "militar" },
-      { label: "Policia Federal", query: "federal" },
-      { label: "Policia Rodoviaria Federal", query: "federal" },
+      { label: "Exercito", query: "exercito" },
+      { label: "Marinha", query: "marinha" },
+      { label: "Aeronautica", query: "aeronautica" },
+      { label: "Policia Federal", query: "policia federal" },
+      { label: "Policia Rodoviaria Federal", query: "policia rodoviaria federal" },
       { label: "Outros servidores federais", query: "federal" },
     ],
     topics: [

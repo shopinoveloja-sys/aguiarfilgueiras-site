@@ -20,6 +20,12 @@ export const getBlogPostBySlug = (slug: string | undefined) =>
   blogPosts.find((post) => post.slug === slug);
 
 const manualRelatedServices: Record<string, string[]> = {
+  "processo-disciplinar-servidor-federal-como-se-defender": ["processo-administrativo-militar", "advogado-direito-militar", "advogado-militar-brasilia"],
+  "pad-na-prf-como-organizar-defesa": ["processo-administrativo-militar", "advogado-direito-militar", "advogado-militar-brasilia"],
+  "pad-na-policia-federal-primeiros-cuidados": ["processo-administrativo-militar", "advogado-direito-militar", "advogado-militar-brasilia"],
+  "militar-da-aeronautica-licenciado-em-tratamento": ["militar-temporario-doente", "licenciamento-indevido-militar", "junta-medica-militar"],
+  "ipm-na-marinha-o-que-fazer-antes-do-depoimento": ["intimado-para-ipm", "defesa-em-ipm", "advogado-criminal-militar"],
+  "punicao-disciplinar-no-exercito-como-agir-no-inicio": ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
   "processo-disciplinar-na-policia-militar-como-se-defender": ["advogado-para-policial-militar", "policial-militar-punicao-disciplinar", "processo-administrativo-militar"],
   "licenciamento-de-militar-doente-quando-e-ilegal": ["militar-temporario-doente", "licenciamento-indevido-militar", "reintegracao-militar"],
   "prazo-para-defesa-em-sindicancia-militar": ["sindicancia-militar", "processo-administrativo-militar", "punicao-disciplinar-militar"],
