@@ -20,6 +20,10 @@ export const getBlogPostBySlug = (slug: string | undefined) =>
   blogPosts.find((post) => post.slug === slug);
 
 const manualRelatedServices: Record<string, string[]> = {
+  "processo-disciplinar-na-policia-militar-como-se-defender": ["advogado-para-policial-militar", "policial-militar-punicao-disciplinar", "processo-administrativo-militar"],
+  "licenciamento-de-militar-doente-quando-e-ilegal": ["militar-temporario-doente", "licenciamento-indevido-militar", "reintegracao-militar"],
+  "prazo-para-defesa-em-sindicancia-militar": ["sindicancia-militar", "processo-administrativo-militar", "punicao-disciplinar-militar"],
+  "fui-intimado-para-ipm-e-agora": ["intimado-para-ipm", "defesa-em-ipm", "advogado-criminal-militar"],
   "bombeiro-militar-punicao-disciplinar-defesa": ["bombeiro-militar-punicao-disciplinar", "punicao-disciplinar-militar", "processo-administrativo-militar"],
   "policial-militar-punicao-disciplinar-recurso": ["policial-militar-punicao-disciplinar", "punicao-disciplinar-militar", "processo-administrativo-militar"],
   "reintegracao-militar-quando-buscar": ["reintegracao-militar", "licenciamento-indevido-militar", "militar-temporario-licenciado"],
@@ -47,14 +51,17 @@ const relatedServiceRules = [
   { slug: "conselho-de-disciplina-militar", terms: ["conselho de disciplina", "conselho", "disciplina militar"] },
   { slug: "conselho-de-justificacao", terms: ["conselho de justificacao", "justificacao", "oficial"] },
   { slug: "advogado-criminal-militar", terms: ["advogado criminal militar", "advogado penal militar", "defesa penal", "crime militar advogado"] },
+  { slug: "intimado-para-ipm", terms: ["intimado para ipm", "fui intimado para ipm", "intimacao ipm", "depor em ipm"] },
   { slug: "defesa-em-ipm", terms: ["ipm", "inquerito", "oitiva", "depoimento", "investigacao"] },
   { slug: "direito-penal-militar", terms: ["penal", "crime", "codigo penal", "desercao", "acusado"] },
   { slug: "desercao-militar", terms: ["desercao", "crime de desercao", "ausencia", "acusado"] },
   { slug: "exclusao-das-forcas-armadas", terms: ["exclusao", "desligamento", "forcas armadas"] },
   { slug: "licenciamento-indevido-militar", terms: ["licenciamento", "reintegracao", "temporario"] },
   { slug: "militar-temporario-licenciado", terms: ["militar temporario", "temporario", "licenciado durante tratamento", "licenciamento temporario"] },
+  { slug: "militar-temporario-doente", terms: ["militar temporario doente", "militar doente", "licenciamento de militar doente", "temporario incapaz"] },
   { slug: "concurso-militar-eliminacao", terms: ["concurso militar", "exame medico", "investigacao social", "eliminacao", "edital"] },
   { slug: "reintegracao-militar", terms: ["reintegracao militar", "retorno ao servico", "reintegracao", "retorno militar"] },
+  { slug: "advogado-para-policial-militar", terms: ["advogado para policial militar", "advogado policial militar", "processo disciplinar policia militar", "defesa policial militar"] },
   { slug: "policial-militar-punicao-disciplinar", terms: ["policial militar", "punicao disciplinar policial", "recurso policial militar"] },
   { slug: "bombeiro-militar-punicao-disciplinar", terms: ["bombeiro militar", "punicao disciplinar bombeiro", "recurso bombeiro militar"] },
   { slug: "junta-medica-militar", terms: ["junta medica", "inspecao de saude", "laudo", "apto", "incapacidade"] },

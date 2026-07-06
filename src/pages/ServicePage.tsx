@@ -13,6 +13,9 @@ const SITE_URL = "https://aguiarfilgueiras.com.br";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 const relatedBlogByService: Record<string, string[]> = {
+  "intimado-para-ipm": ["fui-intimado-para-ipm-e-agora"],
+  "militar-temporario-doente": ["licenciamento-de-militar-doente-quando-e-ilegal"],
+  "advogado-para-policial-militar": ["processo-disciplinar-na-policia-militar-como-se-defender", "policial-militar-punicao-disciplinar-recurso"],
   "advogado-criminal-militar": ["advogado-criminal-militar-como-atuar"],
   "reintegracao-militar": ["reintegracao-militar-quando-buscar"],
   "policial-militar-punicao-disciplinar": ["policial-militar-punicao-disciplinar-recurso"],

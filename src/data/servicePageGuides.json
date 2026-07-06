@@ -711,5 +711,98 @@
         "answer": "Sim. Mesmo quando parece pequena, ela pode influenciar conceito, historico funcional e progressao na carreira."
       }
     ]
+  },
+  "intimado-para-ipm": {
+    "deadline": "Quando o militar e intimado para IPM, o ideal e agir antes do depoimento. A urgencia nao esta apenas no comparecimento, mas na preparacao do que sera dito e do que precisa ser provado.",
+    "risks": [
+      "comparecer sem conhecer a portaria e o objeto real da investigacao",
+      "falar cedo demais e criar contradicoes desnecessarias",
+      "deixar mensagens, ordens e documentos importantes fora da analise",
+      "subestimar reflexos administrativos e disciplinares paralelos ao IPM"
+    ],
+    "whenToCall": [
+      "assim que receber a intimacao para comparecimento ou depoimento",
+      "quando houver duvida sobre o que exatamente esta sendo investigado",
+      "se ja existirem mensagens, boletins ou documentos que precisam ser preservados",
+      "antes de qualquer declaracao formal relevante"
+    ],
+    "ctaTitle": "Foi intimado para IPM?",
+    "ctaText": "Separe a intimacao, a portaria, mensagens, boletins e uma linha do tempo dos fatos. A orientacao certa no inicio evita erros dificeis de corrigir depois.",
+    "faqs": [
+      {
+        "question": "Receber intimacao para IPM significa que serei denunciado?",
+        "answer": "Nao necessariamente. O IPM e fase de apuracao, mas a forma como o militar se posiciona e organiza a prova pode influenciar bastante o rumo do caso."
+      },
+      {
+        "question": "Posso depor sem preparar documentos?",
+        "answer": "O ideal e nao improvisar. Intimacao, portaria, mensagens, ordens, laudos e nomes de testemunhas costumam ajudar a dar contexto real aos fatos."
+      },
+      {
+        "question": "O IPM pode gerar reflexo disciplinar?",
+        "answer": "Sim. Dependendo do caso, a mesma situacao pode produzir efeitos penais, administrativos e disciplinares."
+      }
+    ]
+  },
+  "militar-temporario-doente": {
+    "deadline": "Nos casos de militar temporario doente, o tempo pesa na preservacao de laudos, prontuario, remuneracao e prova da incapacidade. A analise deve ser feita ainda durante o tratamento ou logo apos o licenciamento.",
+    "risks": [
+      "aceitar o licenciamento sem confrontar a situacao clinica real",
+      "nao demonstrar nexo entre a doenca, o acidente e o servico",
+      "deixar atas de inspecao, exames e prontuario se perderem com o tempo",
+      "confundir o melhor caminho entre reintegracao, reforma ou reparacao"
+    ],
+    "whenToCall": [
+      "quando o militar estiver em tratamento e houver risco de desligamento",
+      "se a junta medica concluir de forma incompatível com o quadro clinico",
+      "quando a remuneracao ou o vinculo funcional dependerem de conclusao medica",
+      "ao receber ato de licenciamento em contexto de saude"
+    ],
+    "ctaTitle": "Militar temporario doente merece analise tecnica cedo",
+    "ctaText": "Junte laudos, exames, prontuario, atas de inspecao, ato de licenciamento e documentos do servico. A cronologia medica faz diferenca nesses casos.",
+    "faqs": [
+      {
+        "question": "Militar temporario doente sempre pode pedir reintegracao?",
+        "answer": "Nao. A medida adequada depende da prova medica, do nexo com o servico, do ato administrativo e do objetivo juridico mais viavel."
+      },
+      {
+        "question": "Laudos particulares ajudam?",
+        "answer": "Sim. Eles ajudam a demonstrar limitacoes, tratamento, diagnostico e divergencias em relacao a eventual conclusao oficial."
+      },
+      {
+        "question": "O melhor caminho sempre sera reforma?",
+        "answer": "Nem sempre. Em alguns casos a estrategia passa por reintegracao; em outros, por reforma ou outra medida de protecao."
+      }
+    ]
+  },
+  "advogado-para-policial-militar": {
+    "deadline": "Casos de policial militar costumam exigir resposta rapida porque o prazo corre junto com reflexos em escala, conceito, curso e promocao. O ideal e agir no mesmo dia da comunicacao.",
+    "risks": [
+      "reagir por impulso sem organizar boletins, escalas e ordens de servico",
+      "tratar como simples advertencia um caso com reflexo futuro relevante",
+      "perder prazo de reconsideracao, defesa ou recurso",
+      "deixar o regulamento e a prova operacional de lado na estrategia"
+    ],
+    "whenToCall": [
+      "ao receber punicao disciplinar, sindicancia ou notificacao para defesa",
+      "quando houver IPM ou procedimento com risco funcional mais serio",
+      "se a narrativa administrativa estiver incompleta ou contraditoria",
+      "quando a decisao puder afetar conceito, promocao, escala ou permanencia"
+    ],
+    "ctaTitle": "Policial militar precisa de defesa com contexto real do servico",
+    "ctaText": "Separe boletins, escalas, mensagens, ordens de servico, registros operacionais e data de ciencia da comunicacao para uma leitura tecnica do caso.",
+    "faqs": [
+      {
+        "question": "Advogado para policial militar atua apenas em punicao disciplinar?",
+        "answer": "Nao. A atuacao pode envolver punicao, sindicancia, IPM, processo administrativo e outras situacoes com reflexo direto na carreira policial militar."
+      },
+      {
+        "question": "Escalas e ordens de servico realmente ajudam?",
+        "answer": "Muitas vezes sim, porque mostram contexto operacional, comando recebido e realidade do servico no momento dos fatos."
+      },
+      {
+        "question": "Vale buscar ajuda mesmo em punicao aparentemente pequena?",
+        "answer": "Vale analisar. Mesmo sancoes leves podem influenciar historico funcional, conceito e progressao futura."
+      }
+    ]
   }
 }

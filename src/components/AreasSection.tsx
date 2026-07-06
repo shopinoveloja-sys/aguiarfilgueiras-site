@@ -113,6 +113,55 @@ const AreasSection = () => {
             ))}
           </div>
         </div>
+
+        <div className="mt-8 rounded-sm border border-accent/20 bg-primary p-6 sm:p-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+                Buscas de alta intencao
+              </span>
+              <h3 className="mt-3 font-heading text-2xl font-bold text-primary-foreground">
+                Temas para quem precisa agir agora
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gold-light/75">
+                Este bloco prioriza pesquisas mais urgentes, como intimacao para IPM, problema de saude
+                de militar temporario e defesa de policial militar.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {[
+              {
+                title: "Fui intimado para IPM",
+                desc: "Orientacao inicial para depoimento, documentos e risco de investigacao penal militar.",
+                to: "/intimado-para-ipm",
+              },
+              {
+                title: "Militar temporario doente",
+                desc: "Leitura tecnica sobre tratamento, licenciamento, incapacidade e medidas possiveis.",
+                to: "/militar-temporario-doente",
+              },
+              {
+                title: "Advogado para policial militar",
+                desc: "Defesa em punicao disciplinar, sindicancia, IPM e casos com impacto direto na carreira.",
+                to: "/advogado-para-policial-militar",
+              },
+            ].map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="rounded-sm border border-gold/20 bg-primary-foreground/5 p-5 transition-colors hover:border-gold hover:bg-primary-foreground/10"
+              >
+                <h4 className="font-heading text-lg font-semibold text-primary-foreground">{item.title}</h4>
+                <p className="mt-2 text-sm leading-relaxed text-gold-light/75">{item.desc}</p>
+                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gold">
+                  Ver pagina <ArrowRight className="h-4 w-4" />
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

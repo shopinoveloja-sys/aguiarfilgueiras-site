@@ -588,6 +588,81 @@ export const servicePages: ServicePage[] = [
     documents: ["nota de punicao", "boletins", "ordens de servico, escalas e registros operacionais", "testemunhas e ficha funcional"],
     related: ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
   },
+  {
+    slug: "intimado-para-ipm",
+    eyebrow: "Urgencia e defesa inicial",
+    title: "Fui intimado para IPM: o que fazer no inicio",
+    seoTitle: "Fui Intimado para IPM | O Que Fazer no Inicio",
+    seoDescription:
+      "Recebeu intimacao para IPM? Entenda o que fazer no inicio, quais documentos separar e como evitar erros em depoimento e investigacao militar.",
+    keywords: ["fui intimado para ipm", "intimado para ipm o que fazer", "intimacao ipm", "advogado ipm"],
+    intro:
+      "Receber intimacao para IPM costuma gerar pressa e inseguranca. O ponto principal no inicio e entender o objeto da apuracao, separar os documentos certos e evitar manifestacoes precipitadas.",
+    problems: [
+      "militar intimado sem saber exatamente o que esta sendo apurado",
+      "prazo curto para comparecimento ou prestacao de declaracoes",
+      "risco de depor sem conhecer a linha documental do caso",
+      "medo de que a investigacao gere denuncia ou reflexo disciplinar",
+    ],
+    approach: [
+      "leitura da intimacao, da portaria e do contexto funcional do caso",
+      "organizacao de mensagens, ordens, laudos, boletins e cronologia",
+      "orientacao antes de qualquer depoimento ou versao formal",
+      "avaliacao dos riscos penais e administrativos decorrentes do IPM",
+    ],
+    documents: ["intimacao recebida", "portaria do IPM", "mensagens e e-mails", "boletins, ordens e nomes de testemunhas"],
+    related: ["defesa-em-ipm", "direito-penal-militar", "advogado-criminal-militar"],
+  },
+  {
+    slug: "militar-temporario-doente",
+    eyebrow: "Saude, permanencia e direitos",
+    title: "Militar temporario doente: quais direitos avaliar",
+    seoTitle: "Militar Temporario Doente | Direitos e Medidas Possiveis",
+    seoDescription:
+      "Entenda quais direitos o militar temporario doente pode avaliar em casos de tratamento, incapacidade, licenciamento e necessidade de reintegracao ou reforma.",
+    keywords: ["militar temporario doente", "militar temporario incapaz", "direitos militar temporario doente", "licenciamento militar doente"],
+    intro:
+      "Quando o militar temporario adoece, a analise juridica precisa olhar para tratamento, incapacidade, nexo com o servico e regularidade do eventual licenciamento. Nem todo desligamento e simples rotina administrativa.",
+    problems: [
+      "tratamento em andamento proximo do licenciamento",
+      "duvida sobre incapacidade temporaria ou permanente",
+      "junta medica incompatível com a realidade clinica",
+      "incerteza entre reintegracao, reforma ou outra protecao adequada",
+    ],
+    approach: [
+      "reconstrucao da linha do tempo medica e funcional do militar",
+      "comparacao entre laudos oficiais, exames e restricoes reais",
+      "avaliacao do ato de licenciamento e dos seus fundamentos",
+      "definicao da estrategia mais adequada para permanencia, reintegracao ou reforma",
+    ],
+    documents: ["laudos e exames", "atas de inspecao de saude", "ato de licenciamento", "prontuario e documentos do servico"],
+    related: ["militar-temporario-licenciado", "licenciamento-indevido-militar", "reforma-militar-por-invalidez"],
+  },
+  {
+    slug: "advogado-para-policial-militar",
+    eyebrow: "Policia Militar e carreira",
+    title: "Advogado para policial militar em punicao, IPM e processo disciplinar",
+    seoTitle: "Advogado para Policial Militar | Defesa Disciplinar e IPM",
+    seoDescription:
+      "Advogado para policial militar em punicao disciplinar, IPM, sindicancia, conselho e casos que afetam conceito, promocao e permanencia na carreira.",
+    keywords: ["advogado para policial militar", "advogado policial militar", "defesa policial militar", "punicao policial militar"],
+    intro:
+      "O policial militar costuma enfrentar ao mesmo tempo pressao funcional, hierarquia e reflexos imediatos na carreira. Por isso, a defesa precisa ser tecnica, pratica e adaptada ao regulamento da corporacao.",
+    problems: [
+      "punicao disciplinar ou comunicacao recebida com prazo curto",
+      "sindicancia, IPM ou processo administrativo com risco funcional",
+      "receio de prejuizo em conceito, promocao, escala ou permanencia",
+      "dificuldade de organizar documentos operacionais e testemunhas",
+    ],
+    approach: [
+      "analise da comunicacao, do regulamento e da urgencia do caso",
+      "organizacao de boletins, escalas, mensagens e ordens de servico",
+      "preparo da resposta administrativa ou da defesa mais robusta",
+      "avaliacao dos reflexos do caso na carreira policial militar",
+    ],
+    documents: ["nota de punicao ou intimacao", "boletins e escalas", "mensagens, ordens e registros operacionais", "ficha funcional e testemunhas"],
+    related: ["policial-militar-punicao-disciplinar", "punicao-disciplinar-militar", "defesa-em-ipm"],
+  },
 ];
 
 export const getServicePageBySlug = (slug: string | undefined) =>
