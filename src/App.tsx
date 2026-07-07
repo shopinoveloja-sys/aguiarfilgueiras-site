@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import Index from "./pages/Index";
 import { servicePages } from "./data/servicePages";
@@ -15,6 +15,12 @@ const ServicePage = lazy(() => import("./pages/ServicePage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
+
+const legacyRedirects = [
+  { from: "/areas-de-atuacao", to: "/advogado-direito-militar/" },
+  { from: "/areas-de-atuacao/direito-penal-militar", to: "/direito-penal-militar/" },
+  { from: "/o-escritorio", to: "/bio/" },
+];
 
 const App = () => {
   useEffect(() => {
@@ -34,6 +40,13 @@ const App = () => {
               <Route path="/bio" element={<Links />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
+              {legacyRedirects.map((route) => (
+                <Route
+                  key={route.from}
+                  path={route.from}
+                  element={<Navigate to={route.to} replace />}
+                />
+              ))}
               {servicePages.map((page) => (
                 <Route key={page.slug} path={`/${page.slug}`} element={<ServicePage slug={page.slug} />} />
               ))}
