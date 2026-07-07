@@ -201,11 +201,11 @@ const Blog = () => {
             <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
               <div>
                 <h1 className="max-w-3xl font-heading text-3xl font-bold leading-tight sm:text-5xl">
-                  Artigos separados por forca, tema e estado
+                  Conteudo juridico para quem precisa entender o proprio caso com clareza
                 </h1>
                 <p className="mt-5 max-w-2xl text-base leading-relaxed text-gold-light/80">
-                  Comece escolhendo entre Forcas Federais e Forcas Estaduais. Depois filtre por assunto, estado
-                  ou palavra-chave para encontrar a orientacao mais proxima do seu caso.
+                  Os artigos estao organizados por perfil de atendimento, assunto e contexto funcional para facilitar
+                  a leitura de temas que costumam surgir na rotina militar, disciplinar, administrativa e previdenciaria.
                 </p>
               </div>
               <div className="rounded-sm border border-gold/20 bg-primary-foreground/5 p-5">
@@ -308,7 +308,7 @@ const Blog = () => {
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Buscar por tema, palavra ou area"
+                  placeholder="Buscar por tema, palavra ou assunto"
                   className="h-full min-h-12 w-full rounded-sm border border-border bg-background pl-11 pr-4 text-sm outline-none transition-colors focus:border-accent"
                 />
               </label>
@@ -353,7 +353,7 @@ const Blog = () => {
                 <div className="rounded-sm border border-border bg-cream p-5">
                   <div className="flex items-center gap-2">
                     <Shield className="h-5 w-5 text-accent" />
-                    <h3 className="font-heading text-lg font-bold text-primary">Areas relacionadas</h3>
+                    <h3 className="font-heading text-lg font-bold text-primary">Paginas relacionadas</h3>
                   </div>
                   <div className="mt-4 space-y-3">
                     {(activeTopicData.serviceSlugs.length ? activeTopicData.serviceSlugs : servicePages.slice(0, 4).map((page) => page.slug))
@@ -376,7 +376,7 @@ const Blog = () => {
               <div>
                 <div className="flex items-end justify-between gap-4">
                   <div>
-                    <h2 className="font-heading text-2xl font-bold text-primary">Publicacoes</h2>
+                    <h2 className="font-heading text-2xl font-bold text-primary">Artigos e orientacoes</h2>
                     <p className="mt-2 text-sm text-muted-foreground">
                       {filteredPosts.length} artigo{filteredPosts.length === 1 ? "" : "s"} encontrado
                       {filteredPosts.length === 1 ? "" : "s"}.
@@ -418,7 +418,7 @@ const Blog = () => {
                     <FileSearch className="h-8 w-8 text-accent" />
                     <h3 className="mt-4 font-heading text-xl font-bold text-primary">Nenhum artigo encontrado</h3>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      Tente outro termo ou selecione todos os topicos para visualizar os demais artigos.
+                      Tente outro termo de busca ou remova um dos filtros para ampliar os resultados.
                     </p>
                   </div>
                 )}

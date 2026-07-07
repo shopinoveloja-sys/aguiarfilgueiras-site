@@ -2,6 +2,7 @@ type AnalyticsPayload = Record<string, string | number | boolean | null | undefi
 
 type DataLayerWindow = Window & {
   dataLayer?: Array<Record<string, unknown>>;
+  __aguiarTrackingDisabled?: boolean;
 };
 
 type SocialNetwork = "instagram" | "facebook" | "youtube" | "x" | "linkedin";
@@ -9,6 +10,20 @@ type SocialNetwork = "instagram" | "facebook" | "youtube" | "x" | "linkedin";
 const UTM_PARAMS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
 
 const ATTRIBUTION_STORAGE_KEY = "aguiar_attribution";
+const INTERNAL_TRAFFIC_STORAGE_KEY = "aguiar_internal_traffic";
+
+const isTrackingDisabled = () => {
+  if (typeof window === "undefined") return true;
+
+  const trackingWindow = window as DataLayerWindow;
+  if (trackingWindow.__aguiarTrackingDisabled) return true;
+
+  try {
+    return window.localStorage.getItem(INTERNAL_TRAFFIC_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
 
 const getStoredAttribution = () => {
   try {
@@ -95,6 +110,7 @@ const getBasePayload = (event: string) => ({
 
 export const trackEvent = (event: string, payload: AnalyticsPayload = {}) => {
   if (typeof window === "undefined") return;
+  if (isTrackingDisabled()) return;
 
   const dataLayerWindow = window as DataLayerWindow;
   dataLayerWindow.dataLayer = dataLayerWindow.dataLayer || [];

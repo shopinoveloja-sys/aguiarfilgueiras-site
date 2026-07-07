@@ -129,8 +129,8 @@ const BlogPost = () => {
                 className="h-10 w-10 rounded-full object-cover"
               />
               <div>
-                <span className="block text-sm font-semibold text-primary">Carlos Filgueiras</span>
-                <span className="text-xs text-muted-foreground">Fundador</span>
+                <span className="block text-sm font-semibold text-primary">Dr. Carlos Filgueiras</span>
+                <span className="text-xs text-muted-foreground">Advogado</span>
               </div>
               <MessageSquareQuote className="ml-auto h-5 w-5 text-accent/60" />
             </div>
@@ -148,7 +148,7 @@ const BlogPost = () => {
           {relatedServices.length > 0 && (
             <section className="mt-12 rounded-sm border border-border bg-cream p-6">
               <h2 className="font-heading text-xl font-bold text-primary">
-                Orientacoes relacionadas
+                Paginas relacionadas ao tema
               </h2>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {relatedServices.map((service) => (
@@ -177,7 +177,7 @@ const BlogPost = () => {
               }
               className="inline-flex items-center rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
             >
-              Falar com o escritorio
+              Falar com a equipe do escritorio
             </Link>
           </div>
         </article>

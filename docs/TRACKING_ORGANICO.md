@@ -13,6 +13,42 @@ Objetivo: identificar quais canais trazem visitantes qualificados e geram contat
 - Marcar como conversao/key event apenas eventos reais de lead.
 - Manter eventos de clique social como eventos de engajamento, nao como conversao principal.
 
+## Trafego interno e testes
+
+Para evitar que acessos de validacao do proprio escritorio contaminem os relatorios do GA4, o site suporta um modo interno por navegador.
+
+### Como ativar no navegador do Carlos
+
+Abrir uma vez:
+
+```text
+https://aguiarfilgueiras.com.br/?aguiar_internal=1
+```
+
+Esse comando grava uma preferencia local no navegador e passa a bloquear o envio de hits do GTM/GA4 naquele browser.
+
+### Como desativar depois
+
+Abrir uma vez:
+
+```text
+https://aguiarfilgueiras.com.br/?aguiar_internal=0
+```
+
+### Quando usar
+
+- testes de layout;
+- revisao de SEO;
+- conferencias de texto;
+- navegacao interna do Carlos;
+- validacoes feitas por voce no navegador dele.
+
+### Observacoes
+
+- o bloqueio vale para aquele navegador/perfil, nao para todos os dispositivos;
+- isso e mais confiavel do que depender de IP fixo, porque IP pode mudar;
+- para validar GTM Preview e GA4 DebugView, usar um navegador sem esse modo ativo ou desativar temporariamente com `?aguiar_internal=0`.
+
 ## Canais a separar
 
 | Canal | Identificacao principal | Observacao |

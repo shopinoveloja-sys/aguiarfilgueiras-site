@@ -185,7 +185,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
               className="mt-8 inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
             >
               <Phone className="h-4 w-4" />
-              Falar com advogado militar
+              Falar com a equipe do escritorio
             </a>
           </div>
         </section>
@@ -193,7 +193,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
         <section className="py-16 sm:py-20">
           <div className="container mx-auto grid max-w-5xl gap-10 px-6 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
-              <h2 className="font-heading text-2xl font-bold text-primary">Quando procurar orientacao juridica</h2>
+              <h2 className="font-heading text-2xl font-bold text-primary">Situacoes em que a orientacao juridica costuma ser importante</h2>
               <div className="mt-6 grid gap-4">
                 {page.problems.map((item) => (
                   <div key={item} className="flex gap-3 rounded-sm border border-border bg-card p-4">
@@ -203,7 +203,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                 ))}
               </div>
 
-              <h2 className="mt-12 font-heading text-2xl font-bold text-primary">Como conduzimos a defesa</h2>
+              <h2 className="mt-12 font-heading text-2xl font-bold text-primary">Como o caso costuma ser analisado</h2>
               <div className="mt-6 space-y-4">
                 {page.approach.map((item, index) => (
                   <div key={item} className="flex gap-4">
@@ -221,7 +221,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                     <section className="rounded-sm border border-border bg-card p-6">
                       <div className="flex items-center gap-3">
                         <Clock className="h-5 w-5 text-accent" />
-                        <h2 className="font-heading text-xl font-bold text-primary">Prazos e primeiros passos</h2>
+                        <h2 className="font-heading text-xl font-bold text-primary">Prazos e cuidados iniciais</h2>
                       </div>
                       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{guide.deadline}</p>
                     </section>
@@ -229,7 +229,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                     <section className="rounded-sm border border-border bg-card p-6">
                       <div className="flex items-center gap-3">
                         <Phone className="h-5 w-5 text-accent" />
-                        <h2 className="font-heading text-xl font-bold text-primary">Quando falar com advogado</h2>
+                        <h2 className="font-heading text-xl font-bold text-primary">Momentos em que vale buscar orientacao</h2>
                       </div>
                       <ul className="mt-4 space-y-3">
                         {guide.whenToCall.map((item) => (
@@ -244,7 +244,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                   <section className="mt-12">
                     <div className="flex items-center gap-3">
                       <AlertTriangle className="h-5 w-5 text-accent" />
-                      <h2 className="font-heading text-2xl font-bold text-primary">Riscos de agir sem orientacao</h2>
+                      <h2 className="font-heading text-2xl font-bold text-primary">Riscos de conduzir o caso sem orientacao juridica</h2>
                     </div>
                     <div className="mt-6 grid gap-4 sm:grid-cols-2">
                       {guide.risks.map((item) => (
@@ -271,7 +271,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                       className="mt-6 inline-flex items-center gap-2 rounded-sm bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
                     >
                       <Phone className="h-4 w-4" />
-                      Enviar documentos para analise
+                      Enviar documentos para avaliacao inicial
                     </a>
                   </section>
 
@@ -295,7 +295,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
 
             <aside className="h-fit rounded-sm border border-border bg-cream p-6">
               <FileText className="h-7 w-7 text-accent" />
-              <h2 className="mt-4 font-heading text-xl font-bold text-primary">Documentos uteis</h2>
+              <h2 className="mt-4 font-heading text-xl font-bold text-primary">Documentos que costumam ajudar na analise</h2>
               <ul className="mt-5 space-y-3">
                 {page.documents.map((item) => (
                   <li key={item} className="text-sm leading-relaxed text-muted-foreground">
@@ -304,7 +304,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                 ))}
               </ul>
               <div className="mt-8 border-t border-border pt-6">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Temas relacionados</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Paginas relacionadas</h3>
                 <div className="mt-4 space-y-3">
                   {page.related.map((relatedSlug) => (
                     <Link
@@ -320,7 +320,7 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
               </div>
               {relatedPosts.length > 0 && (
                 <div className="mt-8 border-t border-border pt-6">
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Artigos relacionados</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Leituras relacionadas</h3>
                   <div className="mt-4 space-y-3">
                     {relatedPosts.map((post) => (
                       <Link

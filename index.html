@@ -97,11 +97,54 @@
 
     <!-- Google Tag Manager -->
     <script>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
-      new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
-      "https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,"script","dataLayer","GTM-MPXN6L4L");
+      (function (w, d, s, l, i, measurementId) {
+        var storageKey = "aguiar_internal_traffic";
+        var searchParams = new URLSearchParams(w.location.search);
+        var enableInternalTraffic = searchParams.get("aguiar_internal") === "1";
+        var disableInternalTraffic = searchParams.get("aguiar_internal") === "0";
+
+        try {
+          if (enableInternalTraffic) {
+            w.localStorage.setItem(storageKey, "1");
+          }
+
+          if (disableInternalTraffic) {
+            w.localStorage.removeItem(storageKey);
+          }
+        } catch (error) {
+          console.warn("Nao foi possivel atualizar a preferencia de trafego interno.", error);
+        }
+
+        var internalTrafficEnabled = false;
+
+        try {
+          internalTrafficEnabled = w.localStorage.getItem(storageKey) === "1";
+        } catch (error) {
+          console.warn("Nao foi possivel ler a preferencia de trafego interno.", error);
+        }
+
+        w.__aguiarTrackingDisabled = internalTrafficEnabled;
+
+        if (internalTrafficEnabled) {
+          w["ga-disable-" + measurementId] = true;
+          w[l] = w[l] || [];
+          w[l].push({
+            event: "aguiar_internal_traffic",
+            traffic_type: "internal",
+            tracking_allowed: false,
+          });
+          return;
+        }
+
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-MPXN6L4L", "G-5BWKM1RQ3W");
     </script>
     <!-- End Google Tag Manager -->
   </head>
