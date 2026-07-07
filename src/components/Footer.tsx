@@ -84,6 +84,9 @@ const Footer = () => {
               <Link to="/advogado-direito-militar" className="text-gold-light/55 hover:text-gold">
                 Direito Militar
               </Link>
+              <Link to="/atendimento-militar" className="text-gold-light/55 hover:text-gold">
+                Atendimento por cidade
+              </Link>
               <Link to="/blog" className="text-gold-light/55 hover:text-gold">
                 Blog
               </Link>

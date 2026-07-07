@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { geoCoverageHub } from "@/data/geoCoverage";
 import { getServicePageBySlug } from "@/data/servicePages";
 import { blogPosts } from "@/data/blogPosts";
 import { trackEvent } from "@/lib/analytics";
@@ -334,6 +335,19 @@ const ServicePage = ({ slug: fixedSlug }: ServicePageProps) => {
                   </div>
                 </div>
               )}
+              <div className="mt-8 border-t border-border pt-6">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Atendimento por estado e cidade</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  Consulte o hub geografico para ver paginas por UF e cidades prioritarias conectadas a este tema.
+                </p>
+                <Link
+                  to={`/${geoCoverageHub.slug}`}
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
+                >
+                  Abrir atendimento por cidade
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </aside>
           </div>
         </section>

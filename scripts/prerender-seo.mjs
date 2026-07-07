@@ -118,6 +118,24 @@ const readServicePages = () => {
   return vm.runInNewContext(match[1], {});
 };
 
+const readGeoCoverage = () => {
+  const filePath = path.join(rootDir, "src", "data", "geoCoverage.ts");
+  const source = fs.readFileSync(filePath, "utf8");
+  const statesMatch = source.match(/export const geoStates: GeoState\[\] = (\[[\s\S]*?\]);/);
+  const citiesMatch = source.match(/export const geoCities: GeoCity\[\] = (\[[\s\S]*?\]);/);
+  const hubMatch = source.match(/export const geoCoverageHub = (\{[\s\S]*?\});/);
+
+  if (!statesMatch || !citiesMatch || !hubMatch) {
+    throw new Error("Nao foi possivel localizar geoCoverage em geoCoverage.ts");
+  }
+
+  return {
+    states: vm.runInNewContext(statesMatch[1], {}),
+    cities: vm.runInNewContext(citiesMatch[1], {}),
+    hub: vm.runInNewContext(`(${hubMatch[1]})`, {}),
+  };
+};
+
 const setOrCreateMeta = (html, selector, tag) => {
   const [regex, marker] = selector;
   if (regex.test(html)) {
@@ -250,6 +268,84 @@ const blogIndexBody = (posts, servicePages) => `
     </section>
   </main>`;
 
+const geoHubBody = (hub, states) => `
+  <main>
+    <section>
+      <p>Atendimento nacional</p>
+      <h1>${escapeHtml(hub.title)}</h1>
+      <p>${escapeHtml(hub.description)}</p>
+    </section>
+    <section>
+      <h2>Estados prioritarios</h2>
+      <ul>
+        ${states
+          .map(
+            (state) =>
+              `<li><a href="/atendimento-militar/${state.slug}/">Atendimento em Direito Militar em ${escapeHtml(state.name)}</a> - ${escapeHtml(
+                state.summary,
+              )}</li>`,
+          )
+          .join("")}
+      </ul>
+    </section>
+  </main>`;
+
+const geoStateBody = (state, cities, services, posts) => `
+  <main>
+    <section>
+      <p>${escapeHtml(state.region)} - ${escapeHtml(state.code)}</p>
+      <h1>Atendimento em Direito Militar em ${escapeHtml(state.name)}</h1>
+      <p>${escapeHtml(state.summary)}</p>
+      <p>${escapeHtml(state.localAngle)}</p>
+    </section>
+    <section>
+      <h2>Servicos juridicos relacionados</h2>
+      <ul>${services.map((page) => `<li><a href="/${page.slug}/">${escapeHtml(page.title)}</a></li>`).join("")}</ul>
+      ${
+        cities.length
+          ? `<h2>Cidades prioritarias</h2><ul>${cities
+              .map(
+                (city) =>
+                  `<li><a href="/atendimento-militar/${state.slug}/${city.slug}/">Atendimento em ${escapeHtml(city.name)}/${escapeHtml(
+                    state.code,
+                  )}</a></li>`,
+              )
+              .join("")}</ul>`
+          : ""
+      }
+      ${
+        posts.length
+          ? `<h2>Leituras relacionadas</h2><ul>${posts
+              .map((post) => `<li><a href="/blog/${post.slug}/">${escapeHtml(post.title)}</a></li>`)
+              .join("")}</ul>`
+          : ""
+      }
+    </section>
+  </main>`;
+
+const geoCityBody = (state, city, services, posts) => `
+  <main>
+    <section>
+      <p>${escapeHtml(city.name)} - ${escapeHtml(state.code)}</p>
+      <h1>Atendimento em Direito Militar em ${escapeHtml(city.name)}/${escapeHtml(state.code)}</h1>
+      <p>${escapeHtml(city.summary)}</p>
+      <p>${escapeHtml(city.localAngle)}</p>
+    </section>
+    <section>
+      <h2>Servico juridico conectado a esta cidade</h2>
+      <ul>${services.map((page) => `<li><a href="/${page.slug}/">${escapeHtml(page.title)}</a></li>`).join("")}</ul>
+      <h2>Voltar para a cobertura estadual</h2>
+      <p><a href="/atendimento-militar/${state.slug}/">Atendimento em Direito Militar em ${escapeHtml(state.name)}</a></p>
+      ${
+        posts.length
+          ? `<h2>Leituras relacionadas</h2><ul>${posts
+              .map((post) => `<li><a href="/blog/${post.slug}/">${escapeHtml(post.title)}</a></li>`)
+              .join("")}</ul>`
+          : ""
+      }
+    </section>
+  </main>`;
+
 const writeRoute = (route) => {
   const template = fs.readFileSync(path.join(distDir, "index.html"), "utf8");
   const html = applySeo(template, route);
@@ -273,6 +369,7 @@ const writeSitemap = (routes) => {
 const servicePages = readServicePages();
 const blogPosts = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "blogPosts.json"), "utf8"));
 const serviceGuides = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "servicePageGuides.json"), "utf8"));
+const geoCoverage = readGeoCoverage();
 
 for (const page of servicePages) {
   const guide = serviceGuides[page.slug];
@@ -367,6 +464,162 @@ writeRoute({
   },
 });
 
+writeRoute({
+  path: "/atendimento-militar",
+  title: "Atendimento em Direito Militar por estado e cidade | Aguiar Filgueiras Advocacia",
+  description: geoCoverage.hub.description,
+  keywords: [
+    "advogado militar por estado",
+    "atendimento direito militar",
+    "advogado militar por cidade",
+    "direito militar brasil",
+  ],
+  body: geoHubBody(
+    geoCoverage.hub,
+    geoCoverage.states.filter((state) => geoCoverage.hub.featuredStateSlugs.includes(state.slug)),
+  ),
+  jsonLd: [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: geoCoverage.hub.title,
+      url: `${siteUrl}/atendimento-militar/`,
+      description: geoCoverage.hub.description,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: `${siteUrl}/` },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Atendimento por estado e cidade",
+          item: `${siteUrl}/atendimento-militar/`,
+        },
+      ],
+    },
+  ],
+});
+
+for (const state of geoCoverage.states) {
+  const stateServices = state.serviceSlugs
+    .map((slug) => servicePages.find((page) => page.slug === slug))
+    .filter(Boolean);
+  const stateCities = geoCoverage.cities.filter((city) => city.stateSlug === state.slug);
+  const statePosts = blogPosts
+    .filter((post) => getRelatedServiceSlugsForPost(post).some((slug) => state.serviceSlugs.includes(slug)))
+    .slice(0, 6);
+
+  writeRoute({
+    path: `/atendimento-militar/${state.slug}`,
+    title: `Atendimento em Direito Militar em ${state.name} | Aguiar Filgueiras Advocacia`,
+    description: `${state.summary} ${state.localAngle}`,
+    keywords: [
+      `advogado militar ${state.code.toLowerCase()}`,
+      `direito militar ${stripAccents(state.name.toLowerCase())}`,
+      `atendimento militar ${state.code.toLowerCase()}`,
+    ],
+    body: geoStateBody(state, stateCities, stateServices, statePosts),
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "LegalService",
+        name: "Aguiar Filgueiras Advocacia",
+        url: `${siteUrl}/atendimento-militar/${state.slug}/`,
+        description: `${state.summary} ${state.localAngle}`,
+        serviceType: "Direito Militar",
+        areaServed: {
+          "@type": "AdministrativeArea",
+          name: state.name,
+        },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Inicio", item: `${siteUrl}/` },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Atendimento por estado e cidade",
+            item: `${siteUrl}/atendimento-militar/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: state.name,
+            item: `${siteUrl}/atendimento-militar/${state.slug}/`,
+          },
+        ],
+      },
+    ],
+  });
+}
+
+for (const city of geoCoverage.cities) {
+  const state = geoCoverage.states.find((entry) => entry.slug === city.stateSlug);
+  if (!state) continue;
+
+  const cityServices = city.serviceSlugs
+    .map((slug) => servicePages.find((page) => page.slug === slug))
+    .filter(Boolean);
+  const cityPosts = blogPosts
+    .filter((post) => getRelatedServiceSlugsForPost(post).some((slug) => city.serviceSlugs.includes(slug)))
+    .slice(0, 5);
+
+  writeRoute({
+    path: `/atendimento-militar/${state.slug}/${city.slug}`,
+    title: `Atendimento em Direito Militar em ${city.name}/${state.code} | Aguiar Filgueiras Advocacia`,
+    description: `${city.summary} ${city.localAngle}`,
+    keywords: [
+      `advogado militar ${stripAccents(city.name.toLowerCase())}`,
+      `direito militar ${stripAccents(city.name.toLowerCase())}`,
+      `advogado militar ${state.code.toLowerCase()}`,
+    ],
+    body: geoCityBody(state, city, cityServices, cityPosts),
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "LegalService",
+        name: "Aguiar Filgueiras Advocacia",
+        url: `${siteUrl}/atendimento-militar/${state.slug}/${city.slug}/`,
+        description: `${city.summary} ${city.localAngle}`,
+        serviceType: "Direito Militar",
+        areaServed: [
+          { "@type": "City", name: city.name },
+          { "@type": "AdministrativeArea", name: state.name },
+        ],
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Inicio", item: `${siteUrl}/` },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Atendimento por estado e cidade",
+            item: `${siteUrl}/atendimento-militar/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: state.name,
+            item: `${siteUrl}/atendimento-militar/${state.slug}/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 4,
+            name: city.name,
+            item: `${siteUrl}/atendimento-militar/${state.slug}/${city.slug}/`,
+          },
+        ],
+      },
+    ],
+  });
+}
+
 for (const post of blogPosts) {
   writeRoute({
     path: `/blog/${post.slug}`,
@@ -409,8 +662,23 @@ for (const post of blogPosts) {
 writeSitemap([
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/blog", changefreq: "weekly", priority: "0.8" },
+  { path: "/atendimento-militar", changefreq: "weekly", priority: "0.85" },
+  ...geoCoverage.states.map((state) => ({
+    path: `/atendimento-militar/${state.slug}`,
+    changefreq: "monthly",
+    priority: "0.75",
+  })),
+  ...geoCoverage.cities.map((city) => ({
+    path: `/atendimento-militar/${city.stateSlug}/${city.slug}`,
+    changefreq: "monthly",
+    priority: "0.7",
+  })),
   ...servicePages.map((page) => ({ path: `/${page.slug}`, changefreq: "monthly", priority: "0.9" })),
   ...blogPosts.map((post) => ({ path: `/blog/${post.slug}`, changefreq: "monthly", priority: "0.8" })),
 ]);
 
-console.log(`Pre-render SEO concluido: ${servicePages.length + blogPosts.length + 1} rotas.`);
+console.log(
+  `Pre-render SEO concluido: ${
+    servicePages.length + blogPosts.length + geoCoverage.states.length + geoCoverage.cities.length + 2
+  } rotas.`,
+);

@@ -1,143 +1,29 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, BookOpen, Calendar, FileSearch, MapPin, Search, Shield, Tags } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { blogPosts } from "@/data/blogPosts";
+import { blogAudiences, blogStates, getBlogAudienceById, getBlogTopicById, normalizeText } from "@/data/blogTaxonomy";
+import { geoStates, getGeoStatePath } from "@/data/geoCoverage";
 import { servicePages } from "@/data/servicePages";
 import { applySeo, setJsonLd } from "@/lib/seo";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
 
-const audiences = [
-  {
-    id: "federais",
-    label: "Forcas Federais",
-    description: "Exercito, Marinha, Aeronautica, Policia Federal, Policia Rodoviaria Federal e outros servidores federais.",
-    terms: ["militar", "forcas armadas", "exercito", "marinha", "aeronautica", "federal", "prf", "policia federal"],
-    groups: [
-      { label: "Exercito", query: "exercito" },
-      { label: "Marinha", query: "marinha" },
-      { label: "Aeronautica", query: "aeronautica" },
-      { label: "Policia Federal", query: "policia federal" },
-      { label: "Policia Rodoviaria Federal", query: "policia rodoviaria federal" },
-      { label: "Outros servidores federais", query: "federal" },
-    ],
-    topics: [
-      {
-        id: "todos",
-        label: "Todos",
-        description: "Todos os artigos aplicaveis ao publico federal.",
-        serviceSlugs: [] as string[],
-        terms: [] as string[],
-      },
-      {
-        id: "penal-ipm",
-        label: "Penal militar e IPM",
-        description: "Crimes militares, IPM, oitivas e defesa tecnica.",
-        serviceSlugs: ["direito-penal-militar", "defesa-em-ipm"],
-        terms: ["penal", "crime", "ipm", "codigo penal", "inquerito"],
-      },
-      {
-        id: "carreira",
-        label: "Carreira militar",
-        description: "Promocao, exclusao, licenciamento e reintegracao.",
-        serviceSlugs: ["exclusao-das-forcas-armadas", "licenciamento-indevido-militar", "promocao-militar-preterida"],
-        terms: ["exclusao", "licenciamento", "promocao", "carreira", "forcas armadas"],
-      },
-      {
-        id: "saude-beneficios",
-        label: "Saude, pensao e beneficios",
-        description: "Reforma, invalidez, pensao militar e abate-teto.",
-        serviceSlugs: ["reforma-militar-por-invalidez", "pensao-militar", "abate-teto-pensao-militar"],
-        terms: ["pensao", "previdenciario", "reforma", "invalidez", "abate-teto", "beneficio"],
-      },
-    ],
-  },
-  {
-    id: "estaduais",
-    label: "Forcas Estaduais",
-    description: "Policiais militares, bombeiros militares e carreiras estaduais com demandas disciplinares e administrativas.",
-    terms: ["policial", "bombeiro", "estadual", "disciplinar", "punicao", "administrativo", "transgressao"],
-    groups: [
-      { label: "Policiais militares", query: "policial" },
-      { label: "Bombeiros militares", query: "bombeiro" },
-    ],
-    topics: [
-      {
-        id: "todos",
-        label: "Todos",
-        description: "Todos os artigos aplicaveis ao publico estadual.",
-        serviceSlugs: ["punicao-disciplinar-militar", "processo-administrativo-militar", "advogado-direito-militar"],
-        terms: [] as string[],
-      },
-      {
-        id: "disciplina",
-        label: "Disciplina e punicoes",
-        description: "Punicoes, transgressoes, ampla defesa e recursos disciplinares.",
-        serviceSlugs: ["punicao-disciplinar-militar", "processo-administrativo-militar"],
-        terms: ["disciplinar", "punicao", "transgressao", "ampla defesa"],
-      },
-      {
-        id: "processos",
-        label: "Processos administrativos",
-        description: "Sindicancias, PAD, conselhos e defesa administrativa.",
-        serviceSlugs: ["processo-administrativo-militar", "punicao-disciplinar-militar"],
-        terms: ["administrativo", "sindicancia", "processo", "conselho", "defesa"],
-      },
-      {
-        id: "carreira-estadual",
-        label: "Carreira e permanencia",
-        description: "Promocao, exclusao, licenciamento e impactos na carreira estadual.",
-        serviceSlugs: ["promocao-militar-preterida", "exclusao-das-forcas-armadas", "licenciamento-indevido-militar"],
-        terms: ["promocao", "exclusao", "licenciamento", "carreira", "permanencia"],
-      },
-    ],
-  },
-];
-
-const states = [
-  "Todos os estados",
-  "AC",
-  "AL",
-  "AP",
-  "AM",
-  "BA",
-  "CE",
-  "DF",
-  "ES",
-  "GO",
-  "MA",
-  "MT",
-  "MS",
-  "MG",
-  "PA",
-  "PB",
-  "PR",
-  "PE",
-  "PI",
-  "RJ",
-  "RN",
-  "RS",
-  "RO",
-  "RR",
-  "SC",
-  "SP",
-  "SE",
-  "TO",
-];
-
-const normalize = (value: string) =>
-  value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-
 const Blog = () => {
-  const [activeAudience, setActiveAudience] = useState("federais");
-  const [activeTopic, setActiveTopic] = useState("todos");
-  const [activeState, setActiveState] = useState("Todos os estados");
-  const [search, setSearch] = useState("");
+  const [searchParams] = useSearchParams();
+  const initialAudience = getBlogAudienceById(searchParams.get("audience")).id;
+  const initialTopic = getBlogTopicById(initialAudience, searchParams.get("topic")).id;
+  const initialState = blogStates.includes(searchParams.get("state") || "")
+    ? (searchParams.get("state") as string)
+    : "Todos os estados";
+  const initialSearch = searchParams.get("search") || "";
+
+  const [activeAudience, setActiveAudience] = useState(initialAudience);
+  const [activeTopic, setActiveTopic] = useState(initialTopic);
+  const [activeState, setActiveState] = useState(initialState);
+  const [search, setSearch] = useState(initialSearch);
 
   useEffect(() => {
     const description =
@@ -167,26 +53,27 @@ const Blog = () => {
   }, []);
 
   const filteredPosts = useMemo(() => {
-    const audience = audiences.find((item) => item.id === activeAudience) || audiences[0];
+    const audience = getBlogAudienceById(activeAudience);
     const topic = audience.topics.find((item) => item.id === activeTopic) || audience.topics[0];
-    const query = normalize(search.trim());
-    const selectedState = activeState === "Todos os estados" ? "" : normalize(activeState);
+    const query = normalizeText(search.trim());
+    const selectedState = activeState === "Todos os estados" ? "" : normalizeText(activeState);
 
     return blogPosts.filter((post) => {
-      const text = normalize(
+      const text = normalizeText(
         [post.title, post.category, post.excerpt, post.carlosComment, ...(post.keywords || [])].join(" "),
       );
-      const matchesAudience = audience.terms.some((term) => text.includes(normalize(term)));
-      const matchesTopic = topic.id === "todos" || topic.terms.some((term) => text.includes(normalize(term)));
+      const matchesAudience = audience.terms.some((term) => text.includes(normalizeText(term)));
+      const matchesTopic = topic.id === "todos" || topic.terms.some((term) => text.includes(normalizeText(term)));
       const matchesState = !selectedState || text.includes(selectedState);
       const matchesSearch = !query || text.includes(query);
       return matchesAudience && matchesTopic && matchesState && matchesSearch;
     });
   }, [activeAudience, activeTopic, activeState, search]);
 
-  const activeAudienceData = audiences.find((audience) => audience.id === activeAudience) || audiences[0];
+  const activeAudienceData = getBlogAudienceById(activeAudience);
   const activeTopicData = activeAudienceData.topics.find((topic) => topic.id === activeTopic) || activeAudienceData.topics[0];
   const featuredPost = filteredPosts[0] || blogPosts[0];
+  const geoState = geoStates.find((state) => state.code === activeState);
 
   return (
     <div className="min-h-screen bg-background">
@@ -227,7 +114,7 @@ const Blog = () => {
         <section className="border-b border-border bg-card py-8">
           <div className="container mx-auto max-w-6xl px-6">
             <div className="grid gap-4 md:grid-cols-2">
-              {audiences.map((audience) => (
+              {blogAudiences.map((audience) => (
                 <button
                   key={audience.id}
                   type="button"
@@ -292,7 +179,7 @@ const Blog = () => {
                     onChange={(event) => setActiveState(event.target.value)}
                     className="min-h-12 w-full rounded-sm border border-border bg-background pl-11 pr-4 text-sm outline-none transition-colors focus:border-accent"
                   >
-                    {states.map((state) => (
+                    {blogStates.map((state) => (
                       <option key={state} value={state}>
                         {state}
                       </option>
@@ -369,6 +256,31 @@ const Blog = () => {
                           <ArrowRight className="h-4 w-4 shrink-0" />
                         </Link>
                       ))}
+                  </div>
+                </div>
+
+                <div className="rounded-sm border border-border bg-card p-5">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-accent" />
+                    <h3 className="font-heading text-lg font-bold text-primary">Atendimento por estado e cidade</h3>
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    Navegue pelas paginas geograficas para encontrar temas e servicos conectados ao seu estado ou cidade.
+                  </p>
+                  <div className="mt-4 space-y-3">
+                    <Link to="/atendimento-militar" className="flex items-center justify-between text-sm font-semibold text-accent hover:underline">
+                      Ver mapa de atendimento
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                    {geoState ? (
+                      <Link
+                        to={getGeoStatePath(geoState.slug)}
+                        className="flex items-center justify-between text-sm font-semibold text-accent hover:underline"
+                      >
+                        Abrir pagina de {geoState.name}
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    ) : null}
                   </div>
                 </div>
               </aside>

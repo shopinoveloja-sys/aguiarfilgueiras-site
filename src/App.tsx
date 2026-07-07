@@ -11,6 +11,7 @@ import { installEmbeddedVideoTracking } from "./lib/analytics";
 const Links = lazy(() => import("./pages/Links"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
+const GeoCoveragePage = lazy(() => import("./pages/GeoCoveragePage"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -40,6 +41,9 @@ const App = () => {
               <Route path="/bio" element={<Links />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/atendimento-militar" element={<GeoCoveragePage />} />
+              <Route path="/atendimento-militar/:stateSlug" element={<GeoCoveragePage />} />
+              <Route path="/atendimento-militar/:stateSlug/:citySlug" element={<GeoCoveragePage />} />
               {legacyRedirects.map((route) => (
                 <Route
                   key={route.from}
