@@ -86,10 +86,10 @@ const AreasSection = () => {
         <div className="mt-14 rounded-sm border border-border bg-background p-6 sm:p-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h3 className="font-heading text-2xl font-bold text-primary">Casos e temas mais buscados</h3>
+              <h3 className="font-heading text-2xl font-bold text-primary">Principais duvidas e situacoes atendidas</h3>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                Esta malha de links ajuda o visitante a chegar mais rapido ao tema certo e reforca para o Google
-                quais assuntos o escritorio cobre com profundidade.
+                Selecione abaixo o assunto que mais se aproxima do seu caso para entender os primeiros cuidados,
+                os documentos normalmente mais importantes e quando vale buscar orientacao juridica.
               </p>
             </div>
             <Link
@@ -118,14 +118,14 @@ const AreasSection = () => {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
-                Buscas de alta intencao
+                Atendimento em situacoes urgentes
               </span>
               <h3 className="mt-3 font-heading text-2xl font-bold text-primary-foreground">
-                Temas para quem precisa agir agora
+                Duvidas frequentes em casos que pedem resposta rapida
               </h3>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gold-light/75">
-                Este bloco prioriza pesquisas mais urgentes, como intimacao para IPM, problema de saude
-                de militar temporario e defesa de policial militar.
+                Reunimos aqui temas que costumam exigir atencao imediata, como intimacao para IPM,
+                questoes de saude de militar temporario e defesa de policial militar em procedimento disciplinar.
               </p>
             </div>
           </div>
@@ -133,18 +133,18 @@ const AreasSection = () => {
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {[
               {
-                title: "Fui intimado para IPM",
-                desc: "Orientacao inicial para depoimento, documentos e risco de investigacao penal militar.",
+                title: "Fui intimado para IPM. O que fazer?",
+                desc: "Veja os cuidados iniciais antes do depoimento, os documentos que merecem atencao e os riscos envolvidos na apuracao.",
                 to: "/intimado-para-ipm",
               },
               {
-                title: "Militar temporario doente",
-                desc: "Leitura tecnica sobre tratamento, licenciamento, incapacidade e medidas possiveis.",
+                title: "Militar temporario doente: quais direitos avaliar?",
+                desc: "Entenda quando analisar tratamento, licenciamento, incapacidade, reintegracao ou outra medida de protecao.",
                 to: "/militar-temporario-doente",
               },
               {
-                title: "Advogado para policial militar",
-                desc: "Defesa em punicao disciplinar, sindicancia, IPM e casos com impacto direto na carreira.",
+                title: "Policial militar punido: como organizar a defesa?",
+                desc: "Saiba por onde comecar em punicao disciplinar, sindicancia, IPM e casos com reflexo direto na carreira.",
                 to: "/advogado-para-policial-militar",
               },
             ].map((item) => (
