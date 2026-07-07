@@ -16,9 +16,9 @@ const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 const Index = () => {
   useEffect(() => {
     applySeo({
-      title: "Advogado Militar em Brasilia e Atendimento Nacional | Aguiar Filgueiras",
+      title: "Advogado Militar DF e Brasilia | Atendimento Nacional",
       description:
-        "Escritorio de advocacia militar em Brasilia com atendimento nacional para IPM, intimacao para IPM, punicao disciplinar, sindicancia, conselho de disciplina, militar temporario doente, junta medica e pensao militar.",
+        "Advogado militar no DF e em Brasilia para IPM, intimacao para IPM, punicao disciplinar, sindicancia, licenciamento, junta medica, reforma e pensao militar, com atendimento nacional.",
       canonicalUrl: `${SITE_URL}/`,
       keywords:
         "advogado militar brasilia, advogado criminal militar, advogado direito militar, fui intimado para ipm, intimado para ipm o que fazer, advogado para policial militar, punicao disciplinar militar, sindicancia militar, conselho de disciplina militar, militar temporario doente, junta medica militar, licenciamento indevido militar, pensao militar, reforma militar por invalidez",

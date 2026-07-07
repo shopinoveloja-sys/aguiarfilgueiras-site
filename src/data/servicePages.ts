@@ -16,13 +16,13 @@ export const servicePages: ServicePage[] = [
   {
     slug: "advogado-direito-militar",
     eyebrow: "Atuacao nacional",
-    title: "Advogado especialista em Direito Militar",
-    seoTitle: "Advogado Direito Militar | Aguiar Filgueiras",
+    title: "Advogado de Direito Militar para defesa da carreira e dos seus direitos",
+    seoTitle: "Advogado de Direito Militar | Defesa Militar em Todo o Brasil",
     seoDescription:
-      "Advocacia especializada em Direito Militar para defesa penal, disciplinar, administrativa e previdenciaria de militares em todo o Brasil.",
+      "Advogado de Direito Militar para IPM, punicao disciplinar, sindicancia, licenciamento, reforma e pensao militar. Atendimento em Brasilia e online.",
     keywords: ["advogado direito militar", "advogado militar", "direito militar", "advocacia militar"],
     intro:
-      "O Direito Militar exige leitura tecnica da legislacao, conhecimento da rotina das Forcas Armadas e estrategia para proteger carreira, remuneracao e direitos funcionais.",
+      "Se voce procura advogado de Direito Militar, o ponto central e agir cedo. Casos envolvendo IPM, punicao disciplinar, sindicancia, licenciamento, saude e pensao militar exigem leitura tecnica dos documentos, dos prazos e dos reflexos na carreira.",
     problems: [
       "responder a IPM, sindicancia, conselho de disciplina ou processo administrativo",
       "contestar punicao disciplinar, licenciamento ou exclusao",
@@ -41,13 +41,13 @@ export const servicePages: ServicePage[] = [
   {
     slug: "advogado-militar-brasilia",
     eyebrow: "Brasilia e atendimento virtual",
-    title: "Advogado militar em Brasilia com atendimento nacional",
-    seoTitle: "Advogado Militar Brasilia | Atendimento Nacional",
+    title: "Advogado militar em Brasilia e no DF com atendimento nacional",
+    seoTitle: "Advogado Militar DF e Brasilia | Aguiar Filgueiras",
     seoDescription:
-      "Advogado militar em Brasilia para militares das Forcas Armadas, familiares e pensionistas. Atendimento virtual em todo o Brasil.",
+      "Advogado militar em Brasilia e no DF para IPM, punicao disciplinar, licenciamento, junta medica e questoes de carreira, com atendimento nacional.",
     keywords: ["advogado militar brasilia", "advogado militar df", "advocacia militar brasilia"],
     intro:
-      "Brasilia concentra orgaos administrativos, comandos e tribunais relevantes para causas militares. A atuacao local, aliada ao atendimento virtual, permite acompanhar casos em todo o pais.",
+      "Quem busca advogado militar em Brasilia ou no DF geralmente precisa de resposta rapida para IPM, punicao disciplinar, licenciamento, junta medica ou questao funcional. A atuacao local, somada ao atendimento virtual, permite acompanhar casos administrativos e judiciais em todo o Brasil.",
     problems: [
       "militar notificado em organizacao militar no DF ou em outro estado",
       "familiares e pensionistas com duvidas previdenciarias",
@@ -91,13 +91,13 @@ export const servicePages: ServicePage[] = [
   {
     slug: "defesa-em-ipm",
     eyebrow: "Inquerito policial militar",
-    title: "Defesa em IPM: como agir no inquerito policial militar",
-    seoTitle: "Defesa em IPM | Inquerito Policial Militar",
+    title: "Foi intimado para IPM? Como funciona a defesa no inquerito policial militar",
+    seoTitle: "Advogado para IPM | Defesa em Inquerito Policial Militar",
     seoDescription:
-      "Orientacao juridica para militares em IPM. Entenda riscos, documentos, depoimentos e medidas de defesa desde o inicio da investigacao.",
+      "Foi intimado para IPM? Veja como funciona a defesa em inquerito policial militar, quais documentos separar e como se preparar antes da oitiva.",
     keywords: ["defesa militar IPM", "como contestar IPM", "inquerito policial militar IPM", "advogado IPM"],
     intro:
-      "O IPM e uma fase de apuracao, mas o que acontece nele pode definir o rumo de uma acusacao penal militar ou de medidas disciplinares.",
+      "Quem recebe intimacao para IPM costuma ter pouco tempo para entender o caso e se preparar para a oitiva. A defesa em inquerito policial militar comeca pela leitura da portaria, pelo acesso aos autos e pela organizacao dos documentos, mensagens e registros ligados aos fatos.",
     problems: [
       "militar chamado para prestar declaracao",
       "apreensao de documentos, mensagens ou equipamentos",

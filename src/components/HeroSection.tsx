@@ -30,7 +30,7 @@ const HeroSection = () => {
           />
 
           <h1 className="font-heading text-4xl font-bold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
-            Advogado militar em Brasilia com atuacao nacional em{" "}
+            Advogado militar em Brasilia e no DF com atuacao nacional em{" "}
             <span className="text-gradient-gold">Direito Militar</span>
           </h1>
           <p className="sr-only">
@@ -39,9 +39,9 @@ const HeroSection = () => {
           </p>
 
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gold-light/80">
-            Defesa tecnica para IPM, punicao disciplinar, processo administrativo militar,
-            licenciamento indevido, reforma por invalidez e pensao militar, com atendimento
-            virtual para todo o Brasil.
+            Atendimento para quem recebeu intimacao para IPM, punicao disciplinar, sindicancia,
+            licenciamento indevido, problema em junta medica, reforma por invalidez ou questao
+            de pensao militar, com suporte virtual para todo o Brasil.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
