@@ -96,7 +96,7 @@ const AreasSection = () => {
               to="/blog"
               className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-all hover:gap-3"
             >
-              Ver biblioteca completa
+              Ver todos os artigos
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

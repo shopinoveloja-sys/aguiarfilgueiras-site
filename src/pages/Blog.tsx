@@ -418,7 +418,7 @@ const Blog = () => {
                     <FileSearch className="h-8 w-8 text-accent" />
                     <h3 className="mt-4 font-heading text-xl font-bold text-primary">Nenhum artigo encontrado</h3>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      Tente outro termo ou selecione todos os topicos para ver a biblioteca completa.
+                      Tente outro termo ou selecione todos os topicos para visualizar os demais artigos.
                     </p>
                   </div>
                 )}

@@ -134,8 +134,9 @@ const ContactSection = () => {
               Envie os dados do caso para uma primeira triagem
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-gold-light/85">
-              O formulario encaminha sua mensagem ao escritorio e avisa a equipe no canal interno de atendimento.
-              Para casos com prazo em andamento, informe a data da notificacao, audiencia ou recurso.
+              O formulario encaminha sua mensagem ao escritorio para analise inicial e retorno pelo
+              contato informado. Se houver prazo em andamento, informe a data da notificacao, audiencia
+              ou recurso.
             </p>
             <div className="mt-8 space-y-4">
               {supportItems.map((item) => (
@@ -253,7 +254,7 @@ const ContactSection = () => {
 
             {status === "success" && (
               <p className="mt-4 text-sm font-semibold text-primary">
-                Mensagem enviada. A equipe foi avisada e retornara pelo contato informado.
+                Mensagem enviada. O escritorio retornara pelo contato informado.
               </p>
             )}
             {status === "error" && (

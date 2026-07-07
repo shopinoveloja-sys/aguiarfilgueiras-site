@@ -27,15 +27,15 @@ const BlogSection = () => {
           className="text-center"
         >
           <span className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-            Insights Juridicos
+            Conteudo juridico
           </span>
           <h2 className="mt-3 font-heading text-3xl font-bold text-primary sm:text-4xl">
-            Blog &amp; Noticias sobre Direito Militar
+            Artigos e orientacoes sobre Direito Militar
           </h2>
           <div className="mx-auto mt-2 h-[2px] w-16 bg-accent" />
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            Conteudo exclusivo com analises do nosso fundador Carlos Filgueiras sobre temas
-            relevantes do Direito Militar.
+            Publicacoes com orientacoes praticas sobre IPM, punicoes disciplinares, carreira,
+            pensao, saude e outras questoes relevantes do Direito Militar.
           </p>
         </motion.div>
 
@@ -102,7 +102,7 @@ const BlogSection = () => {
             to="/blog"
             className="inline-flex items-center gap-2 rounded-sm border border-accent px-5 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
           >
-            Ver biblioteca por topicos <ArrowRight className="h-4 w-4" />
+            Ver todos os artigos <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
@@ -114,17 +114,17 @@ const BlogSection = () => {
         >
           <Mail className="mx-auto mb-4 h-8 w-8 text-gold" />
           <h3 className="font-heading text-2xl font-bold text-primary-foreground">
-            Receba nossos conteudos exclusivos
+            Receba novos artigos por e-mail
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-gold-light/70">
-            Assine nossa newsletter e fique por dentro das novidades do Direito Militar,
-            analises do Carlos Filgueiras e dicas juridicas para militares.
+            Cadastre seu e-mail para acompanhar novas publicacoes sobre Direito Militar
+            e temas que costumam gerar duvidas no atendimento.
           </p>
 
           {subscribed ? (
             <div className="mt-6 rounded-sm bg-accent/20 px-6 py-4">
               <p className="text-sm font-semibold text-gold">
-                Inscricao realizada com sucesso. Em breve voce recebera nossos conteudos.
+                Cadastro realizado com sucesso. As proximas publicacoes poderao ser enviadas para este e-mail.
               </p>
             </div>
           ) : (
@@ -142,7 +142,7 @@ const BlogSection = () => {
                 type="submit"
                 className="rounded-sm bg-accent px-8 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
               >
-                Assinar Newsletter
+                Cadastrar e-mail
               </button>
             </form>
           )}

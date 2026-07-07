@@ -42,8 +42,8 @@ const HomeFaqSection = () => {
             O que o militar mais precisa saber antes de agir
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            Esta e a parte que costuma mudar o rumo do caso: entender prazo, reunir documentos e evitar uma resposta
-            improvisada.
+            Estas sao algumas das perguntas que costumam surgir logo no inicio, especialmente
+            quando existe prazo curto, notificacao recebida ou necessidade de reunir documentos.
           </p>
         </motion.div>
 
