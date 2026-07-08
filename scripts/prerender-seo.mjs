@@ -6,6 +6,7 @@ const rootDir = process.cwd();
 const distDir = path.join(rootDir, "dist");
 const siteUrl = "https://aguiarfilgueiras.com.br";
 const defaultImage = `${siteUrl}/og-image.jpg`;
+const getArticleImageUrl = (slug) => `${siteUrl}/social/${slug}-facebook.jpg`;
 
 const escapeHtml = (value = "") =>
   String(value)
@@ -151,6 +152,7 @@ const applySeo = (template, route) => {
   const keywords = escapeHtml(route.keywords?.join(", ") || "");
   const canonicalPath = route.path === "/" || route.path.endsWith("/") ? route.path : `${route.path}/`;
   const canonical = `${siteUrl}${canonicalPath}`;
+  const image = route.image || defaultImage;
 
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
   html = setOrCreateMeta(html, [/<meta name="description" content="[^"]*"\s*\/?>/i, ""], `<meta name="description" content="${description}">`);
@@ -160,10 +162,10 @@ const applySeo = (template, route) => {
   html = setOrCreateMeta(html, [/<meta property="og:title" content="[^"]*"\s*\/?>/i, ""], `<meta property="og:title" content="${title}">`);
   html = setOrCreateMeta(html, [/<meta property="og:description" content="[^"]*"\s*\/?>/i, ""], `<meta property="og:description" content="${description}">`);
   html = setOrCreateMeta(html, [/<meta property="og:url" content="[^"]*"\s*\/?>/i, ""], `<meta property="og:url" content="${canonical}">`);
-  html = setOrCreateMeta(html, [/<meta property="og:image" content="[^"]*"\s*\/?>/i, ""], `<meta property="og:image" content="${defaultImage}">`);
+  html = setOrCreateMeta(html, [/<meta property="og:image" content="[^"]*"\s*\/?>/i, ""], `<meta property="og:image" content="${image}">`);
   html = setOrCreateMeta(html, [/<meta name="twitter:title" content="[^"]*"\s*\/?>/i, ""], `<meta name="twitter:title" content="${title}">`);
   html = setOrCreateMeta(html, [/<meta name="twitter:description" content="[^"]*"\s*\/?>/i, ""], `<meta name="twitter:description" content="${description}">`);
-  html = setOrCreateMeta(html, [/<meta name="twitter:image" content="[^"]*"\s*\/?>/i, ""], `<meta name="twitter:image" content="${defaultImage}">`);
+  html = setOrCreateMeta(html, [/<meta name="twitter:image" content="[^"]*"\s*\/?>/i, ""], `<meta name="twitter:image" content="${image}">`);
 
   const jsonLd = JSON.stringify(route.jsonLd);
   html = html.replace("</head>", `  <script type="application/ld+json">${jsonLd}</script>\n</head>`);
@@ -627,6 +629,7 @@ for (const post of blogPosts) {
     description: post.seoDescription || post.excerpt,
     keywords: post.keywords || [post.category, "direito militar", "advogado militar"],
     ogType: "article",
+    image: getArticleImageUrl(post.slug),
     body: blogBody(post, servicePages),
     jsonLd: {
       "@context": "https://schema.org",
@@ -635,6 +638,7 @@ for (const post of blogPosts) {
       description: post.seoDescription || post.excerpt,
       mainEntityOfPage: `${siteUrl}/blog/${post.slug}/`,
       url: `${siteUrl}/blog/${post.slug}/`,
+      image: getArticleImageUrl(post.slug),
       datePublished: post.date,
       dateModified: post.date,
       articleSection: post.category,

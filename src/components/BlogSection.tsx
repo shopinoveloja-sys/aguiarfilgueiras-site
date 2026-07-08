@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import { Calendar, MessageSquareQuote, ArrowRight, Mail } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import founderImg from "@/assets/founder.jpg";
+import founderImg from "@/assets/founder.webp";
+import heroBg from "@/assets/hero-bg.jpg";
 import { blogPosts } from "@/data/blogPosts";
 
 const BlogSection = () => {
@@ -67,7 +68,21 @@ const BlogSection = () => {
                   {article.excerpt}
                 </p>
 
-                <div className="mt-6 rounded-sm border-l-2 border-accent/40 bg-cream p-4">
+                <div className="mt-6 overflow-hidden rounded-sm border border-border/70 bg-cream">
+                  <div className="relative aspect-[16/8] overflow-hidden border-b border-border/60">
+                    <img
+                      src={article.coverImage || heroBg}
+                      alt={article.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-primary/20" />
+                    <div className="absolute right-3 top-3 rounded-full bg-background/85 p-2 shadow-sm">
+                      <MessageSquareQuote className="h-4 w-4 text-accent/70" />
+                    </div>
+                  </div>
+
+                  <div className="border-l-2 border-accent/40 p-4">
                   <div className="mb-2 flex items-center gap-2">
                     <img
                       src={founderImg}
@@ -79,11 +94,11 @@ const BlogSection = () => {
                       <span className="text-xs font-semibold text-primary">Carlos Filgueiras</span>
                       <span className="ml-1.5 text-[10px] text-muted-foreground">- Fundador</span>
                     </div>
-                    <MessageSquareQuote className="ml-auto h-4 w-4 text-accent/50" />
                   </div>
                   <p className="text-xs italic leading-relaxed text-muted-foreground">
                     "{article.carlosComment}"
                   </p>
+                </div>
                 </div>
 
                 <Link

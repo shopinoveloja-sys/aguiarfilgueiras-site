@@ -3,14 +3,17 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, MessageSquareQuote } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import founderImg from "@/assets/founder.jpg";
-import { getBlogPostBySlug, getRelatedServiceSlugsForPost } from "@/data/blogPosts";
+import founderImg from "@/assets/founder.webp";
+import {
+  getBlogPostAbsoluteImageUrl,
+  getBlogPostBySlug,
+  getRelatedServiceSlugsForPost,
+} from "@/data/blogPosts";
 import { getServicePageBySlug } from "@/data/servicePages";
 import { trackEvent } from "@/lib/analytics";
 import { applySeo, setJsonLd } from "@/lib/seo";
 
 const SITE_URL = "https://aguiarfilgueiras.com.br";
-const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -31,6 +34,7 @@ const BlogPost = () => {
     }
 
     const canonicalUrl = `${SITE_URL}/blog/${post.slug}/`;
+    const articleImage = getBlogPostAbsoluteImageUrl(post.slug, SITE_URL, "facebook");
     const seoTitle = post.seoTitle || `${post.title} | Aguiar Filgueiras Advocacia`;
     const seoDescription = post.seoDescription || post.excerpt;
     const keywords = post.keywords?.join(", ") || post.category;
@@ -41,6 +45,7 @@ const BlogPost = () => {
       description: seoDescription,
       mainEntityOfPage: canonicalUrl,
       url: canonicalUrl,
+      image: articleImage,
       datePublished: post.date,
       dateModified: post.date,
       articleSection: post.category,
@@ -69,7 +74,7 @@ const BlogPost = () => {
       canonicalUrl,
       keywords,
       ogType: "article",
-      image: DEFAULT_IMAGE,
+      image: articleImage,
     });
 
     setJsonLd("blog-article-jsonld", articleJsonLd);
