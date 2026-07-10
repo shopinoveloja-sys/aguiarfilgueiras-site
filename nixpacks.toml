@@ -19,6 +19,11 @@ Caddyfile = '''
 
 	rewrite /health /*
 
+	# Do not let scanners or old WordPress-style probes resolve to the SPA homepage.
+	# These paths should look absent to external crawlers and security checks.
+	@blockedSensitive path_regexp blockedSensitive ^/(?:\.env(?:\..*)?|\.git(?:/.*)?|server-status|wp-admin(?:/.*)?|wp-login\.php|xmlrpc\.php|wp-content(?:/.*)?|wp-includes(?:/.*)?|wp-json(?:/.*)?)$
+	respond @blockedSensitive 404
+
 	# Preserve the authority of URLs from the former WordPress site.
 	redir /areas-de-atuacao/direito-penal-militar /direito-penal-militar/ permanent
 	redir /areas-de-atuacao/direito-penal-militar/ /direito-penal-militar/ permanent
@@ -42,6 +47,12 @@ Caddyfile = '''
 	root * ../app/{$NIXPACKS_SPA_OUTPUT_DIR}
 	encode gzip
 	file_server
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+	}
 
 	@assets {
 		path_regexp assets \.(css|js|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2)$
