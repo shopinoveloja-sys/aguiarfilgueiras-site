@@ -1,5 +1,11 @@
 import posts from "./blogPosts.json";
 
+export type BlogPostSocialImages = {
+  facebook: string;
+  linkedin: string;
+  gmb: string;
+};
+
 export type BlogPost = {
   id: number;
   slug: string;
@@ -12,9 +18,30 @@ export type BlogPost = {
   keywords?: string[];
   carlosComment: string;
   content: string[];
+  coverImage?: string;
+  socialImages?: BlogPostSocialImages;
 };
 
-export const blogPosts = posts as BlogPost[];
+export const getBlogPostRelativeImagePath = (
+  slug: string,
+  channel: keyof BlogPostSocialImages = "facebook",
+) => `/social/${slug}-${channel}.jpg`;
+
+export const getBlogPostAbsoluteImageUrl = (
+  slug: string,
+  siteUrl: string,
+  channel: keyof BlogPostSocialImages = "facebook",
+) => `${siteUrl}${getBlogPostRelativeImagePath(slug, channel)}`;
+
+export const blogPosts = (posts as BlogPost[]).map((post) => ({
+  ...post,
+  coverImage: getBlogPostRelativeImagePath(post.slug, "facebook"),
+  socialImages: {
+    facebook: getBlogPostRelativeImagePath(post.slug, "facebook"),
+    linkedin: getBlogPostRelativeImagePath(post.slug, "linkedin"),
+    gmb: getBlogPostRelativeImagePath(post.slug, "gmb"),
+  },
+}));
 
 export const getBlogPostBySlug = (slug: string | undefined) =>
   blogPosts.find((post) => post.slug === slug);
