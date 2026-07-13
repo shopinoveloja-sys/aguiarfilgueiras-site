@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 
+// Build hook kept explicit so each deploy regenerates article-level SEO pages and social metadata.
 const rootDir = process.cwd();
 const distDir = path.join(rootDir, "dist");
 const siteUrl = "https://aguiarfilgueiras.com.br";
