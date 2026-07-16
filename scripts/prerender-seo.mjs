@@ -667,6 +667,8 @@ for (const post of blogPosts) {
 writeSitemap([
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/blog", changefreq: "weekly", priority: "0.8" },
+  { path: "/politica-de-privacidade", changefreq: "yearly", priority: "0.3" },
+  { path: "/termos-de-uso", changefreq: "yearly", priority: "0.3" },
   { path: "/atendimento-militar", changefreq: "weekly", priority: "0.85" },
   ...geoCoverage.states.map((state) => ({
     path: `/atendimento-militar/${state.slug}`,
