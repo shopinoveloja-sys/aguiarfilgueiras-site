@@ -13,6 +13,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://aguiarfilgueiras.com.br/politica-de-privacidade/</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://aguiarfilgueiras.com.br/termos-de-uso/</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://aguiarfilgueiras.com.br/atendimento-militar/</loc>
     <lastmod>2026-07-08</lastmod>
     <changefreq>weekly</changefreq>
