@@ -94,6 +94,17 @@ const Footer = () => {
                 Bio
               </Link>
             </div>
+            <div className="flex flex-wrap items-center justify-center gap-4 md:justify-end">
+              <Link
+                to="/politica-de-privacidade"
+                className="text-gold-light/55 hover:text-gold"
+              >
+                Politica de Privacidade
+              </Link>
+              <Link to="/termos-de-uso" className="text-gold-light/55 hover:text-gold">
+                Termos de Uso
+              </Link>
+            </div>
           </div>
         </div>
 

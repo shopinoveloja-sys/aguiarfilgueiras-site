@@ -13,6 +13,8 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const GeoCoveragePage = lazy(() => import("./pages/GeoCoveragePage"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -44,6 +46,8 @@ const App = () => {
               <Route path="/atendimento-militar" element={<GeoCoveragePage />} />
               <Route path="/atendimento-militar/:stateSlug" element={<GeoCoveragePage />} />
               <Route path="/atendimento-militar/:stateSlug/:citySlug" element={<GeoCoveragePage />} />
+              <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+              <Route path="/termos-de-uso" element={<TermsOfUse />} />
               {legacyRedirects.map((route) => (
                 <Route
                   key={route.from}
