@@ -6,11 +6,12 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import Index from "./pages/Index";
 import { servicePages } from "./data/servicePages";
-import { installEmbeddedVideoTracking } from "./lib/analytics";
+import { installEmbeddedVideoTracking, installGlobalSocialTracking } from "./lib/analytics";
 
 const Links = lazy(() => import("./pages/Links"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
+const BlogVideos = lazy(() => import("./pages/BlogVideos"));
 const GeoCoveragePage = lazy(() => import("./pages/GeoCoveragePage"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -28,6 +29,7 @@ const legacyRedirects = [
 const App = () => {
   useEffect(() => {
     installEmbeddedVideoTracking();
+    installGlobalSocialTracking();
   }, []);
 
   return (
@@ -42,6 +44,7 @@ const App = () => {
               <Route path="/links" element={<Links />} />
               <Route path="/bio" element={<Links />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/videos" element={<BlogVideos />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/atendimento-militar" element={<GeoCoveragePage />} />
               <Route path="/atendimento-militar/:stateSlug" element={<GeoCoveragePage />} />

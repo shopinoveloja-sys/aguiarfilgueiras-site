@@ -113,12 +113,20 @@ const BlogSection = () => {
         </div>
 
         <div className="mt-10 text-center">
-          <Link
-            to="/blog"
-            className="inline-flex items-center gap-2 rounded-sm border border-accent px-5 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            Ver todos os artigos <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-2 rounded-sm border border-accent px-5 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              Ver todos os artigos <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/blog/videos"
+              className="inline-flex items-center gap-2 rounded-sm bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:brightness-110"
+            >
+              Ver videos do canal <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         <motion.div

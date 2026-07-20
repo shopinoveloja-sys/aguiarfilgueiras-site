@@ -8,6 +8,7 @@ const distDir = path.join(rootDir, "dist");
 const siteUrl = "https://aguiarfilgueiras.com.br";
 const defaultImage = `${siteUrl}/og-image.jpg`;
 const getArticleImageUrl = (slug) => `${siteUrl}/social/${slug}-facebook.jpg`;
+const getVideoThumbnailUrl = (videoId) => `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
 
 const escapeHtml = (value = "") =>
   String(value)
@@ -138,6 +139,17 @@ const readGeoCoverage = () => {
   };
 };
 
+const readVideoLibrary = () => {
+  const filePath = path.join(rootDir, "src", "data", "videos.ts");
+  const source = fs.readFileSync(filePath, "utf8");
+  const match = source.match(/export const videoLibrary: VideoItem\[\] = (\[[\s\S]*?\]);/);
+  if (!match) {
+    throw new Error("Nao foi possivel localizar videoLibrary em videos.ts");
+  }
+
+  return vm.runInNewContext(match[1], {});
+};
+
 const setOrCreateMeta = (html, selector, tag) => {
   const [regex, marker] = selector;
   if (regex.test(html)) {
@@ -239,6 +251,7 @@ const blogIndexBody = (posts, servicePages) => `
       <p>Biblioteca de Direito Militar</p>
       <h1>Artigos separados por forca, tema e estado</h1>
       <p>Encontre orientacoes para Forcas Federais, Forcas Estaduais, IPM, punicoes, carreira, pensao e beneficios militares.</p>
+      <p><a href="/blog/videos/">Assistir aos videos do canal sobre Direito Militar</a></p>
     </section>
     <section>
       <h2>Forcas Federais</h2>
@@ -269,6 +282,34 @@ const blogIndexBody = (posts, servicePages) => `
       <h2>Areas relacionadas</h2>
       <ul>${servicePages.map((page) => `<li><a href="/${page.slug}/">${escapeHtml(page.title)}</a></li>`).join("")}</ul>
     </section>
+  </main>`;
+
+const blogVideosBody = (videos) => `
+  <main>
+    <section>
+      <p>Videos do canal</p>
+      <h1>Conteudo em video sobre Direito Militar</h1>
+      <p>Assista aos videos do canal Aguiar Filgueiras Advocacia com orientacoes iniciais sobre direitos, punicoes disciplinares e defesa administrativa.</p>
+    </section>
+    ${videos
+      .map(
+        (video) => `
+    <article id="${escapeHtml(video.slug)}">
+      <p>${escapeHtml(video.category)} - ${escapeHtml(video.theme)}</p>
+      <h2>${escapeHtml(video.title)}</h2>
+      <p>${escapeHtml(video.intro)}</p>
+      <iframe
+        src="https://www.youtube.com/embed/${escapeHtml(video.youtubeId)}?enablejsapi=1&rel=0&modestbranding=1&origin=${encodeURIComponent(siteUrl)}"
+        title="${escapeHtml(video.title)}"
+        width="560"
+        height="315"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+      <p><a href="${escapeHtml(video.youtubeUrl)}">Assistir no YouTube</a></p>
+    </article>`,
+      )
+      .join("")}
   </main>`;
 
 const geoHubBody = (hub, states) => `
@@ -373,6 +414,7 @@ const servicePages = readServicePages();
 const blogPosts = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "blogPosts.json"), "utf8"));
 const serviceGuides = JSON.parse(fs.readFileSync(path.join(rootDir, "src", "data", "servicePageGuides.json"), "utf8"));
 const geoCoverage = readGeoCoverage();
+const videoLibrary = readVideoLibrary();
 
 for (const page of servicePages) {
   const guide = serviceGuides[page.slug];
@@ -465,6 +507,56 @@ writeRoute({
       articleSection: post.category,
     })),
   },
+});
+
+writeRoute({
+  path: "/blog/videos",
+  title: "Videos de Direito Militar | Aguiar Filgueiras Advocacia",
+  description:
+    "Biblioteca de videos do escritorio Aguiar Filgueiras Advocacia com conteudos sobre Direito Militar, defesa disciplinar, processo administrativo e orientacao juridica para militares.",
+  keywords: [
+    "videos direito militar",
+    "advogado militar youtube",
+    "direito militar video",
+    "punicao disciplinar militar video",
+    "processo administrativo militar video",
+  ],
+  image: videoLibrary[0] ? getVideoThumbnailUrl(videoLibrary[0].youtubeId) : defaultImage,
+  body: blogVideosBody(videoLibrary),
+  jsonLd: [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Videos de Direito Militar | Aguiar Filgueiras Advocacia",
+      url: `${siteUrl}/blog/videos/`,
+      description:
+        "Biblioteca de videos do escritorio Aguiar Filgueiras Advocacia com conteudos sobre Direito Militar, defesa disciplinar, processo administrativo e orientacao juridica para militares.",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: `${siteUrl}/` },
+        { "@type": "ListItem", position: 2, name: "Blog", item: `${siteUrl}/blog/` },
+        { "@type": "ListItem", position: 3, name: "Videos", item: `${siteUrl}/blog/videos/` },
+      ],
+    },
+    ...videoLibrary.map((video) => ({
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: video.title,
+      description: video.description,
+      thumbnailUrl: video.thumbnailUrl,
+      embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
+      contentUrl: video.youtubeUrl,
+      url: `${siteUrl}/blog/videos/#${video.slug}`,
+      publisher: {
+        "@type": "LegalService",
+        name: "Aguiar Filgueiras Advocacia",
+        url: siteUrl,
+      },
+    })),
+  ],
 });
 
 writeRoute({
@@ -667,6 +759,7 @@ for (const post of blogPosts) {
 writeSitemap([
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/blog", changefreq: "weekly", priority: "0.8" },
+  { path: "/blog/videos", changefreq: "weekly", priority: "0.7" },
   { path: "/politica-de-privacidade", changefreq: "yearly", priority: "0.3" },
   { path: "/termos-de-uso", changefreq: "yearly", priority: "0.3" },
   { path: "/atendimento-militar", changefreq: "weekly", priority: "0.85" },
@@ -686,6 +779,6 @@ writeSitemap([
 
 console.log(
   `Pre-render SEO concluido: ${
-    servicePages.length + blogPosts.length + geoCoverage.states.length + geoCoverage.cities.length + 2
+    servicePages.length + blogPosts.length + geoCoverage.states.length + geoCoverage.cities.length + 3
   } rotas.`,
 );

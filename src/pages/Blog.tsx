@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowRight, BookOpen, Calendar, FileSearch, MapPin, Search, Shield, Tags } from "lucide-react";
+import { ArrowRight, BookOpen, Calendar, FileSearch, MapPin, PlayCircle, Search, Shield, Tags } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { blogPosts } from "@/data/blogPosts";
@@ -113,6 +113,28 @@ const Blog = () => {
 
         <section className="border-b border-border bg-card py-8">
           <div className="container mx-auto max-w-6xl px-6">
+            <div className="mb-6 rounded-sm border border-accent/20 bg-accent/5 p-5">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Videos do canal</p>
+                  <h2 className="mt-2 font-heading text-2xl font-bold text-primary">
+                    Assista aos conteudos em video sobre Direito Militar
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                    Reunimos uma area propria para videos do canal Aguiar Filgueiras Advocacia, com embed responsivo,
+                    link direto para o YouTube e estrutura pronta para novos conteudos.
+                  </p>
+                </div>
+                <Link
+                  to="/blog/videos"
+                  className="inline-flex items-center gap-2 rounded-sm bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
+                >
+                  Ir para videos
+                  <PlayCircle className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
               {blogAudiences.map((audience) => (
                 <button

@@ -64,6 +64,22 @@ const Footer = () => {
                 Facebook
               </a>
               <a
+                href="https://www.youtube.com/@aguiarfilgueirasadvocacia"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  trackSocialClick({
+                    socialNetwork: "youtube",
+                    linkUrl: "https://www.youtube.com/@aguiarfilgueirasadvocacia",
+                    buttonText: "YouTube",
+                    placement: "footer",
+                  })
+                }
+                className="text-gold-light/70 hover:text-gold"
+              >
+                YouTube
+              </a>
+              <a
                 href="https://www.linkedin.com/in/carlos-filgueiras-992396154/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -89,6 +105,9 @@ const Footer = () => {
               </Link>
               <Link to="/blog" className="text-gold-light/55 hover:text-gold">
                 Blog
+              </Link>
+              <Link to="/blog/videos" className="text-gold-light/55 hover:text-gold">
+                Videos
               </Link>
               <Link to="/bio" className="text-gold-light/55 hover:text-gold">
                 Bio
